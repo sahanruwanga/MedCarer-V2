@@ -106,13 +106,14 @@ public class RegisterActivity extends AppCompatActivity {
                         String uid = jObj.getString("unique_id");
 
                         JSONObject user = jObj.getJSONObject("user");
+                        String user_id = user.getString("user_id");
                         String name = user.getString("user_name");
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
 
                         // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
+                        db.addUser(Integer.parseInt(user_id), name, email, uid, created_at);
 
                         Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
@@ -128,11 +129,11 @@ public class RegisterActivity extends AppCompatActivity {
                         // message
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
-                                "Meka"+errorMsg, Toast.LENGTH_LONG).show();
+                                errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),"Or meka"+e.getMessage(),Toast.LENGTH_LONG).show();
+//                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Enter correct details again",Toast.LENGTH_LONG).show();
                 }
 
             }

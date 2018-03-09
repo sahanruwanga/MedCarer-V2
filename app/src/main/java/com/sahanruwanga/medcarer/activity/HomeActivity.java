@@ -1,60 +1,50 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
 //from blog
-import java.util.HashMap;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private TextView txtName;
-    private TextView txtEmail;
-    private Button btnLogout;
-
-    private SQLiteHandler db;
-    private SessionManager session;
+    private SQLiteHandler sqLiteHandler;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        MaterialSearchView searchView = findViewById(R.id.searchViewMM);
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onSearchViewShown() {
+
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -62,38 +52,15 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //region From Blog
-        txtName = (TextView) findViewById(R.id.name);
-        txtEmail = (TextView) findViewById(R.id.email);
-        btnLogout = (Button) findViewById(R.id.btnLogout);
-
         // SqLite database handler
-        db = new SQLiteHandler(getApplicationContext());
+        setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
 
-        // session manager
-        session = new SessionManager(getApplicationContext());
+        // sessionManager manager
+        setSessionManager(new SessionManager(getApplicationContext()));
 
-        if (!session.isLoggedIn()) {
+        if (!getSessionManager().isLoggedIn()) {
             logoutUser();
         }
-
-        // Fetching user details from sqlite
-        HashMap<String, String> user = db.getUserDetails();
-
-        String name = user.get("name");
-        String email = user.get("email");
-
-        // Displaying the user details on the screen
-        txtName.setText(name);
-        txtEmail.setText(email);
-
-        // Logout button click event
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                logoutUser();
-            }
-        });
         //endregion
     }
 
@@ -103,9 +70,9 @@ public class HomeActivity extends AppCompatActivity
      * preferences Clears the user data from sqlite users table
      * */
     private void logoutUser() {
-        session.setLogin(false);
-
-        db.deleteUsers();
+        getSessionManager().setLogin(false);
+        getSessionManager().setMHCreated(false);
+        getSqLiteHandler().deleteTables();
 
         // Launching the login activity
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
@@ -119,15 +86,13 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }else {
             super.onBackPressed();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 
@@ -139,7 +104,7 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.savePDF) {
             return true;
         }
 
@@ -152,22 +117,51 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.myProfile) {
+            Intent intent = new Intent(this, MyProfileActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.notification) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.logout) {
+            logoutUser();
+        } else if (id == R.id.downloadUM) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.aboutApp) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.aboutDevSR) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.rate) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void openMedicalHistory(View view) {
+        Intent intent = new Intent(this, MedicalHistoryActivity.class);
+        startActivity(intent);
+    }
+
+    public void openAllergicMedicine(View view) {
+        Intent intent = new Intent(this, AllergicMedicineActivity.class);
+        startActivity(intent);
+    }
+
+    public SQLiteHandler getSqLiteHandler() {
+        return sqLiteHandler;
+    }
+
+    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
+        this.sqLiteHandler = sqLiteHandler;
+    }
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
+    }
+
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 }

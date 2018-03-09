@@ -7,8 +7,11 @@ package com.sahanruwanga.medcarer.app;
 
 public class AppConfig {
     // Server user login url
-    public static String URL_LOGIN = "http://192.168.8.100/med_carer/login.php";
+    public static String URL_LOGIN = "http://192.168.8.101/med_carer/login.php";
 
     // Server user register url
-    public static String URL_REGISTER = "http://192.168.8.100/med_carer/register.php";
+    public static String URL_REGISTER = "http://192.168.8.101/med_carer/register.php";
+
+    // Server medical history url
+    public static String URL_MEDICAL_HISTORY = "http://192.168.8.101/med_carer/medical_history.php";
 }

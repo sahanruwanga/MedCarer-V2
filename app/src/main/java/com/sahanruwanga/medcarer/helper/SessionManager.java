@@ -13,36 +13,83 @@ public class SessionManager {
     private static String TAG = SessionManager.class.getSimpleName();
 
     // Shared Preferences
-    SharedPreferences pref;
+    private SharedPreferences sharedPreferences;
 
-    Editor editor;
-    Context _context;
+    private Editor editor;
+    private Context context;
 
-    // Shared pref mode
-    int PRIVATE_MODE = 0;
+    // Shared sharedPreferences mode
+    private int PRIVATE_MODE = 0;
 
     // Shared preferences file name
-    private static final String PREF_NAME = "AndroidHiveLogin";
+    private static final String PREF_NAME = "MedCarerLogin";
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
+    private static final String KEY_IS_MH_CREATED = "isMHCreated";
 
     public SessionManager(Context context) {
-        this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        editor = pref.edit();
+        this.setContext(context);
+        setSharedPreferences(this.getContext().getSharedPreferences(PREF_NAME, getPRIVATE_MODE()));
+        setEditor(getSharedPreferences().edit());
     }
 
     public void setLogin(boolean isLoggedIn) {
 
-        editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
+        getEditor().putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
 
         // commit changes
-        editor.commit();
+        getEditor().commit();
 
         Log.d(TAG, "User login session modified!");
     }
 
     public boolean isLoggedIn(){
-        return pref.getBoolean(KEY_IS_LOGGEDIN, false);
+        return getSharedPreferences().getBoolean(KEY_IS_LOGGEDIN, false);
+    }
+
+    public void setMHCreated(boolean isMHCreated) {
+
+        getEditor().putBoolean(KEY_IS_MH_CREATED, isMHCreated);
+
+        // commit changes
+        getEditor().commit();
+
+        Log.d(TAG, "DB create session modified!");
+    }
+
+    public boolean isMHCreated(){
+        return getSharedPreferences().getBoolean(KEY_IS_MH_CREATED, false);
+    }
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    public Editor getEditor() {
+        return editor;
+    }
+
+    public void setEditor(Editor editor) {
+        this.editor = editor;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public int getPRIVATE_MODE() {
+        return PRIVATE_MODE;
+    }
+
+    public void setPRIVATE_MODE(int PRIVATE_MODE) {
+        this.PRIVATE_MODE = PRIVATE_MODE;
     }
 }

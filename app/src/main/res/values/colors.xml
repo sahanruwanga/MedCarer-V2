@@ -6,6 +6,8 @@
     <color name="colorHintText">#848383</color>
     <color name="colorBlack">#000000</color>
     <color name="colorLink">#5246ff</color>
-
+    <color name="colorLiteBlue">#6fcafa</color>
+    <color name="colorForSelecting">#dcdcdc</color>
+    <color name="colorWhite">#ffffff</color>
 
 </resources>

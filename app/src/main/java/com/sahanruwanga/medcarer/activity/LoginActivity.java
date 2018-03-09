@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
+import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -28,33 +29,35 @@ import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = RegisterActivity.class.getSimpleName();
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private EditText email;
     private EditText password;
-    private ProgressDialog pDialog;
-    private SessionManager session;
-    private SQLiteHandler db;
+    private ProgressDialog progressDialog;
+    private SessionManager sessionManager;
+    private SQLiteHandler sqLiteHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Email and Password fields initialization
         setEmail((EditText)findViewById(R.id.email));
         setPassword((EditText)findViewById(R.id.password));
 
         // Progress dialog
-        pDialog = new ProgressDialog(this);
-        pDialog.setCancelable(false);
+        setProgressDialog(new ProgressDialog(this));
+        getProgressDialog().setCancelable(false);
 
         // SQLite database handler
-        db = new SQLiteHandler(getApplicationContext());
+        setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
 
         // Session manager
-        session = new SessionManager(getApplicationContext());
+        setSessionManager(new SessionManager(getApplicationContext()));
 
         // Check if user is already logged in or not
-        if (session.isLoggedIn()) {
+        if (getSessionManager().isLoggedIn()) {
+            User.setUserId(getSqLiteHandler().getUserDetails().get("user_id"));
             // User is already logged in. Take him to main activity
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
@@ -80,15 +83,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    //region checkLodin()
+    //region checkLogin()
     /**
-     * function to verify login details in mysql db
+     * function to verify login details in mysql sqLiteHandler
      * */
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
 
-        pDialog.setMessage("Logging in ...");
+        getProgressDialog().setMessage("Logging in ...");
         showDialog();
 
         StringRequest strReq = new StringRequest(Method.POST,
@@ -106,21 +109,22 @@ public class LoginActivity extends AppCompatActivity {
                     // Check for error node in json
                     if (!error) {
                         // user successfully logged in
-                        // Create login session
-                        session.setLogin(true);
+                        // Create login sessionManager
+                        getSessionManager().setLogin(true);
 
                         // Now store the user in SQLite
                         String uid = jObj.getString("unique_id");
 
                         JSONObject user = jObj.getJSONObject("user");
+                        String user_id = user.getString("user_id");
                         String name = user.getString("user_name");
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
 
                         // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
-
+                        getSqLiteHandler().addUser(Integer.parseInt(user_id), name, email, uid, created_at);
+                        User.setUserId(user_id);
                         // Launch main activity
                         Intent intent = new Intent(LoginActivity.this,
                                 HomeActivity.class);
@@ -167,14 +171,15 @@ public class LoginActivity extends AppCompatActivity {
     }
     //endregion
 
+
     private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
+        if (!getProgressDialog().isShowing())
+            getProgressDialog().show();
     }
 
     private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
+        if (getProgressDialog().isShowing())
+            getProgressDialog().dismiss();
     }
 
     public void openRegisterActivity(View view){
@@ -198,6 +203,30 @@ public class LoginActivity extends AppCompatActivity {
 
     public void setPassword(EditText password) {
         this.password = password;
+    }
+
+    public SQLiteHandler getSqLiteHandler() {
+        return sqLiteHandler;
+    }
+
+    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
+        this.sqLiteHandler = sqLiteHandler;
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
+    }
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
+    }
+
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
     //endregion
 }
