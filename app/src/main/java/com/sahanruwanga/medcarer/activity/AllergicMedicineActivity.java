@@ -6,8 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
-import com.sahanruwanga.medcarer.app.RecyclerViewAdapter;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 
 import java.util.LinkedList;
@@ -17,14 +17,14 @@ public class AllergicMedicineActivity extends AppCompatActivity {
     private SQLiteHandler sqLiteHandler;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private RecyclerViewAdapter recyclerViewAdapter;
+    private MedicalHistoryAdapter medicalHistoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_allergic_medicine);
 
-        this.setRecyclerView((RecyclerView)findViewById(R.id.allergicRecyclerView));
+        this.setRecyclerView((RecyclerView)findViewById(R.id.medicalHistoryRecyclerView));
         this.getRecyclerView().setHasFixedSize(true);
         this.setLayoutManager(new LinearLayoutManager(this));
         this.getRecyclerView().setLayoutManager(getLayoutManager());
@@ -52,8 +52,8 @@ public class AllergicMedicineActivity extends AppCompatActivity {
 
     private void show(){
         //this.setSqLiteHandler(new SQLiteHandler(this));
-//        this.setRecyclerViewAdapter(new RecyclerViewAdapter(getMD(), this, getRecyclerView()));
-        this.getRecyclerView().setAdapter(getRecyclerViewAdapter());
+//        this.setMedicalHistoryAdapter(new MedicalHistoryAdapter(getMD(), this, getRecyclerView()));
+        this.getRecyclerView().setAdapter(getMedicalHistoryAdapter());
     }
 
     public SQLiteHandler getSqLiteHandler() {
@@ -80,11 +80,11 @@ public class AllergicMedicineActivity extends AppCompatActivity {
         this.layoutManager = layoutManager;
     }
 
-    public RecyclerViewAdapter getRecyclerViewAdapter() {
-        return recyclerViewAdapter;
+    public MedicalHistoryAdapter getMedicalHistoryAdapter() {
+        return medicalHistoryAdapter;
     }
 
-    public void setRecyclerViewAdapter(RecyclerViewAdapter recyclerViewAdapter) {
-        this.recyclerViewAdapter = recyclerViewAdapter;
+    public void setMedicalHistoryAdapter(MedicalHistoryAdapter medicalHistoryAdapter) {
+        this.medicalHistoryAdapter = medicalHistoryAdapter;
     }
 }

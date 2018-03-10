@@ -26,6 +26,7 @@ public class SessionManager {
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_IS_MH_CREATED = "isMHCreated";
+    private static final String KEY_IS_APPOINTMENT_CREATED = "isAppointmentCreated";
 
     public SessionManager(Context context) {
         this.setContext(context);
@@ -33,6 +34,7 @@ public class SessionManager {
         setEditor(getSharedPreferences().edit());
     }
 
+    //region Loogin Session Handle
     public void setLogin(boolean isLoggedIn) {
 
         getEditor().putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
@@ -46,7 +48,9 @@ public class SessionManager {
     public boolean isLoggedIn(){
         return getSharedPreferences().getBoolean(KEY_IS_LOGGEDIN, false);
     }
+    //endregion
 
+    //region Medical History table created event handle
     public void setMHCreated(boolean isMHCreated) {
 
         getEditor().putBoolean(KEY_IS_MH_CREATED, isMHCreated);
@@ -60,7 +64,25 @@ public class SessionManager {
     public boolean isMHCreated(){
         return getSharedPreferences().getBoolean(KEY_IS_MH_CREATED, false);
     }
+    //endregion
 
+    //region Appointment table created event handle
+    public void setAppointmentCreated(boolean isAppointmentCreated) {
+
+        getEditor().putBoolean(KEY_IS_APPOINTMENT_CREATED, isAppointmentCreated);
+
+        // commit changes
+        getEditor().commit();
+
+        Log.d(TAG, "DB create session modified!");
+    }
+
+    public boolean isAppointmentCreated(){
+        return getSharedPreferences().getBoolean(KEY_IS_APPOINTMENT_CREATED, false);
+    }
+    //endregion
+
+    //region Getters and Setters
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
     }
@@ -92,4 +114,5 @@ public class SessionManager {
     public void setPRIVATE_MODE(int PRIVATE_MODE) {
         this.PRIVATE_MODE = PRIVATE_MODE;
     }
+    //endregion
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sahanruwanga.medcarer.activity.MedicalHistoryActivity">
+    tools:context="com.sahanruwanga.medcarer.activity.AppointmentActivity">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
     <com.miguelcatalan.materialsearchview.MaterialSearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/searchViewMH"
+        android:id="@+id/searchViewAllergic"
         />
     <FrameLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/medicalHistoryRecyclerView"/>
+                android:id="@+id/appointmentRecyclerView"/>
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
@@ -37,7 +37,7 @@
             android:src="@drawable/ic_create"
             app:rippleColor="@color/colorBlack"
             android:layout_gravity="bottom|right"
-            android:onClick="openAddMedicalRecord"
+            android:onClick="openAddAppointment"
             android:foregroundGravity="right|bottom" />
     </FrameLayout>
 

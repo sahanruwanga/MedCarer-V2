@@ -1,7 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,12 +8,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.volley.Request.Method;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -22,7 +19,7 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
-import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
+import com.sahanruwanga.medcarer.app.AppointmentAdapter;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
@@ -34,7 +31,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MedicalHistoryActivity extends AppCompatActivity {
+public class AppointmentActivity extends AppCompatActivity {
     private static final String TAG = MedicalHistoryActivity.class.getSimpleName();
     private Toolbar toolbar;
     private MaterialSearchView searchView;
@@ -43,35 +40,32 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private MedicalHistoryAdapter medicalHistoryAdapter;
+    private AppointmentAdapter appointmentAdapter;
 
-    //region onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medical_history);
+        setContentView(R.layout.activity_appointment);
 
         // SQLiteHelper initialization
-        setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
+        this.setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
         // Session manager
-        setSessionManager(new SessionManager(getApplicationContext()));
+        this.setSessionManager(new SessionManager(getApplicationContext()));
 
         // Progress dialog
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+        this.setProgressDialog(new ProgressDialog(this));
+        getProgressDialog().setCancelable(false);
 
         //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
-        if(!getSessionManager().isMHCreated()){
+        if(!getSessionManager().isAppointmentCreated()){
             storeInSQLite(User.getUserId());
-            Toast.makeText(this, "Working", Toast.LENGTH_LONG).show();
         }
 
-        Toast.makeText(this, "RecyclerView is Working", Toast.LENGTH_LONG).show();
         //RecyclerView and layoutmanagrer initialization
-        setRecyclerView((RecyclerView)findViewById(R.id.medicalHistoryRecyclerView));
+        setRecyclerView((RecyclerView)findViewById(R.id.appointmentRecyclerView));
         getRecyclerView().setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        getRecyclerView().setLayoutManager(layoutManager);
+        setLayoutManager(new LinearLayoutManager(this));
+        getRecyclerView().setLayoutManager(getLayoutManager());
         showRecyclerView();
 
         //Toolbar creation
@@ -80,7 +74,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         showDefaultToolBar();
 
         //region Search Bar Functions
-        setSearchView((MaterialSearchView) findViewById(R.id.searchViewMH));
+        setSearchView((MaterialSearchView) findViewById(R.id.searchViewAllergic));
         getSearchView().setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
@@ -101,44 +95,18 @@ public class MedicalHistoryActivity extends AppCompatActivity {
             }
         });
         //endregion
-
     }
-    //endregion
 
-    //region Show RecyclerView in Medical History
+    //region Show RecyclerView in Appointment
     private void showRecyclerView(){
-        setMedicalHistoryAdapter(new MedicalHistoryAdapter(getSqLiteHandler().getMedicalRecords(), this, getRecyclerView()));
-        getRecyclerView().setAdapter(getMedicalHistoryAdapter());
+        this.appointmentAdapter = new AppointmentAdapter(getSqLiteHandler().getAppointmentDetails(), this, getRecyclerView());
+        getRecyclerView().setAdapter(getAppointmentAdapter());
     }
-    //endregion
-
-    //region onCreateOptionMenu and onOptionItemSelected
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.search_view, menu);
-        MenuItem item = menu.findItem(R.id.itemSearch);
-        getSearchView().setMenuItem(item);
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.savePDF) {
-            return true;
-        }else if(id == R.id.sharePDF){
-            //new PDFCreator(new ArrayList<MedicalRecord>(), this).convertToPDF();
-            Toast.makeText(this, "Should generate PDF of the medical history", Toast.LENGTH_LONG).show();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     //endregion
 
     //region Showing tool bars
     public void showDefaultToolBar() {
-        getSupportActionBar().setTitle(R.string.medical_history);
+        getSupportActionBar().setTitle(R.string.appointment);
         getToolbar().setTitleTextColor(Color.parseColor("#000000"));
         getToolbar().setLogo(R.drawable.ic_download);
     }
@@ -150,49 +118,21 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     }
     //endregion
 
-    //region onBackPressed
-    // Back press event
-    @Override
-    public void onBackPressed() {
-        if(getSearchView().isSearchOpen()){
-            getSearchView().closeSearch();
-        }else if (getMedicalHistoryAdapter().getSelectingCount() > 0){
-            getMedicalHistoryAdapter().deseleceAll();
-            showDefaultToolBar();
-        }else
-            super.onBackPressed();
-    }
-    //endregion
-
-    //region open Add Medical Record activity
-    // Open new activity to add new medical record
-    public void openAddMedicalRecord(View view){
-        Intent intent = new Intent(this, AddMedicalRecordActivity.class);
-        startActivity(intent);
-    }
-    //endregion
-
-    //region Save new Medical Record
-    public void saveRecord(View view){
-
-    }
-    //endregion
-
     //region Store data in SQLite database
     // Save data into SQLite database from MySQL database
     private void storeInSQLite(final String user_id){
         // Tag used to cancel the request
-        String tag_string_req = "req_medical_history";
+        String tag_string_req = "req_appointment";
 
         progressDialog.setMessage("Retrieving data ...");
         showDialog();
 
-        StringRequest strReq = new StringRequest(Method.POST,
-                AppConfig.URL_MEDICAL_HISTORY, new Response.Listener<String>() {
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_APPOINTMENT, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Medical History Response: " + response.toString());
+                Log.d(TAG, "Appointment Response: " + response.toString());
                 hideDialog();
 
                 try {
@@ -201,25 +141,25 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
                     // Check for error node in json
                     if (!error) {
-                        getSessionManager().setMHCreated(true);
+                        getSessionManager().setAppointmentCreated(true);
 
-                        // Now store the user in SQLite
-                        JSONArray records= jObj.getJSONArray("records");
-                        for (int i=0; i<records.length();i++){
-                            JSONArray medicalRecord = jObj.getJSONArray(records.getString(i));
-                            String disease = medicalRecord.getString(0);
-                            String medicine = medicalRecord.getString(1);
-                            String duration = medicalRecord.getString(2);
-                            String allergic = medicalRecord.getString(3);
-                            String doctor = medicalRecord.getString(4);
-                            String contact = medicalRecord.getString(5);
-                            String description = medicalRecord.getString(6);
+                        // Now store appointments in SQLite
+                        JSONArray appointments = jObj.getJSONArray("appointments");
+                        for (int i=0; i<appointments.length();i++){
+                            JSONArray appointment = jObj.getJSONArray(appointments.getString(i));
+                            String reason = appointment.getString(0);
+                            String date = appointment.getString(1);
+                            String time = appointment.getString(2);
+                            String venue = appointment.getString(3);
+                            String doctor = appointment.getString(4);
+                            String clinicContact = appointment.getString(5);
+                            String notifyTime = appointment.getString(6);
 
-                            getSqLiteHandler().addMedicalRecord(Integer.parseInt(records.getString(i)), disease, medicine, duration, allergic, doctor, contact, description);
+                            getSqLiteHandler().addAppointment(Integer.parseInt(appointments.getString(i)), reason, date, time, venue, doctor, clinicContact, notifyTime);
                         }
 
                     } else {
-                        // Error in login. Get the error message
+                        // Error in fetching. Get the error message
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
@@ -244,7 +184,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
             @Override
             protected Map<String, String> getParams() {
-                // Posting parameters to medical history url
+                // Posting parameters to appointment url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", user_id);
 
@@ -269,6 +209,9 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     }
     //endregion
 
+    public void openAddAppointment(View view) {
+    }
+
     //region Getters and Setters
     public Toolbar getToolbar() {
         return toolbar;
@@ -286,20 +229,12 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         this.searchView = searchView;
     }
 
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
     }
 
-    public void setRecyclerView(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
-    }
-
-    public MedicalHistoryAdapter getMedicalHistoryAdapter() {
-        return medicalHistoryAdapter;
-    }
-
-    public void setMedicalHistoryAdapter(MedicalHistoryAdapter medicalHistoryAdapter) {
-        this.medicalHistoryAdapter = medicalHistoryAdapter;
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
     }
 
     public SQLiteHandler getSqLiteHandler() {
@@ -316,6 +251,30 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
+
+    public RecyclerView.LayoutManager getLayoutManager() {
+        return layoutManager;
+    }
+
+    public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
+    }
+
+    public AppointmentAdapter getAppointmentAdapter() {
+        return appointmentAdapter;
+    }
+
+    public void setAppointmentAdapter(AppointmentAdapter appointmentAdapter) {
+        this.appointmentAdapter = appointmentAdapter;
     }
     //endregion
 }

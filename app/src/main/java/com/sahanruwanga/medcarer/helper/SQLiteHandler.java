@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
 
 import java.util.HashMap;
@@ -31,37 +32,82 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Table names
     private static final String TABLE_USER = "user";
     private static final String TABLE_MEDICAL_HISTORY = "medical_history";
+    private static final String TABLE_APPOINTMENT = "appointment";
+    private static final String TABLE_MEDICATION_SCHEDULE = "medication_schedule";
+    private static final String TABLE_ALLERGIC_MEDICINE = "allergic_medicine";
+
+    //region Table Columns declaration
+    // Common columns
+    private static final String KEY_ID = "user_id";
+    private static  final String KEY_DOCTOR = "doctor";
+    private static  final String KEY_NOTIFY_TIME = "notify_time";
+    private static  final String KEY_DESCRIPTION = "description";
 
     // Login Table Columns names
-    private static final String KEY_ID = "user_id";
+
     private static final String KEY_NAME = "user_name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_UID = "unique_id";
     private static final String KEY_CREATED_AT = "created_at";
+    private static  final String KEY_MEDICINE = "medicine";
 
-    //Medical_history table Columns names
+    // Medical_history table Columns names
     private static  final String KEY_RECORD_ID = "record_id";
     private static  final String KEY_DISEASE = "disease";
-    private static  final String KEY_MEDICINE = "medicine";
     private static  final String KEY_DURATION= "duration";
     private static  final String KEY_ALLERGIC = "allergic";
-    private static  final String KEY_DOCTOR = "doctor";
     private static  final String KEY_CONTACT = "contact";
-    private static  final String KEY_DESCRIPTION = "description";
 
-    //Create tables queries
+    // Appointment table Columns names
+    private static  final String KEY_APPOINTMENT_ID = "appointment_id";
+    private static  final String KEY_REASON = "reason";
+    private static  final String KEY_DATE = "date";
+    private static  final String KEY_TIME= "time";
+    private static  final String KEY_VENUE = "venue";
+    private static  final String KEY_CLINIC_CONTACT = "clinic_contact";
+
+    // Medication Schedule table Columns names
+    private static  final String KEY_SCHEDULE_ID = "appointment_id";
+    private static  final String KEY_QUANTITY = "date";
+    private static  final String KEY_PERIOD= "time";
+
+    // Allergic Medicine table Columns names
+    private static  final String KEY_ALLERGIC_MEDICINE_ID = "allergic_medicine_id";
+
+    //endregion
+
+    //region Queries for creating tables
+    //Create users (login) table query
     private final String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
             + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
             + KEY_EMAIL + " TEXT UNIQUE," + KEY_UID + " TEXT,"
             + KEY_CREATED_AT + " TEXT" + ")";
 
+    // Create Medical History Table query
     private final String CREATE_MEDICAL_HISTORY_TABLE = "CREATE TABLE " + TABLE_MEDICAL_HISTORY + "("
             + KEY_RECORD_ID + " INTEGER PRIMARY KEY," + KEY_DISEASE + " TEXT,"
             + KEY_MEDICINE + " TEXT," + KEY_DURATION + " TEXT," + KEY_ALLERGIC + " TEXT,"
             + KEY_DOCTOR + " TEXT," + KEY_CONTACT + " TEXT," + KEY_DESCRIPTION + " TEXT" + ")";
 
+    // Create Appointment table query
+    private final String CREATE_APPOINTMENT_TABLE = "CREATE TABLE " + TABLE_APPOINTMENT + "("
+            + KEY_APPOINTMENT_ID + " INTEGER PRIMARY KEY," + KEY_REASON + " TEXT,"
+            + KEY_DATE + " TEXT," + KEY_TIME + " TEXT," + KEY_VENUE + " TEXT,"
+            + KEY_DOCTOR + " TEXT," + KEY_CLINIC_CONTACT + " TEXT," + KEY_NOTIFY_TIME + " TEXT" + ")";
 
+    // Create Medication Schedule table query
+    private final String CREATE_MEDICATION_SCHEDULE_TABLE = "CREATE TABLE " + TABLE_MEDICATION_SCHEDULE + "("
+            + KEY_SCHEDULE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
+            + KEY_QUANTITY + " TEXT," + KEY_PERIOD + " TEXT," + KEY_NOTIFY_TIME + " TEXT" + ")";
 
+    // Create Allergic Medicine Schedule table query
+    private final String CREATE_ALLERGIC_MEDICINE_TABLE = "CREATE TABLE " + TABLE_ALLERGIC_MEDICINE + "("
+            + KEY_ALLERGIC_MEDICINE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
+            + KEY_DESCRIPTION + " TEXT" + ")";
+
+    //endregion
+
+    // Constructor call
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -72,6 +118,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_LOGIN_TABLE);
         db.execSQL(CREATE_MEDICAL_HISTORY_TABLE);
+        db.execSQL(CREATE_ALLERGIC_MEDICINE_TABLE);
+        db.execSQL(CREATE_APPOINTMENT_TABLE);
+        db.execSQL(CREATE_MEDICATION_SCHEDULE_TABLE);
 
         Log.d(TAG, "Database tables created");
     }
@@ -82,6 +131,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICAL_HISTORY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ALLERGIC_MEDICINE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICATION_SCHEDULE);
 
         // Create tables again
         onCreate(db);
@@ -150,15 +202,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //endregion
 
     //region Medical History Details
-    /**
-     * Storing Medical Record in database
-     * */
+    // Storing Medical Record in database
     public void addMedicalRecord(int record_id, String disease, String medicine, String duration,
                                  String allergic, String doctor, String contact, String description) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-//        values.put(KEY_ID, userId); // UserID
         values.put(KEY_RECORD_ID, record_id); // Disease
         values.put(KEY_DISEASE, disease); // Disease
         values.put(KEY_MEDICINE, medicine); // Medicine
@@ -175,9 +224,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New medical record is inserted into sqlite: " + id);
     }
 
-    /**
-     * Getting medical records from database
-     * */
+    // Getting medical records from database
     public List<MedicalRecord> getMedicalRecords() {
         List<MedicalRecord> medicalRecords = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_MEDICAL_HISTORY;
@@ -203,6 +250,58 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Fetching medical records from Sqlite: ");
 
         return medicalRecords;
+    }
+    //endregion
+
+    //region Appointment Details
+    // Storing Appointment in database
+    public void addAppointment(int appointment_id, String reason, String date, String time,
+                                 String venue, String doctor, String clinic_contact, String notify_time) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_APPOINTMENT_ID, appointment_id); // Appointment ID
+        values.put(KEY_REASON, reason); // Reason
+        values.put(KEY_DATE, date); // Date
+        values.put(KEY_TIME, time); // Time
+        values.put(KEY_VENUE, venue); // Venue
+        values.put(KEY_DOCTOR, doctor); // Doctor
+        values.put(KEY_CLINIC_CONTACT, clinic_contact); // Clinic Contact
+        values.put(KEY_NOTIFY_TIME, notify_time); // Notify Time
+
+        // Inserting Row
+        long id = db.insert(TABLE_APPOINTMENT, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New medical record is inserted into sqlite: " + id);
+    }
+
+    // Getting medical records from database
+    public List<Appointment> getAppointmentDetails() {
+        List<Appointment> appointments = new LinkedList<>();
+        String query = "SELECT  * FROM " + TABLE_APPOINTMENT;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        Appointment appointment;
+
+        if(cursor.moveToFirst()){
+            do{
+                appointment = new Appointment();
+                appointment.setAppointmentId(cursor.getInt(cursor.getColumnIndex(KEY_APPOINTMENT_ID)));
+                appointment.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
+                appointment.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+                appointment.setTime(cursor.getString(cursor.getColumnIndex(KEY_TIME)));
+                appointment.setVenue(cursor.getString(cursor.getColumnIndex(KEY_VENUE)));
+                appointment.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                appointment.setClinicContact(cursor.getString(cursor.getColumnIndex(KEY_CLINIC_CONTACT)));
+                appointment.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                appointments.add(appointment);
+            }while (cursor.moveToNext());
+        }
+        // return user
+        Log.d(TAG, "Fetching appointments from Sqlite: ");
+
+        return appointments;
     }
     //endregion
 }

@@ -37,7 +37,6 @@
         android:padding="14dp">
 
         <android.support.v7.widget.CardView
-            android:id="@+id/medicalHistoryBtn"
             android:background="@color/colorLiteBlue"
             android:onClick="openMedicalHistory"
             android:layout_width="0dp"
@@ -76,7 +75,6 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/allergicMedicineBtn"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
@@ -115,7 +113,6 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/alternativeMedicineBtn"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
@@ -124,7 +121,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            android:onClick="openAlternativeMedicine">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -153,7 +151,6 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/appointmentBtn"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
@@ -162,7 +159,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            android:onClick="openAppointment">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -180,7 +178,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Doctors's Appointment"
+                    android:text="Appointment"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlack"
                     android:textStyle="bold"
@@ -191,7 +189,6 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/scheduleBtn"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
@@ -200,7 +197,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            android:onClick="openMedicationSchedule">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -237,7 +235,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            android:onClick="openPharmacy">
 
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -3,6 +3,8 @@
     package="com.sahanruwanga.medcarer">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".app.AppController"
@@ -27,7 +29,8 @@
         <activity android:name=".activity.MyProfileActivity" />
         <activity android:name=".activity.MedicalHistoryActivity" />
         <activity android:name=".activity.AddMedicalRecordActivity" />
-        <activity android:name=".activity.AllergicMedicineActivity"></activity>
+        <activity android:name=".activity.AllergicMedicineActivity" />
+        <activity android:name=".activity.AppointmentActivity"></activity>
     </application>
 
 </manifest>

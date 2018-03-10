@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -29,7 +30,7 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        MaterialSearchView searchView = findViewById(R.id.searchViewMM);
+        MaterialSearchView searchView = findViewById(R.id.searchViewMH);
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
@@ -163,5 +164,19 @@ public class HomeActivity extends AppCompatActivity
 
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
+    }
+
+    public void openAlternativeMedicine(View view) {
+    }
+
+    public void openAppointment(View view) {
+        Intent intent = new Intent(this, AppointmentActivity.class);
+        startActivity(intent);
+    }
+
+    public void openMedicationSchedule(View view) {
+    }
+
+    public void openPharmacy(View view) {
     }
 }

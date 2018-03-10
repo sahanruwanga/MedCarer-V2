@@ -1,6 +1,5 @@
 package com.sahanruwanga.medcarer.app;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -22,14 +21,14 @@ import java.util.List;
  * Created by Sahan Ruwanga on 3/8/2018.
  */
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAdapter.ViewHolder> {
     private List<MedicalRecord> medicalRecords;
     private MedicalHistoryActivity context;
     private RecyclerView recyclerView;
     private int selectingCount;
     private ArrayList<LinearLayout> selectedLinearlayouts;
 
-    public RecyclerViewAdapter(List<MedicalRecord> medicalRecords, MedicalHistoryActivity context, RecyclerView recyclerView){
+    public MedicalHistoryAdapter(List<MedicalRecord> medicalRecords, MedicalHistoryActivity context, RecyclerView recyclerView){
         this.medicalRecords = medicalRecords;
         this.context = context;
         this.recyclerView = recyclerView;
@@ -38,7 +37,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MedicalHistoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view  =inflater.inflate(R.layout.layout_history_list_item, parent, false);
@@ -58,7 +57,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.allergic.setText(allergic);
 
         final LinearLayout[] linearLayout = new LinearLayout[1];
-        linearLayout[0] = holder.layout.findViewById(R.id.mainLayout);
+        linearLayout[0] = holder.layout.findViewById(R.id.mainLayoutMHList);
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -122,7 +121,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     private void setCardColor(View view, String allergic){
-        CardView cardView = view.findViewById(R.id.recordRow);
+        CardView cardView = view.findViewById(R.id.cardViewMH);
         if(allergic.equals("Yes")){
             cardView.setCardBackgroundColor(Color.parseColor("#FF4081"));
         }else{
