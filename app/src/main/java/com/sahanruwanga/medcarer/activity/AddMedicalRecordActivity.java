@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,34 +8,51 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.DatePickerFragment;
 
 public class AddMedicalRecordActivity extends AppCompatActivity {
     private EditText disease;
     private EditText medicine;
     private EditText allergic;
-    private EditText date;
+    private static EditText date1;
+    private static EditText date2;
     private EditText doctorName;
     private EditText contact;
     private EditText description;
     private Toolbar toolbar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_medical_record);
 
-        setToolbar((Toolbar) findViewById(R.id.toolbar));
+        setToolbar((Toolbar) findViewById(R.id.toolbarAddMedicalRecord));
         setSupportActionBar(getToolbar());
-        getToolbar().setTitle(R.string.new_record);
-        getToolbar().setLogo(R.drawable.ic_create);
 
         setDisease((EditText)findViewById(R.id.disease));
         setMedicine((EditText)findViewById(R.id.medicine));
         setAllergic((EditText)findViewById(R.id.allergic));
-        setDate((EditText)findViewById(R.id.date));
+        setDate1((EditText)findViewById(R.id.date1));
+        setDate2((EditText)findViewById(R.id.date2));
         setDoctorName((EditText)findViewById(R.id.doctor));
         setContact((EditText)findViewById(R.id.contact));
         setDescription((EditText)findViewById(R.id.description));
+        getDate1().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(hasFocus)
+                    setDate("date1");
+            }
+        });
+        getDate2().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(hasFocus)
+                    setDate("date2");
+            }
+        });
     }
 
     public void saveRecord(View view){
@@ -47,7 +65,25 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         finish();
     }
 
+    public void setDate(String dateNum) {
+//        DialogFragment newFragment = new TimePickerFragment();
+//        newFragment.show(getSupportFragmentManager(), "timePicker");
+        Bundle bundle = new Bundle();
+        bundle.putString("Date", dateNum);
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.setArguments(bundle);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
     //region Getters and Setters
+    public static EditText getDate2() {
+        return date2;
+    }
+
+    public static void setDate2(EditText date2) {
+        AddMedicalRecordActivity.date2 = date2;
+    }
+
     public Toolbar getToolbar() {
         return toolbar;
     }
@@ -80,12 +116,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         this.allergic = allergic;
     }
 
-    public EditText getDate() {
-        return date;
+    public static EditText getDate1() {
+        return date1;
     }
 
-    public void setDate(EditText date) {
-        this.date = date;
+    public static void setDate1(EditText date1) {
+        AddMedicalRecordActivity.date1 = date1;
     }
 
     public EditText getDoctorName() {
@@ -111,5 +147,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
     public void setDescription(EditText description) {
         this.description = description;
     }
+
+
     //endregion
 }

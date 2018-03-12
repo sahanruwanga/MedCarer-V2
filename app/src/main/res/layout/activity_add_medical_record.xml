@@ -1,163 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity"
+    android:background="@color/cardview_shadow_start_color">
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:id="@+id/toolbar"/>
+        android:id="@+id/toolbarAddMedicalRecord"
+        android:background="@color/colorHintText">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="New Medical Record"
+            android:textSize="25sp"
+            android:drawableLeft="@drawable/ic_profile"
+            android:drawablePadding="15dp"/>
+    </android.support.v7.widget.Toolbar>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:paddingBottom="10dp"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/toolbarAddMedicalRecord">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Disease:"
-                android:textSize="18dp"
-                android:id="@+id/tv1"
-                android:textColor="@color/colorBlack"/>
+
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv1"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="3dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:id="@+id/disease"
-                android:hint="Name of Disease"
-                android:textColor="@color/colorBlack"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medicine:"
-                android:textSize="18dp"
-                android:id="@+id/tv2"
-                android:layout_below="@+id/disease"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/colorBlack"/>
+                android:hint="@string/disease_name"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/edit_text_design"
+                android:padding="5dp"
+                android:drawableLeft="@drawable/ic_create"
+                android:drawablePadding="5dp"
+                android:inputType="textPersonName"/>
+
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:id="@+id/medicine"
-                android:layout_marginRight="20dp"
-                android:layout_below="@+id/tv2"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="30dp"
-                android:hint="Name of Medicine"
-                android:textColor="@color/colorBlack"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Allergic:"
-                android:textSize="18dp"
-                android:id="@+id/tv3"
-                android:layout_below="@+id/medicine"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/colorBlack"/>
+                android:layout_below="@+id/disease"
+                android:hint="@string/medicine_name"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/edit_text_design"
+                android:padding="5dp"
+                android:drawableLeft="@drawable/ic_notification"
+                android:drawablePadding="5dp"
+                android:inputType="text"/>
+
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:id="@+id/allergic"
-                android:layout_marginRight="20dp"
-                android:layout_below="@+id/tv3"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="30dp"
-                android:hint="Yes or Not?"
-                android:textColor="@color/colorBlack"/>
-            <TextView
+                android:layout_below="@+id/medicine"
+                android:hint="@string/allergic_status"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/edit_text_design"
+                android:padding="5dp"
+                android:drawableLeft="@drawable/ic_visibility"
+                android:drawablePadding="5dp"
+                android:inputType="text"/>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date:"
-                android:textSize="18dp"
-                android:id="@+id/tv4"
-                android:layout_below="@+id/allergic"
+                android:layout_height="110dp"
+                android:orientation="horizontal"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/colorBlack"/>
+                android:id="@+id/durationLayout1"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_below="@+id/allergic">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:text="@string/from"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:text="@string/to"
+                        android:layout_marginTop="10dp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="15dp">
+
+                    <EditText
+                        android:layout_width="150dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/date1"
+                        android:background="@drawable/edit_text_design"
+                        android:padding="5sp"
+                        android:hint="@string/date1"
+                        android:textColor="@color/colorBlack"
+                        android:drawableLeft="@drawable/ic_info"
+                        android:drawablePadding="5dp"
+                        android:inputType="date"/>
+                    <EditText
+                        android:layout_width="150dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/date2"
+                        android:hint="@string/date1"
+                        android:textColor="@color/colorBlack"
+                        android:background="@drawable/edit_text_design"
+                        android:padding="5sp"
+                        android:drawableLeft="@drawable/ic_info"
+                        android:drawablePadding="5dp"
+                        android:layout_marginTop="10dp"
+                        android:inputType="date"/>
+            </LinearLayout>
+            </LinearLayout>
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/date"
-                android:layout_marginRight="20dp"
-                android:layout_below="@+id/tv4"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="30dp"
-                android:hint="Date"
-                android:textColor="@color/colorBlack"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Doctor:"
-                android:textSize="18dp"
-                android:id="@+id/tv5"
-                android:layout_below="@+id/date"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/colorBlack"/>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/doctor"
-                android:layout_marginRight="20dp"
-                android:layout_below="@+id/tv5"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="30dp"
-                android:hint="Name of Doctor"
-                android:textColor="@color/colorBlack"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Contact:"
-                android:textSize="18dp"
-                android:id="@+id/tv6"
-                android:layout_below="@+id/doctor"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/colorBlack"/>
+                android:layout_below="@+id/durationLayout1"
+                android:hint="@string/doctor_name"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/edit_text_design"
+                android:padding="5dp"
+                android:drawableLeft="@drawable/ic_rate"
+                android:drawablePadding="5dp"
+                android:inputType="textPersonName"/>
+
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:id="@+id/contact"
-                android:layout_marginRight="20dp"
-                android:layout_below="@+id/tv6"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="30dp"
-                android:hint="Contact of Doctor"
-                android:textColor="@color/colorBlack"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Description:"
-                android:textSize="18dp"
-                android:id="@+id/tv7"
-                android:layout_below="@+id/contact"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/colorBlack"/>
+                android:layout_below="@+id/doctor"
+                android:hint="@string/contact_number"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/edit_text_design"
+                android:padding="5dp"
+                android:drawableLeft="@drawable/ic_download"
+                android:drawablePadding="5dp"
+                android:inputType="phone"/>
+
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:id="@+id/description"
-                android:layout_marginRight="20dp"
-                android:layout_below="@+id/tv7"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="30dp"
-                android:hint="Description here"
-                android:textColor="@color/colorBlack" />
+                android:layout_below="@+id/contact"
+                android:hint="@string/description"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/edit_text_design"
+                android:padding="5dp"
+                android:drawableLeft="@drawable/ic_aboutme"
+                android:drawablePadding="5dp"
+                android:inputType="text"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"
+                android:text="@string/save"
+                android:layout_centerHorizontal="true"
                 android:layout_below="@id/description"
-                android:layout_alignRight="@+id/description"
                 android:layout_marginTop="10dp"
                 android:onClick="saveRecord"/>
         </RelativeLayout>

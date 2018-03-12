@@ -6,7 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="hint_email">Email</string>
-    <string name="hint_fullName">Full Name</string>
+    <string name="hint_Name">Name (e.g. Sahan Ruwanga)</string>
     <string name="hint_password">Password</string>
     <string name="button_login">Login</string>
     <string name="button_register">Register</string>
@@ -19,6 +19,20 @@
     <string name="medical_history">Medical History</string>
     <string name="new_record">New Medical Record</string>
     <string name="appointment">Appointment</string>
+
+    <!--Add Medical Record Form-->
+    <string name="disease_name">Disease</string>
+    <string name="medicine_name">Medicine</string>
+    <string name="allergic_status">Yes or No</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="date1">Date</string>
+    <string name="doctor_name">Doctor</string>
+    <string name="contact_number">Contact Number</string>
+    <string name="description">More Description</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

@@ -1,7 +1,16 @@
 package com.sahanruwanga.medcarer.app;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v7.widget.CardView;
+import android.os.Parcelable;
+import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +22,11 @@ import android.widget.Toast;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AppointmentActivity;
 
+import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by Sahan Ruwanga on 3/11/2018.
@@ -81,9 +93,12 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getSelectingCount() == 0)
-                    Toast.makeText(context, "Appointment ID :" + String.valueOf(appointment.getAppointmentId()),
-                            Toast.LENGTH_LONG).show();
+                if(getSelectingCount() == 0) {
+                    // OnClick activity on the list
+                    scheduleNotification(getNotification(appointment.getVenue(),
+                            "You have an appointment in " + appointment.getNotifyTime()),
+                            5000, appointment.getAppointmentId());
+                }
                 else{
                     if(linearLayout[0].isSelected()) {
                         linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
@@ -135,6 +150,43 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         notifyItemRemoved(position);
     }
 
+    private void scheduleNotification(Notification notification, int delay, int appointment_id) {
+        Intent notificationIntent = new Intent(context, NotificationHandler.class);
+        int[] id = new int[1];
+        id[0]=appointment_id;
+        notificationIntent.putExtra(NotificationHandler.NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NotificationHandler.NOTIFICATION, notification);
+        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0); //PendingIntent.FLAG_UPDATE_CURRENT
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private Notification getNotification(String title, String content) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_aboutme);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        Intent intent = new Intent(context, AppointmentActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        builder.setContentIntent(pendingIntent);
+        // Single notification
+        builder.setContentTitle(title);
+        builder.setContentText(content);
+        builder.setGroup("Appointments");
+        builder.setSmallIcon(R.drawable.ic_notification);
+        // To show more than one notification
+        builder.setLargeIcon(bitmap);
+        builder.setStyle(new NotificationCompat.InboxStyle()
+                .addLine("Alex Faaborg   Check this out")
+                .addLine("Jeff Chang   Launch Party")
+                .setBigContentTitle("2 Appointments"));
+//                .setSummaryText("johndoe@gmail.com"));
+        builder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE);
+        builder.setAutoCancel(true);
+        return builder.build();
+    }
+
+    //region ViewHolder class
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView reason;
         public TextView date;
@@ -157,6 +209,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             notifyTime = itemView.findViewById(R.id.appointmentNotifyTime);
         }
     }
+    //endregion
 
     //region Getters and Setters
     public int getSelectingCount() {

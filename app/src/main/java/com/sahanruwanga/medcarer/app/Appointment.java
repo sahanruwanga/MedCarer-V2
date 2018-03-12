@@ -1,10 +1,15 @@
 package com.sahanruwanga.medcarer.app;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by Sahan Ruwanga on 3/11/2018.
  */
 
-public class Appointment {
+public class Appointment implements Parcelable {
     private int appointmentId;
     private String reason;
     private String date;
@@ -91,6 +96,16 @@ public class Appointment {
 
     public void setNotifyTime(String notifyTime) {
         this.notifyTime = notifyTime;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
     //endregion
 }
