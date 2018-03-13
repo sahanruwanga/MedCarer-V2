@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.sahanruwanga.medcarer.activity.HomeActivity"
     tools:showIn="@layout/app_bar_home"
-    android:background="@color/colorLiteBlue"
+    android:background="@drawable/background"
     android:weightSum="10"
     android:orientation="vertical">
 

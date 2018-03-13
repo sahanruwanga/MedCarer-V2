@@ -1,17 +1,18 @@
 package com.sahanruwanga.medcarer.app;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.MedicalHistoryActivity;
+import com.sahanruwanga.medcarer.activity.ViewMedicalRecordActivity;
 
 
 import java.util.ArrayList;
@@ -26,14 +27,18 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     private MedicalHistoryActivity context;
     private RecyclerView recyclerView;
     private int selectingCount;
-    private ArrayList<LinearLayout> selectedLinearlayouts;
+    private ArrayList<MedicalRecord> selectedRecords;
+    private ArrayList<ImageView> selectedImageViews;
+    private ArrayList<ImageView> imageViews;
 
     public MedicalHistoryAdapter(List<MedicalRecord> medicalRecords, MedicalHistoryActivity context, RecyclerView recyclerView){
         this.medicalRecords = medicalRecords;
         this.context = context;
         this.recyclerView = recyclerView;
         this.setSelectingCount(0);
-        selectedLinearlayouts = new ArrayList<>();
+        this.selectedRecords = new ArrayList<>();
+        this.selectedImageViews = new ArrayList<>();
+        this.imageViews = new ArrayList<>();
     }
 
     @Override
@@ -55,24 +60,23 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         String allergic = medicalRecord.getAllergic();
         setCardColor(holder.layout, allergic);
         holder.allergic.setText(allergic);
-
-        final LinearLayout[] linearLayout = new LinearLayout[1];
-        linearLayout[0] = holder.layout.findViewById(R.id.mainLayoutMHList);
+        final ImageView checkIcon = holder.layout.findViewById(R.id.checkIconMH);
+        imageViews.add(checkIcon);
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show();
-
-                if(linearLayout[0].isSelected()) {
-                    linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
+                if(checkIcon.isSelected()) {
                     setSelectingCount(getSelectingCount() - 1);
-                    selectedLinearlayouts.remove(linearLayout[0]);
-                    linearLayout[0].setSelected(false);
+                    getSelectedRecords().remove(medicalRecord);
+                    selectedImageViews.remove(checkIcon);
+                    checkIcon.setVisibility(View.INVISIBLE);
+                    checkIcon.setSelected(false);
                 }else{
-                    linearLayout[0].setBackgroundColor(Color.parseColor("#FF53A7D4"));
                     setSelectingCount(getSelectingCount() + 1);
-                    selectedLinearlayouts.add(linearLayout[0]);
-                    linearLayout[0].setSelected(true);
+                    getSelectedRecords().add(medicalRecord);
+                    selectedImageViews.add(checkIcon);
+                    checkIcon.setVisibility(View.VISIBLE);
+                    checkIcon.setSelected(true);
                 }
                 notifyParent(getSelectingCount());
                 return true;
@@ -81,20 +85,24 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getSelectingCount() == 0)
-                    Toast.makeText(context, "Record id :" + String.valueOf(medicalRecord.getRecord_id()),
-                            Toast.LENGTH_LONG).show();
+                if(getSelectingCount() == 0) {
+                    Intent intent = new Intent(context, ViewMedicalRecordActivity.class);
+                    intent.putExtra("MedicalRecord", medicalRecord);
+                    context.startActivity(intent);
+                }
                 else{
-                    if(linearLayout[0].isSelected()) {
-                        linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
+                    if(checkIcon.isSelected()) {
                         setSelectingCount(getSelectingCount() - 1);
-                        selectedLinearlayouts.remove(linearLayout[0]);
-                        linearLayout[0].setSelected(false);
+                        getSelectedRecords().remove(medicalRecord);
+                        selectedImageViews.remove(checkIcon);
+                        checkIcon.setVisibility(View.INVISIBLE);
+                        checkIcon.setSelected(false);
                     }else{
-                        linearLayout[0].setBackgroundColor(Color.parseColor("#FF53A7D4"));
                         setSelectingCount(getSelectingCount() + 1);
-                        selectedLinearlayouts.add(linearLayout[0]);
-                        linearLayout[0].setSelected(true);
+                        getSelectedRecords().add(medicalRecord);
+                        selectedImageViews.add(checkIcon);
+                        checkIcon.setVisibility(View.VISIBLE);
+                        checkIcon.setSelected(true);
                     }
                 }
                 notifyParent(getSelectingCount());
@@ -113,19 +121,37 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
 
     public void deseleceAll(){
         setSelectingCount(0);
-        setSelectingCount(0);
-        for(LinearLayout layout : selectedLinearlayouts){
-            layout.setBackgroundColor(Color.parseColor("#ffffff"));
+        for(ImageView imageView : selectedImageViews){
+            imageView.setVisibility(View.INVISIBLE);
+            imageView.setSelected(false);
         }
-        selectedLinearlayouts.clear();
+        getSelectedRecords().clear();
+        selectedImageViews.clear();
     }
+
+    public void selectAll(){
+        for(ImageView imageView : imageViews){
+            if (!selectedImageViews.contains(imageView)){
+                selectedImageViews.add(imageView);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setSelected(true);
+            }
+        }
+        for(MedicalRecord medicalRecord : medicalRecords){
+            if(!getSelectedRecords().contains(medicalRecord)){
+                getSelectedRecords().add(medicalRecord);
+            }
+        }
+        setSelectingCount(getItemCount());
+    }
+
 
     private void setCardColor(View view, String allergic){
         CardView cardView = view.findViewById(R.id.cardViewMH);
         if(allergic.equals("Yes")){
-            cardView.setCardBackgroundColor(Color.parseColor("#FF4081"));
+            cardView.setCardBackgroundColor(Color.parseColor("#FFF10004"));
         }else{
-            cardView.setCardBackgroundColor(Color.parseColor("#848383"));
+            cardView.setCardBackgroundColor(Color.parseColor("#FF9893D6"));
         }
     }
 
@@ -142,6 +168,14 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     public void remove(int position) {
         medicalRecords.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public ArrayList<MedicalRecord> getSelectedRecords() {
+        return selectedRecords;
+    }
+
+    public void setSelectedRecords(ArrayList<MedicalRecord> selectedRecords) {
+        this.selectedRecords = selectedRecords;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

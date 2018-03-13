@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context="com.sahanruwanga.medcarer.activity.AllergicMedicineActivity">
+    tools:context="com.sahanruwanga.medcarer.activity.AllergicMedicineActivity"
+    android:background="@drawable/background">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

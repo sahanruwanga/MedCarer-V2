@@ -4,12 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sahanruwanga.medcarer.activity.MedicalHistoryActivity">
+    tools:context="com.sahanruwanga.medcarer.activity.MedicalHistoryActivity"
+    android:background="@drawable/background">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:id="@+id/toolbar"/>
+        android:id="@+id/toolbar"
+        android:background="@color/colorBackground">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medical History"
+            android:id="@+id/toolBarText"
+            android:textSize="25sp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="cursive"/>
+    </android.support.v7.widget.Toolbar>
 
     <com.miguelcatalan.materialsearchview.MaterialSearchView
         android:layout_width="match_parent"
@@ -35,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_create"
-            app:rippleColor="@color/colorBlack"
+            android:background="@color/colorButton"
             android:layout_gravity="bottom|right"
             android:onClick="openAddMedicalRecord"
             android:foregroundGravity="right|bottom" />

@@ -30,8 +30,12 @@
         <activity android:name=".activity.MedicalHistoryActivity" />
         <activity android:name=".activity.AddMedicalRecordActivity" />
         <activity android:name=".activity.AllergicMedicineActivity" />
-        <activity android:name=".activity.AppointmentActivity"></activity>
+        <activity android:name=".activity.AppointmentActivity" />
+
         <receiver android:name=".app.NotificationHandler" />
+
+        <activity android:name=".activity.ViewMedicalRecordActivity" />
+        <activity android:name=".activity.UpdateMedicalRecordActivity"></activity>
     </application>
 
 </manifest>

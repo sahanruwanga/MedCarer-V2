@@ -2,7 +2,6 @@ package com.sahanruwanga.medcarer.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request.Method;
@@ -23,6 +23,7 @@ import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
+import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
@@ -37,11 +38,13 @@ import java.util.Map;
 public class MedicalHistoryActivity extends AppCompatActivity {
     private static final String TAG = MedicalHistoryActivity.class.getSimpleName();
     private Toolbar toolbar;
+    private TextView toolBarText;
     private MaterialSearchView searchView;
     private ProgressDialog progressDialog;
     private SQLiteHandler sqLiteHandler;
     private SessionManager sessionManager;
     private RecyclerView recyclerView;
+    private Menu menu;
     private RecyclerView.LayoutManager layoutManager;
     private MedicalHistoryAdapter medicalHistoryAdapter;
 
@@ -59,7 +62,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         // Progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-
+        this.setToolBarText((TextView)findViewById(R.id.toolBarText));
         //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
         if(!getSessionManager().isMHCreated()){
             storeInSQLite(User.getUserId());
@@ -77,7 +80,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         //Toolbar creation
         setToolbar((Toolbar) findViewById(R.id.toolbar));
         setSupportActionBar(getToolbar());
-        showDefaultToolBar();
 
         //region Search Bar Functions
         setSearchView((MaterialSearchView) findViewById(R.id.searchViewMH));
@@ -115,6 +117,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     //region onCreateOptionMenu and onOptionItemSelected
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.search_view, menu);
         MenuItem item = menu.findItem(R.id.itemSearch);
         getSearchView().setMenuItem(item);
@@ -130,7 +133,15 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         }else if(id == R.id.sharePDF){
             //new PDFCreator(new ArrayList<MedicalRecord>(), this).convertToPDF();
             Toast.makeText(this, "Should generate PDF of the medical history", Toast.LENGTH_LONG).show();
+        }else if(id == R.id.selectAllIcon){
+            getMedicalHistoryAdapter().selectAll();
+        }else if(id == R.id.deleteIcon){
+            for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()){
+                Toast.makeText(this, "Record ID "+String.valueOf(medicalRecord.getRecord_id())
+                        +" is deleted!", Toast.LENGTH_LONG).show();
+            }
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -138,15 +149,20 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     //region Showing tool bars
     public void showDefaultToolBar() {
-        getSupportActionBar().setTitle(R.string.medical_history);
-        getToolbar().setTitleTextColor(Color.parseColor("#000000"));
+        getToolbar().getMenu().clear();
+        getMenuInflater().inflate(R.menu.search_view, menu);
+        MenuItem item = menu.findItem(R.id.itemSearch);
+        getSearchView().setMenuItem(item);
+        getMenuInflater().inflate(R.menu.home, menu);
+        getToolBarText().setText("Medical History");
         getToolbar().setLogo(R.drawable.ic_download);
     }
 
     public void showDeletingToolBar() {
-        getSupportActionBar().setTitle("");
-        getToolbar().setLogo(null);
         getToolbar().getMenu().clear();
+        getMenuInflater().inflate(R.menu.delete_all, menu);
+        getToolBarText().setText("");
+        getToolbar().setLogo(null);
     }
     //endregion
 
@@ -316,6 +332,14 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
+    }
+
+    public TextView getToolBarText() {
+        return toolBarText;
+    }
+
+    public void setToolBarText(TextView toolBarText) {
+        this.toolBarText = toolBarText;
     }
     //endregion
 }

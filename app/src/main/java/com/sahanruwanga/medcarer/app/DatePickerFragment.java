@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
+import android.widget.EditText;
 
+import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity;
 
 import java.util.Calendar;
@@ -16,13 +18,13 @@ import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment
                     implements DatePickerDialog.OnDateSetListener{
-    String dateNum = "";
+    int dateId;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
         Bundle bundle = getArguments();
-        dateNum = bundle.getString("Date");
+        dateId = bundle.getInt("dateId");
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -42,9 +44,11 @@ public class DatePickerFragment extends DialogFragment
         if(day < 10){
             dayNew = "0"+day;
         }
-        if(dateNum.equals("date1"))
-            AddMedicalRecordActivity.getDate1().setText(dayNew+"-"+monthNew+"-"+year);
-        else if(dateNum.equals("date2"))
-            AddMedicalRecordActivity.getDate2().setText(dayNew+"-"+monthNew+"-"+year);
+        EditText dateText = getActivity().findViewById(dateId);
+        dateText.setText(year+"-"+monthNew+"-"+dayNew);
+//        if(dateNum.equals("date1"))
+//            AddMedicalRecordActivity.getDate1().setText(year+"-"+monthNew+"-"+dayNew);
+//        else if(dateNum.equals("date2"))
+//            AddMedicalRecordActivity.getDate2().setText(year+"-"+monthNew+"-"+dayNew);
     }
 }

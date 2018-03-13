@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sahanruwanga.medcarer.activity.AppointmentActivity">
+    tools:context="com.sahanruwanga.medcarer.activity.AppointmentActivity"
+    android:background="@drawable/background">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:id="@+id/toolbar"/>
+        android:id="@+id/toolbar"
+        android:background="@color/colorBackground"/>
 
     <com.miguelcatalan.materialsearchview.MaterialSearchView
         android:layout_width="match_parent"
@@ -38,7 +40,8 @@
             app:rippleColor="@color/colorBlack"
             android:layout_gravity="bottom|right"
             android:onClick="openAddAppointment"
-            android:foregroundGravity="right|bottom" />
+            android:foregroundGravity="right|bottom"
+            android:background="@color/colorButton" />
     </FrameLayout>
 
 </RelativeLayout>

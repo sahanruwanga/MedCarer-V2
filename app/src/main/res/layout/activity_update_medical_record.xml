@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity"
+    tools:context="com.sahanruwanga.medcarer.activity.UpdateMedicalRecordActivity"
     android:background="@drawable/background">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:id="@+id/toolbarAddMedicalRecord"
+        android:id="@+id/toolbarUpdateMedicalRecord"
         android:background="@color/colorBackground">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Medical Record"
+            android:text="Update Medical Record"
             android:textSize="25sp"
             android:drawableLeft="@drawable/ic_profile"
             android:drawablePadding="15dp"
@@ -30,7 +30,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
         android:paddingBottom="10dp"
-        android:layout_below="@+id/toolbarAddMedicalRecord">
+        android:layout_below="@+id/toolbarUpdateMedicalRecord">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,16 +46,16 @@
                 android:id="@+id/diseaseLayout"
                 app:cardCornerRadius="8dp">
                 <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/disease"
-                android:hint="@string/disease_name"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_create"
-                android:drawablePadding="5dp"
-                android:inputType="textPersonName"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/diseaseUpdate"
+                    android:hint="@string/disease_name"
+                    android:textColor="@color/colorBlack"
+                    android:background="@drawable/edit_text_design"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_create"
+                    android:drawablePadding="5dp"
+                    android:inputType="textPersonName"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -69,16 +69,16 @@
                 android:layout_below="@+id/diseaseLayout"
                 app:cardCornerRadius="8dp">
                 <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/medicine"
-                android:hint="@string/medicine_name"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_notification"
-                android:drawablePadding="5dp"
-                android:inputType="text"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/medicineUpdate"
+                    android:hint="@string/medicine_name"
+                    android:textColor="@color/colorBlack"
+                    android:background="@drawable/edit_text_design"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_notification"
+                    android:drawablePadding="5dp"
+                    android:inputType="text"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -92,16 +92,16 @@
                 android:layout_below="@+id/medicineLayout"
                 app:cardCornerRadius="8dp">
                 <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/allergic"
-                android:hint="@string/allergic_status"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_visibility"
-                android:drawablePadding="5dp"
-                android:inputType="text"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/allergicUpdate"
+                    android:hint="@string/allergic_status"
+                    android:textColor="@color/colorBlack"
+                    android:background="@drawable/edit_text_design"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_visibility"
+                    android:drawablePadding="5dp"
+                    android:inputType="text"/>
             </android.support.v7.widget.CardView>
 
             <LinearLayout
@@ -153,7 +153,7 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/date1"
+                            android:id="@+id/date1Update"
                             android:background="@drawable/edit_text_design"
                             android:padding="5sp"
                             android:hint="@string/date1"
@@ -176,7 +176,7 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/date2"
+                            android:id="@+id/date2Update"
                             android:hint="@string/date1"
                             android:textColor="@color/colorBlack"
                             android:background="@drawable/edit_text_design"
@@ -185,7 +185,7 @@
                             android:drawablePadding="5dp"
                             android:inputType="date"/>
                     </android.support.v7.widget.CardView>
-            </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <android.support.v7.widget.CardView
@@ -199,16 +199,16 @@
                 android:layout_below="@+id/durationLayout1"
                 app:cardCornerRadius="8dp">
                 <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/doctor"
-                android:hint="@string/doctor_name"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_doctor"
-                android:drawablePadding="5dp"
-                android:inputType="textPersonName"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/doctorUpdate"
+                    android:hint="@string/doctor_name"
+                    android:textColor="@color/colorBlack"
+                    android:background="@drawable/edit_text_design"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_doctor"
+                    android:drawablePadding="5dp"
+                    android:inputType="textPersonName"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -222,21 +222,21 @@
                 android:layout_below="@+id/doctorLayout"
                 app:cardCornerRadius="8dp">
                 <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/contact"
-                android:hint="@string/contact_number"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_download"
-                android:drawablePadding="5dp"
-                android:inputType="phone"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/contactUpdate"
+                    android:hint="@string/contact_number"
+                    android:textColor="@color/colorBlack"
+                    android:background="@drawable/edit_text_design"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_download"
+                    android:drawablePadding="5dp"
+                    android:inputType="phone"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_centerHorizontal="true"
@@ -247,26 +247,27 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/description"
+                    android:id="@+id/descriptionUpdate"
                     android:hint="@string/description"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
                     android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_aboutme"
+                    android:drawableLeft="@drawable/ic_create"
+                    android:layout_alignTop="@id/descriptionUpdate"
                     android:drawablePadding="5dp"
                     android:maxLines="4"
                     android:inputType="textMultiLine"
-                    android:isScrollContainer="true"/>
+                    android:scrollbarAlwaysDrawVerticalTrack="true"/>
             </android.support.v7.widget.CardView>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/save"
+                android:text="@string/update"
                 android:layout_below="@id/descriptionLayout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:onClick="saveRecord"
+                android:onClick="updateMedicalRecord"
                 android:padding="5dp"
                 android:textSize="20dp"
                 android:background="@drawable/button_shape"/>
