@@ -1,7 +1,10 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +27,7 @@ import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
+import com.sahanruwanga.medcarer.app.PDFCreator;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
@@ -32,6 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,10 +135,10 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.savePDF) {
-            return true;
-        }else if(id == R.id.sharePDF){
-            //new PDFCreator(new ArrayList<MedicalRecord>(), this).convertToPDF();
-            Toast.makeText(this, "Should generate PDF of the medical history", Toast.LENGTH_LONG).show();
+            savePdf();
+        }else if(id == R.id.previewPDF){
+            new PDFCreator(new ArrayList<MedicalRecord>()).createPdf();
+            openPdf();
         }else if(id == R.id.selectAllIcon){
             getMedicalHistoryAdapter().selectAll();
         }else if(id == R.id.deleteIcon){
@@ -141,8 +147,36 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                         +" is deleted!", Toast.LENGTH_LONG).show();
             }
         }
-
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+    //region opendPdf and savePdf Functions
+    private void openPdf(){
+        String dir="/Medical_History";
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOCUMENTS)+dir+ "/MedicalHistory.pdf");
+
+        if(file.exists()) {
+//            Toast.makeText(getApplication(), file.toString() , Toast.LENGTH_LONG).show();
+            Intent target = new Intent(Intent.ACTION_VIEW);
+            target.setDataAndType(Uri.fromFile(file), "application/pdf");
+            target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+            Intent intent = Intent.createChooser(target, "Open File");
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                // Instruct the user to install a PDF reader here, or something
+                Toast.makeText(this, "You don't have any PDF reader.\nPlease install one and try again!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else
+            Toast.makeText(getApplication(), "File path is incorrect." , Toast.LENGTH_LONG).show();
+    }
+
+    private void savePdf(){
+
     }
 
     //endregion

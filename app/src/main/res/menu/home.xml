@@ -7,8 +7,8 @@
         app:showAsAction="never"
         android:title="@string/save" />
     <item
-        android:id="@+id/sharePDF"
+        android:id="@+id/previewPDF"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="@string/share"/>
+        android:title="@string/preview"/>
 </menu>
