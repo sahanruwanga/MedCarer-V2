@@ -1,17 +1,37 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.AppConfig;
+import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
+import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.SQLiteHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddMedicalRecordActivity extends AppCompatActivity {
+
+    private static final String TAG = AddMedicalRecordActivity.class.getSimpleName();
     private EditText disease;
     private EditText medicine;
     private EditText allergic;
@@ -22,6 +42,10 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
     private EditText description;
     private Toolbar toolbar;
 
+    private ProgressDialog pDialog;
+
+    private SQLiteHandler sqLiteHandler;
+
 
 
     @Override
@@ -31,6 +55,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
 
         setToolbar((Toolbar) findViewById(R.id.toolbarAddMedicalRecord));
         setSupportActionBar(getToolbar());
+
+        sqLiteHandler = new SQLiteHandler(getApplicationContext());
+
+        // Progress dialog
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
 
         setDisease((EditText)findViewById(R.id.disease));
         setMedicine((EditText)findViewById(R.id.medicine));
@@ -58,12 +88,117 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
     }
 
     public void saveRecord(View view){
+        String disease = getDisease().getText().toString().trim();
+        String medicine = getMedicine().getText().toString().trim();
+        String duration = getDate1().getText().toString().trim() + " to " + getDate2().getText().toString().trim();
+        String allergic = getAllergic().getText().toString().trim();
+        String doctor = getDoctorName().getText().toString().trim();
+        String contact = getContact().getText().toString().trim();
+        String description = getDescription().getText().toString().trim();
+        if(!disease.isEmpty() && !medicine.isEmpty() && !getDate1().getText().toString().isEmpty() &&
+                !getDate2().getText().toString().isEmpty() && !allergic.isEmpty()){
+            saveMedicalRecord(disease, medicine, duration, allergic,
+                    doctor, contact, description);
+        }else{
+            Toast.makeText(this, "Please enter required details!", Toast.LENGTH_LONG).show();
+        }
+    }
 
+    private void saveMedicalRecord(final String disease, final String medicine, final String duration,
+                                   final String allergic, final String doctor, final String contact, final String description){
+        // Tag used to cancel the request
+        String tag_string_req = "req_insert_medical_record";
+
+        pDialog.setMessage("Saving record ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_INSERT_MEDICAL_RECORD, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Insert Record: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // Record successfully stored in MySQL
+                        // Now store the record in sqlite
+
+                        JSONObject medicalRecord = jObj.getJSONObject("medical_record");
+                        String record_id = medicalRecord.getString("record_id");
+                        String created_at = medicalRecord.getString("created_at");
+
+                        // Inserting row in users table
+                        sqLiteHandler.addMedicalRecord(Integer.parseInt(record_id), disease, medicine,
+                                duration, allergic, doctor, contact, description, created_at);
+
+                        Toast.makeText(getApplicationContext(), "Record successfully inserted!", Toast.LENGTH_LONG).show();
+                        clearAll();
+                    } else {
+
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Enter correct details again",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Registration Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", User.getUserId());
+                params.put("disease", disease);
+                params.put("medicine", medicine);
+                params.put("duration", duration);
+                params.put("allergic", allergic);
+                params.put("doctor", doctor);
+                params.put("contact", contact);
+                params.put("description", description);
+
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void clearAll(){
+        getDisease().setText("");
+        getMedicine().setText("");
+        getDate1().setText("");
+        getDate2().setText("");
+        getAllergic().setText("");
+        getDoctorName().setText("");
+        getContact().setText("");
+        getDescription().setText("");
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Intent intent = new Intent(this, MedicalHistoryActivity.class);
+        startActivity(intent);
         finish();
     }
 
@@ -75,6 +210,17 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 
     public void openCalender1(View view) {

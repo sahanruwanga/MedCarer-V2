@@ -75,7 +75,8 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         getDisease().setText(medicalRecord.getDisease());
         getMedicine().setText(medicalRecord.getMedicine());
         getAllergic().setText(medicalRecord.getAllergic());
-        getDate1().setText(medicalRecord.getDuration().substring(0,8));
+        getDate1().setText(medicalRecord.getDuration().substring(0,11));
+        getDate2().setText(medicalRecord.getDuration().substring(14));
         getDoctor().setText(medicalRecord.getDoctor());
         getContact().setText(medicalRecord.getContact());
         getDescription().setText(medicalRecord.getDescription());

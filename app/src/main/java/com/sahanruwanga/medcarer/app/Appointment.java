@@ -18,11 +18,24 @@ public class Appointment implements Parcelable {
     private String doctor;
     private String clinicContact;
     private String notifyTime;
+    private String created_at;
 
     public Appointment(){}
 
+    protected Appointment(Parcel in){
+        appointmentId = in.readInt();
+        reason = in.readString();
+        date = in.readString();
+        time = in.readString();
+        venue = in.readString();
+        doctor = in.readString();
+        clinicContact = in.readString();
+        notifyTime = in.readString();
+        created_at = in.readString();
+    }
+
     public Appointment(int appointmentId, String reason, String date, String time,
-                       String venue, String doctor, String clinicContact, String notifyTime){
+                       String venue, String doctor, String clinicContact, String notifyTime, String created_at){
         this.setAppointmentId(appointmentId);
         this.setReason(reason);
         this.setDate(date);
@@ -31,7 +44,20 @@ public class Appointment implements Parcelable {
         this.setDoctor(doctor);
         this.setClinicContact(clinicContact);
         this.setNotifyTime(notifyTime);
+        this.created_at = created_at;
     }
+
+    public static final Creator<Appointment> CREATOR = new Creator<Appointment>() {
+        @Override
+        public Appointment createFromParcel(Parcel in) {
+            return new Appointment(in);
+        }
+
+        @Override
+        public Appointment[] newArray(int size) {
+            return new Appointment[size];
+        }
+    };
 
     //region Getters and Setters
     public int getAppointmentId() {
@@ -98,6 +124,14 @@ public class Appointment implements Parcelable {
         this.notifyTime = notifyTime;
     }
 
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -105,7 +139,15 @@ public class Appointment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-
+        parcel.writeInt(appointmentId);
+        parcel.writeString(reason);
+        parcel.writeString(date);
+        parcel.writeString(time);
+        parcel.writeString(venue);
+        parcel.writeString(doctor);
+        parcel.writeString(clinicContact);
+        parcel.writeString(notifyTime);
+        parcel.writeString(created_at);
     }
     //endregion
 }

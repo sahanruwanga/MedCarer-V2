@@ -154,8 +154,9 @@ public class AppointmentActivity extends AppCompatActivity {
                             String doctor = appointment.getString(4);
                             String clinicContact = appointment.getString(5);
                             String notifyTime = appointment.getString(6);
+                            String created_at = appointment.getString(7);
 
-                            getSqLiteHandler().addAppointment(Integer.parseInt(appointments.getString(i)), reason, date, time, venue, doctor, clinicContact, notifyTime);
+                            getSqLiteHandler().addAppointment(Integer.parseInt(appointments.getString(i)), reason, date, time, venue, doctor, clinicContact, notifyTime, created_at);
                         }
 
                     } else {

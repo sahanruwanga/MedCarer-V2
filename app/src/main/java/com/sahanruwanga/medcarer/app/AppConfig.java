@@ -7,14 +7,17 @@ package com.sahanruwanga.medcarer.app;
 
 public class AppConfig {
     // Server user login url
-    public static String URL_LOGIN = "http://192.168.8.100/med_carer/login.php";
+    public static String URL_LOGIN = "http://192.168.8.104/med_carer/login.php";
 
     // Server user register url
-    public static String URL_REGISTER = "http://192.168.8.100/med_carer/register.php";
+    public static String URL_REGISTER = "http://192.168.8.104/med_carer/register.php";
 
     // Server medical history url
-    public static String URL_MEDICAL_HISTORY = "http://192.168.8.100/med_carer/medical_history.php";
+    public static String URL_MEDICAL_HISTORY = "http://192.168.8.104/med_carer/medical_history.php";
 
     // Server allergic medicine url
-    public static String URL_APPOINTMENT = "http://192.168.8.100/med_carer/appointment.php";
+    public static String URL_APPOINTMENT = "http://192.168.8.104/med_carer/appointment.php";
+
+    // Server insert medical record url
+    public static String URL_INSERT_MEDICAL_RECORD = "http://192.168.8.104/med_carer/insert_medical_record.php";
 }

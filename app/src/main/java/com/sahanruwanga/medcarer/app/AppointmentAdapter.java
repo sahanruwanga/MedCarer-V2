@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
@@ -22,11 +21,8 @@ import android.widget.Toast;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AppointmentActivity;
 
-import java.io.Serializable;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Created by Sahan Ruwanga on 3/11/2018.
@@ -37,14 +33,14 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     private AppointmentActivity context;
     private RecyclerView recyclerView;
     private int selectingCount;
-    private ArrayList<LinearLayout> selectedLinearlayouts;
+    private ArrayList<LinearLayout> selectedLinearLayouts;
 
     public AppointmentAdapter(List<Appointment> appointments, AppointmentActivity context, RecyclerView recyclerView){
         this.appointments = appointments;
         this.context = context;
         this.recyclerView = recyclerView;
         this.setSelectingCount(0);
-        selectedLinearlayouts = new ArrayList<>();
+        selectedLinearLayouts = new ArrayList<>();
     }
 
     @Override
@@ -78,12 +74,12 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 if(linearLayout[0].isSelected()) {
                     linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
                     setSelectingCount(getSelectingCount() - 1);
-                    selectedLinearlayouts.remove(linearLayout[0]);
+                    selectedLinearLayouts.remove(linearLayout[0]);
                     linearLayout[0].setSelected(false);
                 }else{
                     linearLayout[0].setBackgroundColor(Color.parseColor("#FF53A7D4"));
                     setSelectingCount(getSelectingCount() + 1);
-                    selectedLinearlayouts.add(linearLayout[0]);
+                    selectedLinearLayouts.add(linearLayout[0]);
                     linearLayout[0].setSelected(true);
                 }
                 notifyParent(getSelectingCount());
@@ -103,12 +99,12 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                     if(linearLayout[0].isSelected()) {
                         linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
                         setSelectingCount(getSelectingCount() - 1);
-                        selectedLinearlayouts.remove(linearLayout[0]);
+                        selectedLinearLayouts.remove(linearLayout[0]);
                         linearLayout[0].setSelected(false);
                     }else{
                         linearLayout[0].setBackgroundColor(Color.parseColor("#FF53A7D4"));
                         setSelectingCount(getSelectingCount() + 1);
-                        selectedLinearlayouts.add(linearLayout[0]);
+                        selectedLinearLayouts.add(linearLayout[0]);
                         linearLayout[0].setSelected(true);
                     }
                 }
@@ -129,10 +125,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     public void deseleceAll(){
         setSelectingCount(0);
         setSelectingCount(0);
-        for(LinearLayout layout : selectedLinearlayouts){
+        for(LinearLayout layout : selectedLinearLayouts){
             layout.setBackgroundColor(Color.parseColor("#ffffff"));
         }
-        selectedLinearlayouts.clear();
+        selectedLinearLayouts.clear();
     }
 
     @Override

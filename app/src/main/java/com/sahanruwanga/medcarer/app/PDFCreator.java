@@ -68,22 +68,23 @@ public class PDFCreator {
             createTableWithColumns(table, Data);
 
             //region Adding Data into table
-            for(int i=0; i < 50; i++ ){
-                table.addCell("Fever");
-                table.addCell("Panadol");
-                PdfPCell allerg = new PdfPCell(new Phrase("Yes"));
+            for(MedicalRecord medicalRecord: medicalRecords){
+                table.addCell(medicalRecord.getDisease()); // Disease
+                table.addCell(medicalRecord.getMedicine());   // Medicine
+                PdfPCell allerg = new PdfPCell(new Phrase("Yes"));  // Allergic
                 allerg.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(allerg);
-                PdfPCell durat = new PdfPCell(new Phrase("2018-02-03 \nto \n2018-02-15"));
+                PdfPCell durat = new PdfPCell(new Phrase(medicalRecord.getDuration().substring(0,10)+"\n"+
+                                            medicalRecord.getDuration().substring(11,13)+"\n"+
+                                            medicalRecord.getDuration().substring(14))); // Duration
                 durat.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(durat);
-                PdfPCell des = new PdfPCell(new Phrase("Sample data saved in the first medical history document." +
-                        "Hope this will work properly!"));
+                PdfPCell des = new PdfPCell(new Phrase(medicalRecord.getDescription()));    // Description
                 des.setPaddingBottom(10.0f);
                 des.setPaddingLeft(3.0f);
                 table.addCell(des);
-                table.addCell("Sahan Ruwanga");
-                table.addCell("0111223300");
+                table.addCell(medicalRecord.getDoctor());       // Doctor
+                table.addCell(medicalRecord.getContact());      // Contact
             }
             //endregion
 

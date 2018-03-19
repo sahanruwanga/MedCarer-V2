@@ -73,6 +73,7 @@ public class HomeActivity extends AppCompatActivity
     private void logoutUser() {
         getSessionManager().setLogin(false);
         getSessionManager().setMHCreated(false);
+        getSessionManager().setAppointmentCreated(false);
         getSqLiteHandler().deleteTables();
 
         // Launching the login activity

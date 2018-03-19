@@ -42,13 +42,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static  final String KEY_DOCTOR = "doctor";
     private static  final String KEY_NOTIFY_TIME = "notify_time";
     private static  final String KEY_DESCRIPTION = "description";
+    private static final String KEY_CREATED_AT = "created_at";
 
     // Login Table Columns names
 
     private static final String KEY_NAME = "user_name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_UID = "unique_id";
-    private static final String KEY_CREATED_AT = "created_at";
     private static  final String KEY_MEDICINE = "medicine";
 
     // Medical_history table Columns names
@@ -87,13 +87,15 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private final String CREATE_MEDICAL_HISTORY_TABLE = "CREATE TABLE " + TABLE_MEDICAL_HISTORY + "("
             + KEY_RECORD_ID + " INTEGER PRIMARY KEY," + KEY_DISEASE + " TEXT,"
             + KEY_MEDICINE + " TEXT," + KEY_DURATION + " TEXT," + KEY_ALLERGIC + " TEXT,"
-            + KEY_DOCTOR + " TEXT," + KEY_CONTACT + " TEXT," + KEY_DESCRIPTION + " TEXT" + ")";
+            + KEY_DOCTOR + " TEXT," + KEY_CONTACT + " TEXT," + KEY_DESCRIPTION + " TEXT,"
+            + KEY_CREATED_AT + " TEXT" + ")";
 
     // Create Appointment table query
     private final String CREATE_APPOINTMENT_TABLE = "CREATE TABLE " + TABLE_APPOINTMENT + "("
             + KEY_APPOINTMENT_ID + " INTEGER PRIMARY KEY," + KEY_REASON + " TEXT,"
             + KEY_DATE + " TEXT," + KEY_TIME + " TEXT," + KEY_VENUE + " TEXT,"
-            + KEY_DOCTOR + " TEXT," + KEY_CLINIC_CONTACT + " TEXT," + KEY_NOTIFY_TIME + " TEXT" + ")";
+            + KEY_DOCTOR + " TEXT," + KEY_CLINIC_CONTACT + " TEXT," + KEY_NOTIFY_TIME + " TEXT,"
+            + KEY_CREATED_AT + " TEXT" + ")";
 
     // Create Medication Schedule table query
     private final String CREATE_MEDICATION_SCHEDULE_TABLE = "CREATE TABLE " + TABLE_MEDICATION_SCHEDULE + "("
@@ -186,6 +188,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return user;
     }
+    //endregion
 
     /**
      * Recreate database Delete all tables and create them again
@@ -195,16 +198,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // Delete All Rows
         db.delete(TABLE_USER, null, null);
         db.delete(TABLE_MEDICAL_HISTORY, null, null);
+        db.delete(TABLE_APPOINTMENT, null, null);
         db.close();
 
         Log.d(TAG, "Deleted all user info from sqlite");
     }
-    //endregion
 
     //region Medical History Details
     // Storing Medical Record in database
     public void addMedicalRecord(int record_id, String disease, String medicine, String duration,
-                                 String allergic, String doctor, String contact, String description) {
+                                 String allergic, String doctor, String contact, String description, String createdAt) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -216,6 +219,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_DOCTOR, doctor); // Doctor
         values.put(KEY_CONTACT, contact); // Contact
         values.put(KEY_DESCRIPTION, description); // Description
+        values.put(KEY_CREATED_AT, createdAt);      // Created At
 
         // Inserting Row
         long id = db.insert(TABLE_MEDICAL_HISTORY, null, values);
@@ -256,7 +260,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //region Appointment Details
     // Storing Appointment in database
     public void addAppointment(int appointment_id, String reason, String date, String time,
-                                 String venue, String doctor, String clinic_contact, String notify_time) {
+                                 String venue, String doctor, String clinic_contact, String notify_time, String created_at) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -268,6 +272,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_DOCTOR, doctor); // Doctor
         values.put(KEY_CLINIC_CONTACT, clinic_contact); // Clinic Contact
         values.put(KEY_NOTIFY_TIME, notify_time); // Notify Time
+        values.put(KEY_CREATED_AT, created_at);     // Created date and time
 
         // Inserting Row
         long id = db.insert(TABLE_APPOINTMENT, null, values);

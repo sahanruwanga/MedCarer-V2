@@ -65,27 +65,29 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         // Session manager
         setSessionManager(new SessionManager(getApplicationContext()));
 
-        // Progress dialog
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        this.setToolBarText((TextView)findViewById(R.id.toolBarText));
-        //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
-        if(!getSessionManager().isMHCreated()){
-            storeInSQLite(User.getUserId());
-            Toast.makeText(this, "Working", Toast.LENGTH_LONG).show();
-        }
-
-        Toast.makeText(this, "RecyclerView is Working", Toast.LENGTH_LONG).show();
         //RecyclerView and layoutmanagrer initialization
         setRecyclerView((RecyclerView)findViewById(R.id.medicalHistoryRecyclerView));
         getRecyclerView().setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         getRecyclerView().setLayoutManager(layoutManager);
+
+        // Progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+
+        this.setToolBarText((TextView)findViewById(R.id.toolBarText));
+        //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
+        if(!getSessionManager().isMHCreated()){
+            storeInSQLite(User.getUserId());
+        }
+
+        // Add data into RecyclerView
         showRecyclerView();
 
         //Toolbar creation
         setToolbar((Toolbar) findViewById(R.id.toolbar));
         setSupportActionBar(getToolbar());
+        getToolbar().setLogo(R.drawable.ic_download);
 
         //region Search Bar Functions
         setSearchView((MaterialSearchView) findViewById(R.id.searchViewMH));
@@ -115,7 +117,8 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     //region Show RecyclerView in Medical History
     private void showRecyclerView(){
-        setMedicalHistoryAdapter(new MedicalHistoryAdapter(getSqLiteHandler().getMedicalRecords(), this, getRecyclerView()));
+        setMedicalHistoryAdapter(new MedicalHistoryAdapter(getSqLiteHandler().getMedicalRecords(),
+                this, getRecyclerView()));
         getRecyclerView().setAdapter(getMedicalHistoryAdapter());
     }
     //endregion
@@ -137,7 +140,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         if (id == R.id.savePDF) {
             savePdf();
         }else if(id == R.id.previewPDF){
-            new PDFCreator(new ArrayList<MedicalRecord>()).createPdf();
+            new PDFCreator(getSqLiteHandler().getMedicalRecords()).createPdf();
             openPdf();
         }else if(id == R.id.selectAllIcon){
             getMedicalHistoryAdapter().selectAll();
@@ -219,6 +222,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     public void openAddMedicalRecord(View view){
         Intent intent = new Intent(this, AddMedicalRecordActivity.class);
         startActivity(intent);
+        finish();
     }
     //endregion
 
@@ -264,8 +268,11 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                             String doctor = medicalRecord.getString(4);
                             String contact = medicalRecord.getString(5);
                             String description = medicalRecord.getString(6);
+                            String created_at = medicalRecord.getString(7);
 
-                            getSqLiteHandler().addMedicalRecord(Integer.parseInt(records.getString(i)), disease, medicine, duration, allergic, doctor, contact, description);
+                            getSqLiteHandler().addMedicalRecord(Integer.parseInt(records.getString(i)),
+                                    disease, medicine, duration, allergic,
+                                    doctor, contact, description, created_at);
                         }
 
                     } else {
