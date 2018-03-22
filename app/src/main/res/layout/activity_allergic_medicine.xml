@@ -1,16 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     tools:context="com.sahanruwanga.medcarer.activity.AllergicMedicineActivity"
     android:background="@drawable/background">
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/toolbarAllergicMedicine"
+        app:logo="@drawable/ic_create"
+        android:background="@color/colorBackground">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Allergic Medicine"
+            android:id="@+id/toolBarTextAllergicMedicine"
+            android:textSize="25sp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="cursive"/>
+    </android.support.v7.widget.Toolbar>
+
+    <com.miguelcatalan.materialsearchview.MaterialSearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchViewAllergicMedicine"
+        />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/medicalHistoryRecyclerView"/>
+        android:layout_below="@+id/toolbarAllergicMedicine"
+        android:layout_margin="5dp">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/allergicMedicineRecyclerView"/>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_create"
+            android:background="@color/colorButton"
+            android:layout_gravity="bottom|right"
+            android:onClick="openAddAllergicMedicine"
+            android:foregroundGravity="right|bottom" />
+    </FrameLayout>
+
+
+</RelativeLayout>

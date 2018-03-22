@@ -65,7 +65,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         // Session manager
         setSessionManager(new SessionManager(getApplicationContext()));
 
-        //RecyclerView and layoutmanagrer initialization
+        //RecyclerView and layout manager initialization
         setRecyclerView((RecyclerView)findViewById(R.id.medicalHistoryRecyclerView));
         getRecyclerView().setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);

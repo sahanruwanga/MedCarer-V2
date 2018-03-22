@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorHintText"
         app:cardCornerRadius="2dp"
-        android:id="@+id/cardViewMH"
-        android:elevation="90dp">
+        android:id="@+id/cardViewMH">
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,7 +77,7 @@
                     android:text="Yes"
                     android:textSize="18dp"
                     android:layout_marginLeft="25dp"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorBlack"
                     android:drawableLeft="@drawable/ic_visibility"
                     android:drawablePadding="5dp"/>
         </LinearLayout>

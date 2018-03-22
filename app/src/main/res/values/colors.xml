@@ -10,5 +10,7 @@
     <color name="colorBackground">#49a399</color>
     <color name="colorButton">#67d3e1</color>
     <color name="colorEditText">#d4d4d4</color>
+    <color name="colorWarning">#FFF10004</color>
+
 
 </resources>

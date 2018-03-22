@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.sahanruwanga.medcarer.app.AllergicMedicine;
 import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
 
@@ -44,8 +45,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static  final String KEY_DESCRIPTION = "description";
     private static final String KEY_CREATED_AT = "created_at";
 
-    // Login Table Columns names
-
+    // User Table Columns names
     private static final String KEY_NAME = "user_name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_UID = "unique_id";
@@ -105,7 +105,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Create Allergic Medicine Schedule table query
     private final String CREATE_ALLERGIC_MEDICINE_TABLE = "CREATE TABLE " + TABLE_ALLERGIC_MEDICINE + "("
             + KEY_ALLERGIC_MEDICINE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
-            + KEY_DESCRIPTION + " TEXT" + ")";
+            + KEY_DESCRIPTION + " TEXT," + KEY_CREATED_AT + " TEXT" + ")";
 
     //endregion
 
@@ -115,7 +115,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //region Creating Tables
-    // Creating Tables
+    // OnCreate for Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_LOGIN_TABLE);
@@ -189,20 +189,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return user;
     }
     //endregion
-
-    /**
-     * Recreate database Delete all tables and create them again
-     * */
-    public void deleteTables() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        // Delete All Rows
-        db.delete(TABLE_USER, null, null);
-        db.delete(TABLE_MEDICAL_HISTORY, null, null);
-        db.delete(TABLE_APPOINTMENT, null, null);
-        db.close();
-
-        Log.d(TAG, "Deleted all user info from sqlite");
-    }
 
     //region Medical History Details
     // Storing Medical Record in database
@@ -309,4 +295,59 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return appointments;
     }
     //endregion
+
+    //region Allergic Medicine Details
+    // Storing Allergic Medicine in database
+    public void addAllergicMedicine(int allergic_medicine_id, String medicine, String description, String createdAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ALLERGIC_MEDICINE_ID, allergic_medicine_id); // Allergic Medicine ID
+        values.put(KEY_MEDICINE, medicine); // Medicine
+        values.put(KEY_DESCRIPTION, description);   // Description
+        values.put(KEY_CREATED_AT, createdAt); // Created At
+
+        // Inserting Row
+        long id = db.insert(TABLE_ALLERGIC_MEDICINE, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New allergic medicine is inserted into sqlite: " + id);
+    }
+
+    // Getting allergic medicine from database
+    public List<AllergicMedicine> getAllergicMedicineDetails() {
+        List<AllergicMedicine> allergicMedicines = new LinkedList<>();
+        String query = "SELECT  * FROM " + TABLE_ALLERGIC_MEDICINE;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        AllergicMedicine allergicMedicine;
+
+        if(cursor.moveToFirst()){
+            do{
+                allergicMedicine = new AllergicMedicine();
+                allergicMedicine.setAllergicMedicineId(cursor.getInt(cursor.getColumnIndex(KEY_ALLERGIC_MEDICINE_ID)));
+                allergicMedicine.setMedicineName(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                allergicMedicine.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                allergicMedicine.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                allergicMedicines.add(allergicMedicine);
+            }while (cursor.moveToNext());
+        }
+        // return user
+        Log.d(TAG, "Fetching allergic medicine from Sqlite: ");
+
+        return allergicMedicines;
+    }
+    //endregion
+
+    // Delete all tables, called when user log out
+    public void deleteTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Delete All Rows
+        db.delete(TABLE_USER, null, null);
+        db.delete(TABLE_MEDICAL_HISTORY, null, null);
+        db.delete(TABLE_APPOINTMENT, null, null);
+        db.close();
+
+        Log.d(TAG, "Deleted all user info from sqlite");
+    }
 }

@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/toolbar"
+        app:logo="@drawable/ic_create"
         android:background="@color/colorBackground">
         <TextView
             android:layout_width="match_parent"

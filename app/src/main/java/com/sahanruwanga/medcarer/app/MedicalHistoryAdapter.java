@@ -26,6 +26,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     private List<MedicalRecord> medicalRecords;
     private MedicalHistoryActivity context;
     private RecyclerView recyclerView;
+
     private int selectingCount;
     private ArrayList<MedicalRecord> selectedRecords;
     private ArrayList<ImageView> selectedImageViews;
@@ -35,6 +36,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         this.medicalRecords = medicalRecords;
         this.context = context;
         this.recyclerView = recyclerView;
+
         this.setSelectingCount(0);
         this.selectedRecords = new ArrayList<>();
         this.selectedImageViews = new ArrayList<>();
@@ -45,7 +47,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     public MedicalHistoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view  =inflater.inflate(R.layout.layout_history_list_item, parent, false);
+        View view  = inflater.inflate(R.layout.layout_history_list_item, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
@@ -170,13 +172,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         notifyItemRemoved(position);
     }
 
-    public ArrayList<MedicalRecord> getSelectedRecords() {
-        return selectedRecords;
-    }
 
-    public void setSelectedRecords(ArrayList<MedicalRecord> selectedRecords) {
-        this.selectedRecords = selectedRecords;
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView disease;
@@ -196,6 +192,14 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     }
 
     //region Getters and Setters
+    public ArrayList<MedicalRecord> getSelectedRecords() {
+        return selectedRecords;
+    }
+
+    public void setSelectedRecords(ArrayList<MedicalRecord> selectedRecords) {
+        this.selectedRecords = selectedRecords;
+    }
+
     public int getSelectingCount() {
         return selectingCount;
     }

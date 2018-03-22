@@ -151,6 +151,21 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void openAlternativeMedicine(View view) {
+    }
+
+    public void openAppointment(View view) {
+        Intent intent = new Intent(this, AppointmentActivity.class);
+        startActivity(intent);
+    }
+
+    public void openMedicationSchedule(View view) {
+    }
+
+    public void openPharmacy(View view) {
+    }
+
+
     public SQLiteHandler getSqLiteHandler() {
         return sqLiteHandler;
     }
@@ -165,19 +180,5 @@ public class HomeActivity extends AppCompatActivity
 
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
-    }
-
-    public void openAlternativeMedicine(View view) {
-    }
-
-    public void openAppointment(View view) {
-        Intent intent = new Intent(this, AppointmentActivity.class);
-        startActivity(intent);
-    }
-
-    public void openMedicationSchedule(View view) {
-    }
-
-    public void openPharmacy(View view) {
     }
 }

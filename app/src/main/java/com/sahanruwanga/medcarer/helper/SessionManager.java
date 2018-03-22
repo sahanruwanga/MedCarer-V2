@@ -27,6 +27,7 @@ public class SessionManager {
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_IS_MH_CREATED = "isMHCreated";
     private static final String KEY_IS_APPOINTMENT_CREATED = "isAppointmentCreated";
+    private static final String KEY_IS_ALLERGIC_MEDICINE_CREATED = "isAllergicMedicineCreated";
 
     public SessionManager(Context context) {
         this.setContext(context);
@@ -79,6 +80,21 @@ public class SessionManager {
 
     public boolean isAppointmentCreated(){
         return getSharedPreferences().getBoolean(KEY_IS_APPOINTMENT_CREATED, false);
+    }
+    //endregion
+
+    //region Allergic Medicine table created event handle
+    public void setAllergicMedicineCreated(boolean isAllergicMedicineCreated) {
+        getEditor().putBoolean(KEY_IS_ALLERGIC_MEDICINE_CREATED, isAllergicMedicineCreated);
+
+        // commit changes
+        getEditor().commit();
+
+        Log.d(TAG, "DB create session modified!");
+    }
+
+    public boolean isAllergicMedicineCreated(){
+        return getSharedPreferences().getBoolean(KEY_IS_ALLERGIC_MEDICINE_CREATED, false);
     }
     //endregion
 

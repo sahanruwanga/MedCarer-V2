@@ -1,6 +1,7 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -210,8 +211,13 @@ public class AppointmentActivity extends AppCompatActivity {
     }
     //endregion
 
+    //region Open Add Appointment Activity
     public void openAddAppointment(View view) {
+        Intent intent = new Intent(this, AddAppointmentActivity.class);
+        startActivity(intent);
+        finish();
     }
+    //endregion
 
     //region Getters and Setters
     public Toolbar getToolbar() {

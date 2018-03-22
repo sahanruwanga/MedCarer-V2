@@ -30,20 +30,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddMedicalRecordActivity extends AppCompatActivity {
-
     private static final String TAG = AddMedicalRecordActivity.class.getSimpleName();
     private EditText disease;
     private EditText medicine;
     private EditText allergic;
-    private static EditText date1;
-    private static EditText date2;
+    private EditText date1;
+    private EditText date2;
     private EditText doctorName;
     private EditText contact;
     private EditText description;
     private Toolbar toolbar;
 
     private ProgressDialog pDialog;
-
     private SQLiteHandler sqLiteHandler;
 
 
@@ -62,14 +60,17 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
-        setDisease((EditText)findViewById(R.id.disease));
-        setMedicine((EditText)findViewById(R.id.medicine));
-        setAllergic((EditText)findViewById(R.id.allergic));
-        setDate1((EditText)findViewById(R.id.date1));
-        setDate2((EditText)findViewById(R.id.date2));
-        setDoctorName((EditText)findViewById(R.id.doctor));
-        setContact((EditText)findViewById(R.id.contact));
-        setDescription((EditText)findViewById(R.id.description));
+        // Define all Edit Texts
+        this.disease = findViewById(R.id.disease);
+        this.medicine = findViewById(R.id.medicine);
+        this.allergic = findViewById(R.id.allergic);
+        this.date1 = findViewById(R.id.date1);
+        this.date2 = findViewById(R.id.date2);
+        this.doctorName = findViewById(R.id.doctor);
+        this.contact = findViewById(R.id.contact);
+        this.description = findViewById(R.id.description);
+
+        // Set onFocusListener to open up calender in date text
         getDate1().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -232,12 +233,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
     }
 
     //region Getters and Setters
-    public static EditText getDate2() {
+    public EditText getDate2() {
         return date2;
     }
 
-    public static void setDate2(EditText date2) {
-        AddMedicalRecordActivity.date2 = date2;
+    public void setDate2(EditText date2) {
+        this.date2 = date2;
     }
 
     public Toolbar getToolbar() {
@@ -272,12 +273,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         this.allergic = allergic;
     }
 
-    public static EditText getDate1() {
+    public EditText getDate1() {
         return date1;
     }
 
-    public static void setDate1(EditText date1) {
-        AddMedicalRecordActivity.date1 = date1;
+    public void setDate1(EditText date1) {
+        this.date1 = date1;
     }
 
     public EditText getDoctorName() {
