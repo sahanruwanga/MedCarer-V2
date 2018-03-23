@@ -26,4 +26,7 @@ public class AppConfig {
 
     // Server insert appointment url
     public static String URL_INSERT_APPOINTMENT = "http://192.168.8.106/med_carer/insert_appointment.php";
+
+    // Server insert medication schedule url
+        public static String URL_INSERT_MEDICATION_SCHEDULE = "http://192.168.8.106/med_carer/insert_medication_schedule.php";
 }

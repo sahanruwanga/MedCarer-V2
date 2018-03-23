@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.Appointment;
+import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -160,6 +161,8 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void openMedicationSchedule(View view) {
+        Intent intent = new Intent(this, MedicationScheduleActivity.class);
+        startActivity(intent);
     }
 
     public void openPharmacy(View view) {

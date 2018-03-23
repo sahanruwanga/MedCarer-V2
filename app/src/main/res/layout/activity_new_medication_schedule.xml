@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sahanruwanga.medcarer.activity.NewMedicationScheduleActivity"
+    android:background="@drawable/background">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/toolbarNewMedicationSchedule"
+        android:background="@color/colorBackground">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="left"
+                android:textSize="18sp"
+                android:onClick="cancelSaving"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:text="Save"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="right"
+                android:textSize="18sp"
+                android:onClick="saveSchedule"/>
+        </FrameLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@+id/toolbarNewMedicationSchedule">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:id="@+id/medicineCardViewMediSchedule"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="8dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/medicineMedicationSchedule"
+                    android:hint="@string/medicine_name"
+                    android:textColor="@color/colorBlack"
+                    android:background="@android:color/transparent"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_rate"
+                    android:drawableStart="@drawable/ic_rate"
+                    android:drawablePadding="5dp"
+                    android:inputType="text"
+                    android:maxLines="1"/>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                android:id="@+id/quantityCardViewMediSchedule"
+                android:layout_below="@+id/medicineCardViewMediSchedule"
+                app:cardCornerRadius="8dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/quantityMedicationSchedule"
+                    android:hint="Quantity"
+                    android:textColor="@color/colorBlack"
+                    android:background="@android:color/transparent"
+                    android:padding="5dp"
+                    android:drawableLeft="@drawable/ic_rate"
+                    android:drawableStart="@drawable/ic_rate"
+                    android:drawablePadding="5dp"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"/>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:id="@+id/startTimeCardViewMediSchedule"
+                app:cardBackgroundColor="@android:color/transparent"
+                android:layout_below="@+id/quantityCardViewMediSchedule"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="15dp"
+                    android:background="@android:color/transparent">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Start Time"
+                            android:textSize="18sp"
+                            android:layout_gravity="center_vertical|center_horizontal"
+                            android:padding="5dp"
+                            android:textColor="@color/colorBlack"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="right"
+                            android:paddingRight="15dp"
+                            android:paddingLeft="15dp"
+                            android:src="@drawable/ic_profile"
+                            android:onClick="openClock"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                        <EditText
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/startTimeMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:text="00:00:00"
+                            android:inputType="none"
+                            android:editable="false"
+                            android:maxLines="1" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:id="@+id/periodCardViewMediSchedule"
+                android:layout_below="@+id/startTimeCardViewMediSchedule"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="15dp"
+                    android:background="@android:color/transparent">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Period of Taking"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:padding="5dp"
+                            android:textColor="@color/colorBlack"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/periodHourMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:text="00"
+                            android:textAlignment="center"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:maxLength="2"
+                            android:focusable="true"
+                            android:selectAllOnFocus="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="HH"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textColor="@color/colorLink"/>
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/periodMinMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:text="00"
+                            android:textAlignment="center"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:maxLength="2"
+                            android:focusable="true"
+                            android:selectAllOnFocus="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="MM"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textColor="@color/colorLink"/>
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/periodSecMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:text="00"
+                            android:textAlignment="center"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:maxLength="2"
+                            android:focusable="true"
+                            android:selectAllOnFocus="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="SS"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textColor="@color/colorLink"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                android:id="@+id/notifyTimeCardViewMediSchedule"
+                android:layout_below="@+id/periodCardViewMediSchedule"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="15dp"
+                    android:background="@android:color/transparent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Notify Before"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:padding="5dp"
+                            android:textColor="@color/colorBlack"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/notifyHourMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:text="00"
+                            android:textAlignment="center"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:maxLength="2"
+                            android:focusable="true"
+                            android:selectAllOnFocus="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="HH"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textColor="@color/colorBlack"/>
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/notifyMinMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:text="00"
+                            android:textAlignment="center"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:maxLength="2"
+                            android:focusable="true"
+                            android:selectAllOnFocus="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="MM"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textColor="@color/colorBlack"/>
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/notifySecMedicationSchedule"
+                            android:background="@android:color/transparent"
+                            android:text="00"
+                            android:textAlignment="center"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:maxLength="2"
+                            android:focusable="true"
+                            android:selectAllOnFocus="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="SS"
+                            android:textSize="18sp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textColor="@color/colorBlack"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

@@ -14,6 +14,7 @@ import android.util.Log;
 import com.sahanruwanga.medcarer.app.AllergicMedicine;
 import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
+import com.sahanruwanga.medcarer.app.MedicationSchedule;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -67,9 +68,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static  final String KEY_CLINIC_CONTACT = "clinic_contact";
 
     // Medication Schedule table Columns names
-    private static  final String KEY_SCHEDULE_ID = "appointment_id";
-    private static  final String KEY_QUANTITY = "date";
-    private static  final String KEY_PERIOD= "time";
+    private static  final String KEY_SCHEDULE_ID = "schedule_id";
+    private static  final String KEY_QUANTITY = "quantity";
+    private static  final String KEY_START_TIME = "start_time";
+    private static  final String KEY_PERIOD = "period";
 
     // Allergic Medicine table Columns names
     private static  final String KEY_ALLERGIC_MEDICINE_ID = "allergic_medicine_id";
@@ -100,9 +102,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Create Medication Schedule table query
     private final String CREATE_MEDICATION_SCHEDULE_TABLE = "CREATE TABLE " + TABLE_MEDICATION_SCHEDULE + "("
             + KEY_SCHEDULE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
-            + KEY_QUANTITY + " TEXT," + KEY_PERIOD + " TEXT," + KEY_NOTIFY_TIME + " TEXT" + ")";
+            + KEY_QUANTITY + " TEXT," + KEY_START_TIME + " TEXT," + KEY_PERIOD + " TEXT,"
+            + KEY_NOTIFY_TIME + " TEXT," + KEY_CREATED_AT + " TEXT" + ")";
 
-    // Create Allergic Medicine Schedule table query
+    // Create Allergic Medicine table query
     private final String CREATE_ALLERGIC_MEDICINE_TABLE = "CREATE TABLE " + TABLE_ALLERGIC_MEDICINE + "("
             + KEY_ALLERGIC_MEDICINE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
             + KEY_DESCRIPTION + " TEXT," + KEY_CREATED_AT + " TEXT" + ")";
@@ -339,7 +342,59 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
     //endregion
 
-    // Delete all tables, called when user log out
+    //region Medication Schedule Details
+    // Storing Medication Schedule in database
+    public void addMedicationSchedule(int schedule_id, String medicine, String quantity, String startTime,
+                                      String period, String notifyTime, String createdAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Put Content Values to save in SQLite
+        ContentValues values = new ContentValues();
+        values.put(KEY_SCHEDULE_ID, schedule_id); // Schedule ID
+        values.put(KEY_MEDICINE, medicine); // Medicine
+        values.put(KEY_QUANTITY, quantity);   // Quantity
+        values.put(KEY_START_TIME, startTime); // Start Time
+        values.put(KEY_PERIOD, period); // Period
+        values.put(KEY_NOTIFY_TIME, notifyTime);   // Notify Time
+        values.put(KEY_CREATED_AT, createdAt); // Created At
+
+        // Inserting Row
+        long id = db.insert(TABLE_MEDICATION_SCHEDULE, null, values);
+
+        // Closing database connection
+        db.close();
+
+        Log.d(TAG, "New Medication Schedule is inserted into sqlite: " + id);
+    }
+
+    // Getting medication schedule from database
+    public List<MedicationSchedule> getMedicationScheduleDetails() {
+        List<MedicationSchedule> medicationSchedules = new LinkedList<>();
+        String query = "SELECT  * FROM " + TABLE_MEDICATION_SCHEDULE;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        MedicationSchedule medicationSchedule;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicationSchedule = new MedicationSchedule();
+                medicationSchedule.setScheduleId(cursor.getInt(cursor.getColumnIndex(KEY_SCHEDULE_ID)));
+                medicationSchedule.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicationSchedule.setQuantity(cursor.getString(cursor.getColumnIndex(KEY_QUANTITY)));
+                medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
+                medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
+                medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicationSchedules.add(medicationSchedule);
+            }while (cursor.moveToNext());
+        }
+        Log.d(TAG, "Fetching medication schedule from Sqlite: ");
+
+        return medicationSchedules;
+    }
+    //endregion
+
+    //region Delete all tables, called when user log out
     public void deleteTables() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
@@ -350,4 +405,5 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "Deleted all user info from sqlite");
     }
+    //endregion
 }

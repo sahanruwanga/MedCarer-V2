@@ -36,7 +36,9 @@
 
         <activity android:name=".activity.ViewMedicalRecordActivity" />
         <activity android:name=".activity.UpdateMedicalRecordActivity" />
-        <activity android:name=".activity.AddAppointmentActivity"></activity>
+        <activity android:name=".activity.AddAppointmentActivity" />
+        <activity android:name=".activity.MedicationScheduleActivity" />
+        <activity android:name=".activity.NewMedicationScheduleActivity"></activity>
     </application>
 
 </manifest>

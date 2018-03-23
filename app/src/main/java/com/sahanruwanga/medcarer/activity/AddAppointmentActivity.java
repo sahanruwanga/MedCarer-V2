@@ -128,8 +128,9 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     }
 
-    private void saveAppointmentInDatabase(final String reason, final String venue, final String doctor, final String clinicNo,
+    private boolean saveAppointmentInDatabase(final String reason, final String venue, final String doctor, final String clinicNo,
                                            final String date, final String time, final String notifyTime){
+        final boolean[] isSuccessful = {false};
         // Tag used to cancel the request
         String tag_string_req = "req_insert_appointment";
 
@@ -148,7 +149,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        // Appointment successfully stored in MySQL
                         // Store the appointment in sqlite
 
                         JSONObject medicalRecord = jObj.getJSONObject("appointment");
@@ -161,6 +161,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
                         Toast.makeText(getApplicationContext(), "Appointment successfully inserted!", Toast.LENGTH_LONG).show();
                         clearAll();
+                        isSuccessful[0] = true;
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -168,10 +169,12 @@ public class AddAppointmentActivity extends AppCompatActivity {
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
+                        isSuccessful[0] = false;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Enter correct details again",Toast.LENGTH_LONG).show();
+                    isSuccessful[0] = false;
                 }
 
             }
@@ -183,6 +186,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
+                isSuccessful[0] = false;
             }
         }) {
 
@@ -205,6 +209,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        return isSuccessful[0];
     }
 
     private void clearAll(){
