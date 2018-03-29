@@ -8,10 +8,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
         android:layout_centerInParent="true"
-        app:srcCompat="@drawable/ic_search"
+        app:srcCompat="@drawable/logo2"
         />
 
     <TextView
@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:text="Your smart medical assistant"
         android:layout_below="@+id/imageView"
+        android:textColor="@color/colorWhite"
         android:gravity="center"/>
 
 </RelativeLayout>

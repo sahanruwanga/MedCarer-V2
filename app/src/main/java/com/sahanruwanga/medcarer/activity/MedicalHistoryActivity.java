@@ -226,12 +226,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     }
     //endregion
 
-    //region Save new Medical Record
-    public void saveRecord(View view){
-
-    }
-    //endregion
-
     //region Store data in SQLite database
     // Save data into SQLite database from MySQL database
     private void storeInSQLite(final String user_id){

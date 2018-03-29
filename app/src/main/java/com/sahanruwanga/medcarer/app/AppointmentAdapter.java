@@ -8,18 +8,23 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AppointmentActivity;
+import com.sahanruwanga.medcarer.activity.ViewAppointmentActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +61,58 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Appointment appointment = appointments.get(position);
-        holder.reason.setText("Reason: "+appointment.getReason());
-        holder.date.setText(appointment.getDate());
-        holder.time.setText(appointment.getTime());
-        holder.venue.setText("Disease: "+appointment.getVenue());
-        holder.doctor.setText(appointment.getDoctor());
-        holder.clinicContact.setText(appointment.getClinicContact());
-        holder.notifyTime.setText(appointment.getNotifyTime());
+
+        // Show data in layout
+        holder.appointmentVenue.setText(appointment.getVenue());
+        holder.appointmentDate.setText(appointment.getDate());
+        holder.appointmentTime.setText(appointment.getTime());
+
+        // Make Notification switch on
+//        holder.appointmentSwitch.setChecked(true);
+
+
+
+
+        // Call for turning on and off notification
+        holder.appointmentSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            // Define objects to set notification
+            Notification notification;
+            PendingIntent pendingIntent;
+            AlarmManager alarmManager;
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    notification = getNotification(appointment.getVenue(),
+                            "You have an appointment at " + appointment.getTime());
+                    Intent notificationIntent = new Intent(context, NotificationHandler.class);
+                    int[] id = new int[1];
+                    id[0] = appointment.getAppointmentId();
+                    notificationIntent.putExtra(NotificationHandler.NOTIFICATION_ID, id);
+                    notificationIntent.putExtra(NotificationHandler.NOTIFICATION, notification);
+                    long futureInMillis = SystemClock.elapsedRealtime() + 5000;
+
+                    pendingIntent = PendingIntent.getBroadcast(context, 0,
+                            notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                    alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                                            futureInMillis,
+                                            5000, pendingIntent);
+
+                }else{
+                    // If the alarm has been set, cancel it.
+                    if (alarmManager!= null) {
+                        alarmManager.cancel(pendingIntent);
+                    }
+                }
+            }
+        });
 
         final LinearLayout[] linearLayout = new LinearLayout[1];
         linearLayout[0] = holder.layout.findViewById(R.id.mainLayoutAppointmentList);
+
+        // OnLongClick listener for each card view
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -86,14 +133,19 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 return true;
             }
         });
+
+        // OnClick listener for each card view
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(getSelectingCount() == 0) {
                     // OnClick activity on the list
-                    scheduleNotification(getNotification(appointment.getVenue(),
-                            "You have an appointment in " + appointment.getNotifyTime()),
-                            5000, appointment.getAppointmentId());
+//                    scheduleNotification(getNotification(appointment.getVenue(),
+//                            "You have an appointment in " + appointment.getNotifyTime()),
+//                            5000, appointment.getAppointmentId());
+                    Intent intent = new Intent(context, ViewAppointmentActivity.class);
+                    intent.putExtra("Appointment", appointment);
+                    context.startActivity(intent);
                 }
                 else{
                     if(linearLayout[0].isSelected()) {
@@ -153,10 +205,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         notificationIntent.putExtra(NotificationHandler.NOTIFICATION_ID, id);
         notificationIntent.putExtra(NotificationHandler.NOTIFICATION, notification);
         long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0); //PendingIntent.FLAG_UPDATE_CURRENT
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                SystemClock.elapsedRealtime() + 5000,
+//                5000, pendingIntent);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
     }
 
     private Notification getNotification(String title, String content) {
@@ -184,25 +241,19 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     //region ViewHolder class
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView reason;
-        public TextView date;
-        public TextView time;
-        public TextView venue;
-        public TextView doctor;
-        public TextView clinicContact;
-        public TextView notifyTime;
         public View layout;
+        public TextView appointmentVenue;
+        public TextView appointmentDate;
+        public TextView appointmentTime;
+        public Switch appointmentSwitch;
 
         public ViewHolder(View itemView) {
             super(itemView);
             layout = itemView;
-            reason = itemView.findViewById(R.id.appointmentReason);
-            date = itemView.findViewById(R.id.appointmentDate);
-            time = itemView.findViewById(R.id.appointmentTime);
-            venue = itemView.findViewById(R.id.appointmentVenue);
-            doctor = itemView.findViewById(R.id.appointmentDoctor);
-            clinicContact = itemView.findViewById(R.id.appointmentClinicContact);
-            notifyTime = itemView.findViewById(R.id.appointmentNotifyTime);
+            appointmentVenue = itemView.findViewById(R.id.appointmentVenue);
+            appointmentDate = itemView.findViewById(R.id.appointmentDate);
+            appointmentTime = itemView.findViewById(R.id.appointmentTime);
+            appointmentSwitch = itemView.findViewById(R.id.appointmentSwitch);
         }
     }
     //endregion

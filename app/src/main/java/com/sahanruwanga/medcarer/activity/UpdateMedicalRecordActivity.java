@@ -55,6 +55,7 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
             }
         });
 
+        // Fill data in edit text boxes
         fillData();
     }
 

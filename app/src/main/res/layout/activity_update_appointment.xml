@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sahanruwanga.medcarer.activity.AddAppointmentActivity"
+    tools:context="com.sahanruwanga.medcarer.activity.UpdateAppointmentActivity"
     android:background="@drawable/background">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:id="@+id/toolbarAddAppointment"
+        android:id="@+id/toolbarUpdateAppointment"
         android:background="@color/colorBackground">
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -24,7 +23,7 @@
                 android:textColor="@color/colorBlack"
                 android:layout_gravity="left"
                 android:textSize="18sp"
-                android:onClick="cancelSaving"/>
+                android:onClick="cancelUpdating"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -34,9 +33,8 @@
                 android:textColor="@color/colorBlack"
                 android:layout_gravity="right"
                 android:textSize="18sp"
-                android:onClick="saveAppointment"/>
+                android:onClick="updateAppointment"/>
         </FrameLayout>
-
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
@@ -46,7 +44,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
         android:paddingBottom="10dp"
-        android:layout_below="@+id/toolbarAddAppointment">
+        android:layout_below="@+id/toolbarUpdateAppointment">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -64,7 +62,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/reasonAppointment"
+                    android:id="@+id/reasonUpdateAppointment"
                     android:hint="Reason"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -87,7 +85,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/venueAppointment"
+                    android:id="@+id/venueUpdateAppointment"
                     android:hint="Venue"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -110,7 +108,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/doctorAppointment"
+                    android:id="@+id/doctorUpdateAppointment"
                     android:hint="Doctor"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -133,7 +131,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/clinicContactAppointment"
+                    android:id="@+id/clinicContactUpdateAppointment"
                     android:hint="Clinic Contact Number"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -156,7 +154,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/dateAppointment"
+                    android:id="@+id/dateUpdateAppointment"
                     android:hint="Date"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -180,7 +178,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/timeAppointment"
+                    android:id="@+id/timeUpdateAppointment"
                     android:hint="Appointment time"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -204,7 +202,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/notifyTimeAppointment"
+                    android:id="@+id/notifyTimeUpdateAppointment"
                     android:hint="Notify Time"
                     android:textColor="@color/colorBlack"
                     android:background="@drawable/edit_text_design"
@@ -217,5 +215,7 @@
 
         </RelativeLayout>
     </ScrollView>
+
+
 
 </RelativeLayout>

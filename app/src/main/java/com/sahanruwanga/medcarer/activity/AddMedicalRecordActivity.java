@@ -88,6 +88,13 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
 
     }
 
+
+    // Cancel function in toolbar
+    public void cancelUpdating(View view) {
+        onBackPressed();
+    }
+
+    // Save function in toolbar
     public void saveRecord(View view){
         String disease = getDisease().getText().toString().trim();
         String medicine = getMedicine().getText().toString().trim();

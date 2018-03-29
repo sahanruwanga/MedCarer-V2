@@ -39,7 +39,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
     private EditText dateText;
     private EditText timeText;
     private EditText notifyTimeText;
-    private Switch notificationSwitch;
 
     private ProgressDialog progressDialog;
     private SQLiteHandler sqLiteHandler;
@@ -63,7 +62,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
         this.dateText = findViewById(R.id.dateAppointment);
         this.timeText = findViewById(R.id.timeAppointment);
         this.notifyTimeText = findViewById(R.id.notifyTimeAppointment);
-        this.notificationSwitch = findViewById(R.id.appointmentNotificationSwitch);
 
         // Set onFocusListener to open up calender in date text
         getDateText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -108,6 +106,12 @@ public class AddAppointmentActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
+    // Cancel function in toolbar
+    public void cancelSaving(View view) {
+        onBackPressed();
+    }
+
+    // Save function on toolbar
     public void saveAppointment(View view) {
         // Get daata from edit text boxes
         String reason = getReasonText().getText().toString().trim();
@@ -220,8 +224,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
         getDateText().setText("");
         getTimeText().setText("");
         getNotifyTimeText().setText("");
-        if(getNotificationSwitch().isChecked())
-            getNotificationSwitch().setChecked(false);
         getReasonText().requestFocus();
     }
 
@@ -301,12 +303,5 @@ public class AddAppointmentActivity extends AppCompatActivity {
         this.notifyTimeText = notifyTimeText;
     }
 
-    public Switch getNotificationSwitch() {
-        return notificationSwitch;
-    }
-
-    public void setNotificationSwitch(Switch notificationSwitch) {
-        this.notificationSwitch = notificationSwitch;
-    }
     //endregion
 }
