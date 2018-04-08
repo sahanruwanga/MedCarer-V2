@@ -61,12 +61,12 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_medical_history);
 
         // SQLiteHelper initialization
-        setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
+        this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
         // Session manager
-        setSessionManager(new SessionManager(getApplicationContext()));
+        this.sessionManager = new SessionManager(getApplicationContext());
 
         //RecyclerView and layout manager initialization
-        setRecyclerView((RecyclerView)findViewById(R.id.medicalHistoryRecyclerView));
+        this.recyclerView = findViewById(R.id.medicalHistoryRecyclerView);
         getRecyclerView().setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         getRecyclerView().setLayoutManager(layoutManager);
@@ -75,7 +75,14 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
 
+        //Toolbar creation
+        setToolbar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(getToolbar());
+        getToolbar().setLogo(R.drawable.ic_download);
+
+        // TextView in toolbar
         this.setToolBarText((TextView)findViewById(R.id.toolBarText));
+
         //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
         if(!getSessionManager().isMHCreated()){
             storeInSQLite(User.getUserId());
@@ -83,11 +90,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
         // Add data into RecyclerView
         showRecyclerView();
-
-        //Toolbar creation
-        setToolbar((Toolbar) findViewById(R.id.toolbar));
-        setSupportActionBar(getToolbar());
-        getToolbar().setLogo(R.drawable.ic_download);
 
         //region Search Bar Functions
         setSearchView((MaterialSearchView) findViewById(R.id.searchViewMH));

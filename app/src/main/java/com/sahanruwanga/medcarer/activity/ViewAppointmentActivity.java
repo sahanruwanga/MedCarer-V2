@@ -1,6 +1,7 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -75,6 +76,14 @@ public class ViewAppointmentActivity extends AppCompatActivity {
 
     // Clinic contact number opens in dial pad
     public void openInDialPad(View view) {
+        Uri number = Uri.parse("tel:" + getContact().getText().toString().trim());
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
+    }
+
+    // Back icon click in toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
     }
 
     //region Getters and Setters

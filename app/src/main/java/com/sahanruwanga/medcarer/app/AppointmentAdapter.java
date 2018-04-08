@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.app;
 
+
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -7,17 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.SystemClock;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,20 +36,27 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     private List<Appointment> appointments;
     private AppointmentActivity context;
     private RecyclerView recyclerView;
+
     private int selectingCount;
-    private ArrayList<LinearLayout> selectedLinearLayouts;
+    private ArrayList<Appointment> selectedAppointments;
+    private ArrayList<ImageView> selectedImageViews;
+    private ArrayList<ImageView> imageViews;
+    private ArrayList<Switch> switches;
 
     public AppointmentAdapter(List<Appointment> appointments, AppointmentActivity context, RecyclerView recyclerView){
         this.appointments = appointments;
         this.context = context;
         this.recyclerView = recyclerView;
+
         this.setSelectingCount(0);
-        selectedLinearLayouts = new ArrayList<>();
+        this.selectedAppointments = new ArrayList<>();
+        this.selectedImageViews = new ArrayList<>();
+        this.imageViews = new ArrayList<>();
+        this.switches = new ArrayList<>();
     }
 
     @Override
-    public AppointmentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view  =inflater.inflate(R.layout.layout_appointment_list_item, parent, false);
 
@@ -59,7 +65,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         final Appointment appointment = appointments.get(position);
 
         // Show data in layout
@@ -71,7 +77,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 //        holder.appointmentSwitch.setChecked(true);
 
 
+        final ImageView checkIcon = holder.layout.findViewById(R.id.appointmentCheckIcon);
+        getImageViews().add(checkIcon);
 
+        getSwitches().add((Switch) holder.layout.findViewById(R.id.appointmentSwitch));
 
         // Call for turning on and off notification
         holder.appointmentSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -97,8 +106,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
                     alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                     alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                                            futureInMillis,
-                                            5000, pendingIntent);
+                            futureInMillis,
+                            5000, pendingIntent);
 
                 }else{
                     // If the alarm has been set, cancel it.
@@ -109,25 +118,28 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             }
         });
 
-        final LinearLayout[] linearLayout = new LinearLayout[1];
-        linearLayout[0] = holder.layout.findViewById(R.id.mainLayoutAppointmentList);
-
         // OnLongClick listener for each card view
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show();
 
-                if(linearLayout[0].isSelected()) {
-                    linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
+                if(checkIcon.isSelected()) {
                     setSelectingCount(getSelectingCount() - 1);
-                    selectedLinearLayouts.remove(linearLayout[0]);
-                    linearLayout[0].setSelected(false);
+                    getSelectedAppointments().remove(appointment);
+                    getSelectedImageViews().remove(checkIcon);
+                    if(getSelectingCount() == 0)
+                        setVisibleSwitch(View.VISIBLE);
+                    checkIcon.setVisibility(View.INVISIBLE);
+                    checkIcon.setSelected(false);
                 }else{
-                    linearLayout[0].setBackgroundColor(Color.parseColor("#FF53A7D4"));
                     setSelectingCount(getSelectingCount() + 1);
-                    selectedLinearLayouts.add(linearLayout[0]);
-                    linearLayout[0].setSelected(true);
+                    getSelectedAppointments().add(appointment);
+                    getSelectedImageViews().add(checkIcon);
+                    if(getSelectingCount() == 1)
+                        setVisibleSwitch(View.INVISIBLE);
+                    checkIcon.setVisibility(View.VISIBLE);
+                    checkIcon.setSelected(true);
                 }
                 notifyParent(getSelectingCount());
                 return true;
@@ -148,22 +160,41 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                     context.startActivity(intent);
                 }
                 else{
-                    if(linearLayout[0].isSelected()) {
-                        linearLayout[0].setBackgroundColor(Color.parseColor("#ffffff"));
+                    if(checkIcon.isSelected()) {
                         setSelectingCount(getSelectingCount() - 1);
-                        selectedLinearLayouts.remove(linearLayout[0]);
-                        linearLayout[0].setSelected(false);
+                        getSelectedAppointments().remove(appointment);
+                        selectedImageViews.remove(checkIcon);
+                        if(getSelectingCount() == 0)
+                            setVisibleSwitch(View.VISIBLE);
+                        checkIcon.setVisibility(View.INVISIBLE);
+                        checkIcon.setSelected(false);
                     }else{
-                        linearLayout[0].setBackgroundColor(Color.parseColor("#FF53A7D4"));
                         setSelectingCount(getSelectingCount() + 1);
-                        selectedLinearLayouts.add(linearLayout[0]);
-                        linearLayout[0].setSelected(true);
+                        getSelectedAppointments().add(appointment);
+                        selectedImageViews.add(checkIcon);
+                        if(getSelectingCount() == 1)
+                            setVisibleSwitch(View.INVISIBLE);
+                        checkIcon.setVisibility(View.VISIBLE);
+                        checkIcon.setSelected(true);
                     }
                 }
                 notifyParent(getSelectingCount());
             }
 
         });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return appointments.size();
+    }
+
+    // set switches invisible when check icons are visible or other way around
+    private void setVisibleSwitch(int visibility){
+        for(Switch aSwitch : getSwitches()){
+            aSwitch.setVisibility(visibility);
+        }
     }
 
     private void notifyParent(int selectingCount){
@@ -176,44 +207,35 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     public void deseleceAll(){
         setSelectingCount(0);
-        setSelectingCount(0);
-        for(LinearLayout layout : selectedLinearLayouts){
-            layout.setBackgroundColor(Color.parseColor("#ffffff"));
+        for(ImageView imageView : selectedImageViews){
+            imageView.setVisibility(View.INVISIBLE);
+            imageView.setSelected(false);
         }
-        selectedLinearLayouts.clear();
+        for(Switch aSwitch : getSwitches()){
+            aSwitch.setVisibility(View.VISIBLE);
+        }
+        getSelectedAppointments().clear();
+        selectedImageViews.clear();
     }
 
-    @Override
-    public int getItemCount() {
-        return appointments.size();
-    }
-
-    public void add(int position, Appointment appointment) {
-        appointments.add(position, appointment);
-        notifyItemInserted(position);
-    }
-
-    public void remove(int position) {
-        appointments.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    private void scheduleNotification(Notification notification, int delay, int appointment_id) {
-        Intent notificationIntent = new Intent(context, NotificationHandler.class);
-        int[] id = new int[1];
-        id[0]=appointment_id;
-        notificationIntent.putExtra(NotificationHandler.NOTIFICATION_ID, id);
-        notificationIntent.putExtra(NotificationHandler.NOTIFICATION, notification);
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                SystemClock.elapsedRealtime() + 5000,
-//                5000, pendingIntent);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+    public void selectAll(){
+        for(Switch aSwitch : getSwitches()){
+            if(aSwitch.getVisibility() == View.VISIBLE)
+                aSwitch.setVisibility(View.INVISIBLE);
+        }
+        for(ImageView imageView : imageViews){
+            if (!selectedImageViews.contains(imageView)){
+                selectedImageViews.add(imageView);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setSelected(true);
+            }
+        }
+        for(Appointment appointment : getSelectedAppointments()){
+            if(!getSelectedAppointments().contains(appointment)){
+                getSelectedAppointments().add(appointment);
+            }
+        }
+        setSelectingCount(getItemCount());
     }
 
     private Notification getNotification(String title, String content) {
@@ -239,13 +261,80 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         return builder.build();
     }
 
-    //region ViewHolder class
+    //region Getter and Setters
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    public AppointmentActivity getContext() {
+        return context;
+    }
+
+    public void setContext(AppointmentActivity context) {
+        this.context = context;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
+
+    public int getSelectingCount() {
+        return selectingCount;
+    }
+
+    public void setSelectingCount(int selectingCount) {
+        this.selectingCount = selectingCount;
+    }
+
+    public ArrayList<Appointment> getSelectedAppointments() {
+        return selectedAppointments;
+    }
+
+    public void setSelectedAppointments(ArrayList<Appointment> selectedAppointments) {
+        this.selectedAppointments = selectedAppointments;
+    }
+
+    public ArrayList<ImageView> getSelectedImageViews() {
+        return selectedImageViews;
+    }
+
+    public void setSelectedImageViews(ArrayList<ImageView> selectedImageViews) {
+        this.selectedImageViews = selectedImageViews;
+    }
+
+    public ArrayList<ImageView> getImageViews() {
+        return imageViews;
+    }
+
+    public void setImageViews(ArrayList<ImageView> imageViews) {
+        this.imageViews = imageViews;
+    }
+
+    public ArrayList<Switch> getSwitches() {
+        return switches;
+    }
+
+    public void setSwitches(ArrayList<Switch> switches) {
+        this.switches = switches;
+    }
+    //endregion
+
     public class ViewHolder extends RecyclerView.ViewHolder{
+
         public View layout;
         public TextView appointmentVenue;
         public TextView appointmentDate;
         public TextView appointmentTime;
         public Switch appointmentSwitch;
+        public ImageView checkIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -254,17 +343,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             appointmentDate = itemView.findViewById(R.id.appointmentDate);
             appointmentTime = itemView.findViewById(R.id.appointmentTime);
             appointmentSwitch = itemView.findViewById(R.id.appointmentSwitch);
+            checkIcon = itemView.findViewById(R.id.appointmentCheckIcon);
         }
     }
-    //endregion
-
-    //region Getters and Setters
-    public int getSelectingCount() {
-        return selectingCount;
-    }
-
-    public void setSelectingCount(int selectingCount) {
-        this.selectingCount = selectingCount;
-    }
-    //endregion
 }

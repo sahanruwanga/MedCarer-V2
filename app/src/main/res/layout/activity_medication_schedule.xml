@@ -11,7 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/toolbarMedicationSchedule"
-        android:background="@color/colorBackground"/>
+        android:background="@color/colorBackground">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medication Schedule"
+            android:id="@+id/toolBarTextMedicationSchedule"
+            android:textSize="25sp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="cursive"/>
+    </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -25,7 +35,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/appointmentRecyclerView"/>
+                android:id="@+id/medicationScheduleRecyclerView"/>
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton

@@ -4,17 +4,18 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:id="@+id/mainLayoutAppointmentList"
-    android:padding="6dp">
+    android:id="@+id/mainLayoutScheduleList"
+    android:padding="1dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorHintText"
         app:cardCornerRadius="2dp"
-        android:id="@+id/cardViewAppointment"
+        android:id="@+id/cardViewMedicationSchedule"
         android:elevation="90dp"
         app:cardBackgroundColor="@color/colorCardView">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,9 +29,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/appointmentVenue"
+                    android:id="@+id/scheduleMedicine"
                     android:padding="5dp"
-                    android:text="Sample Venue"
+                    android:text="Sample Medicine"
                     android:layout_gravity="left"
                     android:textSize="18sp"
                     android:textColor="@color/colorBlack"
@@ -40,12 +41,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="right|center_vertical"
-                    android:id="@+id/appointmentSwitch"/>
+                    android:id="@+id/scheduleSwitch"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/appointmentCheckIcon"
+                    android:id="@+id/scheduleCheckIcon"
                     android:src="@drawable/ic_check"
                     android:layout_gravity="right"
                     android:visibility="invisible"/>
@@ -57,23 +58,31 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/appointmentDate"
+                    android:id="@+id/scheduleQuantity"
                     android:padding="5dp"
-                    android:text="03-02-2018"
+                    android:text="2 per 6hrs"
                     android:textColor="@color/colorBlack"
                     />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/appointmentTime"
                     android:padding="5dp"
-                    android:text="08:00:00"
-                    android:layout_marginLeft="15dp"
+                    android:text="|"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/colorBlack"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/scheduleStartedAt"
+                    android:padding="5dp"
+                    android:text="started at 06:00:00"
+                    android:layout_marginLeft="5dp"
                     android:textColor="@color/colorBlack"
                     />
 

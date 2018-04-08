@@ -9,7 +9,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -20,7 +25,9 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
+import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.AppointmentAdapter;
+import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
@@ -35,11 +42,14 @@ import java.util.Map;
 public class AppointmentActivity extends AppCompatActivity {
     private static final String TAG = MedicalHistoryActivity.class.getSimpleName();
     private Toolbar toolbar;
+    private TextView toolBarText;
+    private ImageView backIcon;
     private MaterialSearchView searchView;
     private ProgressDialog progressDialog;
     private SQLiteHandler sqLiteHandler;
     private SessionManager sessionManager;
     private RecyclerView recyclerView;
+    private Menu menu;
     private RecyclerView.LayoutManager layoutManager;
     private AppointmentAdapter appointmentAdapter;
 
@@ -72,31 +82,54 @@ public class AppointmentActivity extends AppCompatActivity {
         //Toolbar creation
         setToolbar((Toolbar) findViewById(R.id.toolbar));
         setSupportActionBar(getToolbar());
+
+        this.backIcon = findViewById(R.id.backIconAppointment);
+
+        // Toolbar Text
+        this.toolBarText = findViewById(R.id.toolBarTextAppointment);
+
         showDefaultToolBar();
 
-        //region Search Bar Functions
-        setSearchView((MaterialSearchView) findViewById(R.id.searchViewAllergic));
-        getSearchView().setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-            }
-            @Override
-            public void onSearchViewClosed() {
-            }
-        });
-        getSearchView().setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        //endregion
     }
+
+    //region onBackPressed
+    // Back press event
+    @Override
+    public void onBackPressed() {
+        if (getAppointmentAdapter().getSelectingCount() > 0){
+            getAppointmentAdapter().deseleceAll();
+            showDefaultToolBar();
+        }else
+            super.onBackPressed();
+    }
+    //endregion
+
+    // Back icon click in toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
+    }
+
+    //region onCreateOptionMenu and onOptionItemSelected
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.selectAllIcon){
+            getAppointmentAdapter().selectAll();
+        }else if(id == R.id.deleteIcon){
+            for(Appointment appointment : getAppointmentAdapter().getSelectedAppointments()){
+                Toast.makeText(this, "Schedule ID "+String.valueOf(appointment.getAppointmentId())
+                        +" is deleted!", Toast.LENGTH_LONG).show();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    //endregion
 
     //region Show RecyclerView in Appointment
     private void showRecyclerView(){
@@ -107,15 +140,16 @@ public class AppointmentActivity extends AppCompatActivity {
 
     //region Showing tool bars
     public void showDefaultToolBar() {
-        getSupportActionBar().setTitle(R.string.appointment);
-        getToolbar().setTitleTextColor(Color.parseColor("#000000"));
-        getToolbar().setLogo(R.drawable.ic_download);
+        getToolbar().getMenu().clear();
+        getToolBarText().setText("Appointment");
+        getBackIcon().setVisibility(View.VISIBLE);
     }
 
     public void showDeletingToolBar() {
-        getSupportActionBar().setTitle("");
-        getToolbar().setLogo(null);
         getToolbar().getMenu().clear();
+        getMenuInflater().inflate(R.menu.delete_all, menu);
+        getToolBarText().setText("");
+        getBackIcon().setVisibility(View.INVISIBLE);
     }
     //endregion
 
@@ -282,6 +316,30 @@ public class AppointmentActivity extends AppCompatActivity {
 
     public void setAppointmentAdapter(AppointmentAdapter appointmentAdapter) {
         this.appointmentAdapter = appointmentAdapter;
+    }
+
+    public TextView getToolBarText() {
+        return toolBarText;
+    }
+
+    public void setToolBarText(TextView toolBarText) {
+        this.toolBarText = toolBarText;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+    public ImageView getBackIcon() {
+        return backIcon;
+    }
+
+    public void setBackIcon(ImageView backIcon) {
+        this.backIcon = backIcon;
     }
     //endregion
 }

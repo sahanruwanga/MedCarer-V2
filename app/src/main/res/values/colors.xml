@@ -12,6 +12,7 @@
     <color name="colorEditText">#d4d4d4</color>
     <color name="colorWarning">#FFF10004</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorCardView">#d4b4bc</color>
 
 
 </resources>

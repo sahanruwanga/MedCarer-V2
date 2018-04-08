@@ -40,7 +40,8 @@
         <activity android:name=".activity.MedicationScheduleActivity" />
         <activity android:name=".activity.NewMedicationScheduleActivity" />
         <activity android:name=".activity.ViewAppointmentActivity" />
-        <activity android:name=".activity.UpdateAppointmentActivity"></activity>
+        <activity android:name=".activity.UpdateAppointmentActivity" />
+        <activity android:name=".activity.UpdateMedicationScheduleActivity" />
     </application>
 
 </manifest>
