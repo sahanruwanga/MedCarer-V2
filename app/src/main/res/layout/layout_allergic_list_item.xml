@@ -45,11 +45,6 @@ android:padding="1dp">
             android:layout_height="wrap_content"
             android:text="Sample createdAt"
             android:id="@+id/descriptionAllergic"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date"
-            android:id="@+id/dateAllergic"/>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

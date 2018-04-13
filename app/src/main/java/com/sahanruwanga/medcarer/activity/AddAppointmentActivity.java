@@ -216,6 +216,20 @@ public class AddAppointmentActivity extends AppCompatActivity {
         return isSuccessful[0];
     }
 
+    // onClick for Calender icon
+    public void openCalender(View view) {
+        setDate(getDateText().getId());
+    }
+
+    // onClick for clock for appointment time
+    public void openClockForAppointmentTime(View view) {
+        setTime(getTimeText().getId());
+    }
+
+    // onClick for clock for notify time
+    public void openClockForNotifyTime(View view) {
+        setTime(getNotifyTimeText().getId());
+    }
     private void clearAll(){
         getReasonText().setText("");
         getVenueText().setText("");
@@ -302,6 +316,5 @@ public class AddAppointmentActivity extends AppCompatActivity {
     public void setNotifyTimeText(EditText notifyTimeText) {
         this.notifyTimeText = notifyTimeText;
     }
-
     //endregion
 }

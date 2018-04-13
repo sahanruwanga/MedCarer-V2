@@ -98,12 +98,12 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.selectAllIcon){
-            getMedicationScheduleAdapter().selectAll();
+//            getMedicationScheduleAdapter().selectAll();
         }else if(id == R.id.deleteIcon){
-            for(MedicationSchedule medicationSchedule : getMedicationScheduleAdapter().getSelectedSchedules()){
-                Toast.makeText(this, "Schedule ID "+String.valueOf(medicationSchedule.getScheduleId())
-                        +" is deleted!", Toast.LENGTH_LONG).show();
-            }
+//            for(MedicationSchedule medicationSchedule : getMedicationScheduleAdapter().getSelectedSchedules()){
+//                Toast.makeText(this, "Schedule ID "+String.valueOf(medicationSchedule.getScheduleId())
+//                        +" is deleted!", Toast.LENGTH_LONG).show();
+//            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -128,28 +128,31 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     // Back press event
     @Override
     public void onBackPressed() {
-        if (getMedicationScheduleAdapter().getSelectingCount() > 0){
-            getMedicationScheduleAdapter().deseleceAll();
-            showDefaultToolBar();
-        }else
-            super.onBackPressed();
+//        if (getMedicationScheduleAdapter().getSelectingCount() > 0){
+//            getMedicationScheduleAdapter().deseleceAll();
+//            showDefaultToolBar();
+//        }else
+//            super.onBackPressed();
     }
     //endregion
 
-    private List<MedicationSchedule> getSch(){
+    private List<MedicationSchedule> getSch() {
         List<MedicationSchedule> medicationSchedules = new ArrayList<>();
-        MedicationSchedule mds = new MedicationSchedule();
-        mds.setMedicine("Paracetmol");
-        mds.setQuantity("2");
-        mds.setNotifyTime("00:10:00");
-        mds.setStartTime("08:00:00");
-        medicationSchedules.add(mds);
+        MedicationSchedule mds;
+        for(int i=0; i<10; i++){
+            mds = new MedicationSchedule();
+            mds.setMedicine("Paracetmol");
+            mds.setQuantity("2");
+            mds.setNotifyTime("00:10:00");
+            mds.setStartTime("08:00:00");
+            medicationSchedules.add(mds);
+        }
         return medicationSchedules;
     }
 
     // Show saved data in Recycler View
     private void showRecyclerView() {
-        this.medicationScheduleAdapter = new MedicationScheduleAdapter(getSch(),
+        this.medicationScheduleAdapter = new MedicationScheduleAdapter(getSqLiteHandler().getMedicationScheduleDetails(),
                 this, getRecyclerView());
         getRecyclerView().setAdapter(getMedicationScheduleAdapter());
     }

@@ -39,183 +39,167 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <ScrollView
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:paddingBottom="10dp"
+        android:layout_margin="5dp"
         android:layout_below="@+id/toolbarAddAppointment">
-
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.CardView
+            android:layout_height="match_parent"
+            android:layout_margin="15dp">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/reasonLayout"
-                app:cardCornerRadius="8dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reason"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/reasonAppointment"
-                    android:hint="Reason"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
+                    android:layout_margin="5dp"
                     android:drawableLeft="@drawable/ic_create"
                     android:drawablePadding="5dp"
+                    android:maxLines="1"
                     android:inputType="text"/>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/venueLayout"
-                android:layout_below="@+id/reasonLayout"
-                app:cardCornerRadius="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Venue"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/venueAppointment"
-                    android:hint="Venue"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_notification"
+                    android:layout_margin="5dp"
+                    android:drawableLeft="@drawable/ic_create"
                     android:drawablePadding="5dp"
+                    android:maxLines="1"
                     android:inputType="text"/>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/doctorLayout"
-                android:layout_below="@+id/venueLayout"
-                app:cardCornerRadius="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Doctor"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/doctorAppointment"
-                    android:hint="Doctor"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
+                    android:layout_margin="5dp"
                     android:drawableLeft="@drawable/ic_visibility"
                     android:drawablePadding="5dp"
-                    android:inputType="text"/>
-            </android.support.v7.widget.CardView>
+                    android:maxLines="1"
+                    android:inputType="textPersonName"/>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/contactLayout"
-                android:layout_below="@+id/doctorLayout"
-                app:cardCornerRadius="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clinic Contact"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/clinicContactAppointment"
-                    android:hint="Clinic Contact Number"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_download"
+                    android:layout_margin="5dp"
+                    android:drawableLeft="@drawable/ic_create"
                     android:drawablePadding="5dp"
+                    android:maxLines="1"
+                    android:maxLength="10"
                     android:inputType="phone"/>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/dateLayout"
-                android:layout_below="@+id/contactLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/dateAppointment"
-                    android:hint="Date"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_aboutme"
-                    android:drawablePadding="5dp"
-                    android:maxLines="1"
-                    android:inputType="date"/>
-            </android.support.v7.widget.CardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Appointment Date"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_doctor"
+                        android:onClick="openCalender"/>
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/dateAppointment"
+                        android:text="9999-99-99"
+                        android:layout_margin="5dp"
+                        android:maxLines="1"
+                        android:inputType="date"/>
+                </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/timeLayout"
-                android:layout_below="@+id/dateLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/timeAppointment"
-                    android:hint="Appointment time"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_aboutme"
-                    android:drawablePadding="5dp"
-                    android:maxLines="1"
-                    android:inputType="time"/>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/notifyTimeLayout"
-                android:layout_below="@+id/timeLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/notifyTimeAppointment"
-                    android:hint="Notify Time"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_aboutme"
-                    android:drawablePadding="5dp"
-                    android:maxLines="1"
-                    android:inputType="time"/>
-            </android.support.v7.widget.CardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Appointment Time"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_doctor"
+                        android:onClick="openClockForAppointmentTime"/>
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/timeAppointment"
+                        android:text="00:00:00"
+                        android:layout_margin="5dp"
+                        android:maxLines="1"
+                        android:inputType="time"/>
+                </LinearLayout>
 
-        </RelativeLayout>
-    </ScrollView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notify Time"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_doctor"
+                        android:onClick="openClockForNotifyTime"/>
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/notifyTimeAppointment"
+                        android:text="00:00:00"
+                        android:layout_margin="5dp"
+                        android:maxLines="1"
+                        android:inputType="time"/>
+                </LinearLayout>
+
+
+        </LinearLayout>
+        </ScrollView>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

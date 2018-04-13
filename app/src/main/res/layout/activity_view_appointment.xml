@@ -43,17 +43,15 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        app:cardCornerRadius="8dp"
-        android:layout_centerVertical="true"
-        card_view:cardBackgroundColor="@color/colorCardView">
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp">
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,110 +59,79 @@
                 android:orientation="vertical"
                 android:layout_margin="5dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Venue:"
+                        android:text="Venue"
+                        android:textSize="18sp"
                         android:textColor="@color/colorBlack"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/venueAppointmentDetail"
-                        android:textColor="@color/colorBlack" />
-                </LinearLayout>
+                        android:layout_margin="5dp"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Contact:"
+                        android:text="Contact"
+                        android:textSize="18sp"
                         android:textColor="@color/colorBlack"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/contactAppointmentDetail"
-                        android:text="0710730961"
-                        android:textStyle="bold"
                         android:textColor="@color/colorLink"
+                        android:layout_margin="5dp"
                         android:onClick="openInDialPad"/>
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date:"
+                        android:text="Date"
+                        android:textSize="18sp"
                         android:textColor="@color/colorBlack"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/dateAppointmentDetail"
-                        android:textColor="@color/colorBlack" />
-                </LinearLayout>
+                        android:layout_margin="5dp"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Time:"
+                        android:text="Time"
+                        android:textSize="18sp"
                         android:textColor="@color/colorBlack"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/timeAppointmentDetail"
-                        android:textColor="@color/colorBlack" />
-                </LinearLayout>
+                        android:layout_margin="5dp"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Reason:"
+                        android:text="Reason"
+                        android:textSize="18sp"
                         android:textColor="@color/colorBlack"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/reasonAppointmentDetail"
-                        android:textColor="@color/colorBlack" />
-                </LinearLayout>
+                        android:layout_margin="5dp"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Doctor:"
+                        android:text="Doctor"
+                        android:textSize="18sp"
                         android:textColor="@color/colorBlack"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/doctorAppointmentDetail"
-                        android:textColor="@color/colorBlack"/>
-                </LinearLayout>
+                        android:layout_margin="5dp"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"

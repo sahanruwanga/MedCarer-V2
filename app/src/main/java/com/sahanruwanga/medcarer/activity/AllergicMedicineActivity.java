@@ -23,8 +23,6 @@ import com.sahanruwanga.medcarer.app.AllergicMedicine;
 import com.sahanruwanga.medcarer.app.AllergicMedicineAdapter;
 import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
-import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
-import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -206,7 +204,7 @@ public class AllergicMedicineActivity extends AppCompatActivity {
         return allergicMedicines;
     }
 
-    //region Show RecyclerView in Medical History
+    //region Show RecyclerView in Allergic Medicine
     private void showRecyclerView(){
         this.allergicMedicineAdapter = new AllergicMedicineAdapter(getMedicines(), this, getRecyclerView());
         getRecyclerView().setAdapter(getAllergicMedicineAdapter());
@@ -260,6 +258,9 @@ public class AllergicMedicineActivity extends AppCompatActivity {
     //endregion
 
     public void openAddAllergicMedicine(View view) {
+        Intent intent = new Intent(this, NewAllergicMedicineActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public AllergicMedicineAdapter getAllergicMedicineAdapter() {
