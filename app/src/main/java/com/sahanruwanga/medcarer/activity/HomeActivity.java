@@ -1,5 +1,7 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -12,8 +14,7 @@ import android.view.MenuItem;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
-import com.sahanruwanga.medcarer.app.Appointment;
-import com.sahanruwanga.medcarer.app.MedicationSchedule;
+import com.sahanruwanga.medcarer.helper.NetworkStateChecker;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -26,10 +27,17 @@ public class HomeActivity extends AppCompatActivity
     private SQLiteHandler sqLiteHandler;
     private SessionManager sessionManager;
 
+    private NetworkStateChecker networkStateChecker;
+    private IntentFilter intentFilter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        this.networkStateChecker = new NetworkStateChecker();
+        this.intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(getNetworkStateChecker(), getIntentFilter());
 
         MaterialSearchView searchView = findViewById(R.id.searchViewMH);
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
@@ -90,6 +98,7 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }else {
+            unregisterReceiver(getNetworkStateChecker());
             super.onBackPressed();
         }
     }
@@ -183,5 +192,21 @@ public class HomeActivity extends AppCompatActivity
 
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
+    }
+
+    public NetworkStateChecker getNetworkStateChecker() {
+        return networkStateChecker;
+    }
+
+    public void setNetworkStateChecker(NetworkStateChecker networkStateChecker) {
+        this.networkStateChecker = networkStateChecker;
+    }
+
+    public IntentFilter getIntentFilter() {
+        return intentFilter;
+    }
+
+    public void setIntentFilter(IntentFilter intentFilter) {
+        this.intentFilter = intentFilter;
     }
 }

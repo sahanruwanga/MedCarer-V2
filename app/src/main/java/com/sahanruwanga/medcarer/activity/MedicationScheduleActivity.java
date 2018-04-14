@@ -60,6 +60,9 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
         // Session manager
         this.sessionManager = new SessionManager(getApplicationContext());
+        // Progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
 
         // Method call to save data in SQLite if not exist
         if(!getSessionManager().isMedicationScheduleCreated()){
@@ -74,9 +77,7 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         // Add data into RecyclerView
         showRecyclerView();
 
-        // Progress dialog
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+
 
         // TextView in toolbar
         this.setToolBarText((TextView)findViewById(R.id.toolBarTextMedicationSchedule));
@@ -132,7 +133,7 @@ public class MedicationScheduleActivity extends AppCompatActivity {
 //            getMedicationScheduleAdapter().deseleceAll();
 //            showDefaultToolBar();
 //        }else
-//            super.onBackPressed();
+            super.onBackPressed();
     }
     //endregion
 
@@ -163,7 +164,7 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         // Tag used to cancel the request
         String tag_string_req = "req_medication_schedule";
 
-        progressDialog.setMessage("Retrieving data ...");
+        getProgressDialog().setMessage("Retrieving data ...");
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,

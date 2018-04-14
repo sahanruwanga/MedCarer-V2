@@ -23,6 +23,11 @@ import java.util.List;
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = SQLiteHandler.class.getSimpleName();
+    private static final int DELETED = 3;
+    private static final int UPDATED = 2;
+    private static final int SAVED = 1;
+    private static final int LOADED = 0;
+
 
     // All Static variables
     // Database Version
@@ -45,6 +50,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static  final String KEY_NOTIFY_TIME = "notify_time";
     private static  final String KEY_DESCRIPTION = "description";
     private static final String KEY_CREATED_AT = "created_at";
+    private static final String KEY_SYNC_STATUS = "sync_status";
+    private static final String KEY_NOTIFICATION_STATUS = "notification_status";
+    private static final String KEY_STATUS_TYPE = "status_type";
 
     // User Table Columns names
     private static final String KEY_NAME = "user_name";
@@ -87,10 +95,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Create Medical History Table query
     private final String CREATE_MEDICAL_HISTORY_TABLE = "CREATE TABLE " + TABLE_MEDICAL_HISTORY + "("
-            + KEY_RECORD_ID + " INTEGER PRIMARY KEY," + KEY_DISEASE + " TEXT,"
+            + KEY_RECORD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DISEASE + " TEXT,"
             + KEY_MEDICINE + " TEXT," + KEY_DURATION + " TEXT," + KEY_ALLERGIC + " TEXT,"
             + KEY_DOCTOR + " TEXT," + KEY_CONTACT + " TEXT," + KEY_DESCRIPTION + " TEXT,"
-            + KEY_CREATED_AT + " TEXT" + ")";
+            + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT," + KEY_STATUS_TYPE + " TINYINT" + ")";
 
     // Create Appointment table query
     private final String CREATE_APPOINTMENT_TABLE = "CREATE TABLE " + TABLE_APPOINTMENT + "("
@@ -195,12 +203,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //region Medical History Details
     // Storing Medical Record in database
-    public void addMedicalRecord(int record_id, String disease, String medicine, String duration,
-                                 String allergic, String doctor, String contact, String description, String createdAt) {
+    public long addMedicalRecord(String disease, String medicine, String duration,
+                                 String allergic, String doctor, String contact, String description,
+                                 String createdAt, int syncStatus) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_RECORD_ID, record_id); // Disease
         values.put(KEY_DISEASE, disease); // Disease
         values.put(KEY_MEDICINE, medicine); // Medicine
         values.put(KEY_DURATION, duration); // Duration
@@ -209,6 +217,35 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_CONTACT, contact); // Contact
         values.put(KEY_DESCRIPTION, description); // Description
         values.put(KEY_CREATED_AT, createdAt);      // Created At
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, SAVED);
+
+        // Inserting Row
+        long id = db.insert(TABLE_MEDICAL_HISTORY, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New medical record is inserted into sqlite: " + id);
+        return id;
+    }
+
+    // Storing Medical Record in database from centralized database
+    public void addMedicalRecordFromMySQL(int recordId, String disease, String medicine, String duration,
+                                 String allergic, String doctor, String contact, String description,
+                                 String createdAt, int syncStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_RECORD_ID, recordId); // Record ID from MySQL database
+        values.put(KEY_DISEASE, disease); // Disease
+        values.put(KEY_MEDICINE, medicine); // Medicine
+        values.put(KEY_DURATION, duration); // Duration
+        values.put(KEY_ALLERGIC, allergic); // Allergic
+        values.put(KEY_DOCTOR, doctor); // Doctor
+        values.put(KEY_CONTACT, contact); // Contact
+        values.put(KEY_DESCRIPTION, description); // Description
+        values.put(KEY_CREATED_AT, createdAt);      // Created At
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, LOADED);
 
         // Inserting Row
         long id = db.insert(TABLE_MEDICAL_HISTORY, null, values);
@@ -220,7 +257,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Getting medical records from database
     public List<MedicalRecord> getMedicalRecords() {
         List<MedicalRecord> medicalRecords = new LinkedList<>();
-        String query = "SELECT  * FROM " + TABLE_MEDICAL_HISTORY;
+        String query = "SELECT  * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " + KEY_STATUS_TYPE + " IN (0,1,2);";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
@@ -236,6 +273,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 medicalRecord.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
                 medicalRecord.setContact(cursor.getString(cursor.getColumnIndex(KEY_CONTACT)));
                 medicalRecord.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                medicalRecord.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicalRecord.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
                 medicalRecords.add(medicalRecord);
             }while (cursor.moveToNext());
         }
@@ -244,6 +283,128 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return medicalRecords;
     }
+
+    // Update the sync status in SQLite
+    public boolean updateSyncStatus(int recordID, int syncStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_MEDICAL_HISTORY, contentValues, KEY_RECORD_ID + "=" + recordID, null);
+        db.close();
+        return true;
+    }
+
+    // Make disappear when deleted in offline
+    public void makeDeletedMedicalRecord(int recordID, int syncStatus){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_STATUS_TYPE, "DELETED");
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_MEDICAL_HISTORY, contentValues, KEY_RECORD_ID + "=" + recordID, null);
+        db.close();
+    }
+
+    // Update medical record details
+    public boolean updateMedicalRecord(int recordID, int syncStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_MEDICAL_HISTORY, contentValues, KEY_RECORD_ID + "=" + recordID, null);
+        db.close();
+        return true;
+    }
+
+    // Permanently delete from SQLite
+    public void deleteMedicalRecord(int recordID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MEDICAL_HISTORY, KEY_RECORD_ID + "=" + recordID, null);
+        db.close();
+    }
+
+    // Get saved medical records in offline
+    public List<MedicalRecord> getUnsyncedSavedMedicalRecords() {
+        List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
+                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + SAVED;
+        Cursor cursor = db.rawQuery(query, null);
+        MedicalRecord medicalRecord;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicalRecord = new MedicalRecord();
+                medicalRecord.setRecord_id(cursor.getInt(cursor.getColumnIndex(KEY_RECORD_ID)));
+                medicalRecord.setDisease(cursor.getString(cursor.getColumnIndex(KEY_DISEASE)));
+                medicalRecord.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicalRecord.setDuration(cursor.getString(cursor.getColumnIndex(KEY_DURATION)));
+                medicalRecord.setAllergic(cursor.getString(cursor.getColumnIndex(KEY_ALLERGIC)));
+                medicalRecord.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                medicalRecord.setContact(cursor.getString(cursor.getColumnIndex(KEY_CONTACT)));
+                medicalRecord.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                medicalRecord.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicalRecord.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                unSyncedMedicalRecords.add(medicalRecord);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedMedicalRecords;
+    }
+
+    // Get deleted medical records in offline
+    public List<MedicalRecord> getUnsyncedDeletedMedicalRecords() {
+        List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
+                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + DELETED;
+        Cursor cursor = db.rawQuery(query, null);
+        MedicalRecord medicalRecord;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicalRecord = new MedicalRecord();
+                medicalRecord.setRecord_id(cursor.getInt(cursor.getColumnIndex(KEY_RECORD_ID)));
+                medicalRecord.setDisease(cursor.getString(cursor.getColumnIndex(KEY_DISEASE)));
+                medicalRecord.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicalRecord.setDuration(cursor.getString(cursor.getColumnIndex(KEY_DURATION)));
+                medicalRecord.setAllergic(cursor.getString(cursor.getColumnIndex(KEY_ALLERGIC)));
+                medicalRecord.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                medicalRecord.setContact(cursor.getString(cursor.getColumnIndex(KEY_CONTACT)));
+                medicalRecord.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                medicalRecord.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicalRecord.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                unSyncedMedicalRecords.add(medicalRecord);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedMedicalRecords;
+    }
+
+    // Get updated medical records in offline
+    public List<MedicalRecord> getUnsyncedUpdatedMedicalRecords() {
+        List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
+                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + UPDATED;
+        Cursor cursor = db.rawQuery(query, null);
+        MedicalRecord medicalRecord;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicalRecord = new MedicalRecord();
+                medicalRecord.setRecord_id(cursor.getInt(cursor.getColumnIndex(KEY_RECORD_ID)));
+                medicalRecord.setDisease(cursor.getString(cursor.getColumnIndex(KEY_DISEASE)));
+                medicalRecord.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicalRecord.setDuration(cursor.getString(cursor.getColumnIndex(KEY_DURATION)));
+                medicalRecord.setAllergic(cursor.getString(cursor.getColumnIndex(KEY_ALLERGIC)));
+                medicalRecord.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                medicalRecord.setContact(cursor.getString(cursor.getColumnIndex(KEY_CONTACT)));
+                medicalRecord.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                medicalRecord.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicalRecord.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                unSyncedMedicalRecords.add(medicalRecord);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedMedicalRecords;
+    }
+
     //endregion
 
     //region Appointment Details

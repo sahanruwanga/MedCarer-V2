@@ -26,6 +26,8 @@ import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +45,9 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
 
     private ProgressDialog pDialog;
     private SQLiteHandler sqLiteHandler;
+
+    public static final int SYNCED_WITH_SERVER = 1;
+    public static final int NOT_SYNCED_WITH_SERVER = 0;
 
 
 
@@ -103,17 +108,26 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         String doctor = getDoctorName().getText().toString().trim();
         String contact = getContact().getText().toString().trim();
         String description = getDescription().getText().toString().trim();
+        // Get current date time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createdAt = dateFormat.format(new Date());
         if(!disease.isEmpty() && !medicine.isEmpty() && !getDate1().getText().toString().isEmpty() &&
                 !getDate2().getText().toString().isEmpty() && !allergic.isEmpty()){
-            saveMedicalRecord(disease, medicine, duration, allergic,
-                    doctor, contact, description);
+            long localId = sqLiteHandler.addMedicalRecord(disease, medicine,
+                    duration, allergic, doctor, contact, description, createdAt, NOT_SYNCED_WITH_SERVER);
+
+            Toast.makeText(getApplicationContext(), "Record successfully inserted!", Toast.LENGTH_LONG).show();
+            clearAll();
+            saveMedicalRecord(String.valueOf(localId), disease, medicine, duration, allergic,
+                    doctor, contact, description, createdAt);
         }else{
             Toast.makeText(this, "Please enter required details!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void saveMedicalRecord(final String disease, final String medicine, final String duration,
-                                   final String allergic, final String doctor, final String contact, final String description){
+    private void saveMedicalRecord(final String localId, final String disease, final String medicine, final String duration,
+                                   final String allergic, final String doctor, final String contact,
+                                   final String description, final String createdAt){
         // Tag used to cancel the request
         String tag_string_req = "req_insert_medical_record";
 
@@ -135,27 +149,20 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
                         // Record successfully stored in MySQL
                         // Now store the record in sqlite
 
-                        JSONObject medicalRecord = jObj.getJSONObject("medical_record");
-                        String record_id = medicalRecord.getString("record_id");
-                        String created_at = medicalRecord.getString("created_at");
+                        // whole comment for previous one
+//                        JSONObject medicalRecord = jObj.getJSONObject("medical_record");
+//                        String record_id = medicalRecord.getString("record_id");
+//                        String created_at = medicalRecord.getString("created_at");
 
                         // Inserting row in users table
-                        sqLiteHandler.addMedicalRecord(Integer.parseInt(record_id), disease, medicine,
-                                duration, allergic, doctor, contact, description, created_at);
-
-                        Toast.makeText(getApplicationContext(), "Record successfully inserted!", Toast.LENGTH_LONG).show();
-                        clearAll();
+                        sqLiteHandler.updateSyncStatus(Integer.parseInt(localId), SYNCED_WITH_SERVER);
                     } else {
-
                         // Error occurred in registration. Get the error
                         // message
                         String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Enter correct details again",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -164,8 +171,6 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
             }
         }) {
@@ -175,6 +180,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", User.getUserId());
+                params.put("local_record_id", localId);
                 params.put("disease", disease);
                 params.put("medicine", medicine);
                 params.put("duration", duration);
@@ -182,6 +188,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
                 params.put("doctor", doctor);
                 params.put("contact", contact);
                 params.put("description", description);
+                params.put("created_at", createdAt);
 
                 return params;
             }

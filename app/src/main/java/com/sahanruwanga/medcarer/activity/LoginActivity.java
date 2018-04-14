@@ -1,6 +1,8 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.sahanruwanga.medcarer.app.AppConfig;
 import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.NetworkStateChecker;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -40,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 
         // Email and Password fields initialization
         setEmail((EditText)findViewById(R.id.email));

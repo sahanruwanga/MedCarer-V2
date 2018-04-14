@@ -15,12 +15,15 @@ public class MedicalRecord implements Parcelable{
     private String doctor;
     private String contact;
     private String description;
+    private String createdAt;
     private int record_id;
+    private int syncStatus;
+    private int statusType;
 
     public MedicalRecord(){}
 
-    public MedicalRecord(int record_id, String disease, String medicine, String duration,
-                         String allergic, String doctor, String contact, String description){
+    public MedicalRecord(int record_id, String disease, String medicine, String duration, String allergic,
+                         String doctor, String contact, String description, int syncStatus){
         this.setRecord_id(record_id);
         this.setDisease(disease);
         this.setMedicine(medicine);
@@ -29,6 +32,7 @@ public class MedicalRecord implements Parcelable{
         this.setDoctor(doctor);
         this.setContact(contact);
         this.setDescription(description);
+        this.syncStatus = syncStatus;
     }
 
 
@@ -135,6 +139,30 @@ public class MedicalRecord implements Parcelable{
         parcel.writeString(contact);
         parcel.writeString(description);
         parcel.writeInt(record_id);
+    }
+
+    public int getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(int syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getStatusType() {
+        return statusType;
+    }
+
+    public void setStatusType(int statusType) {
+        this.statusType = statusType;
     }
     //endregion
 }

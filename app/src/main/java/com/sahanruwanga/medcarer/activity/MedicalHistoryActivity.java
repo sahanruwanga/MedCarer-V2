@@ -2,7 +2,11 @@ package com.sahanruwanga.medcarer.activity;
 
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +33,7 @@ import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.PDFCreator;
 import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.NetworkStateChecker;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
@@ -54,11 +59,15 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private MedicalHistoryAdapter medicalHistoryAdapter;
 
+    public static final int SYNCED_WITH_SERVER = 1;
+    public static final int NOT_SYNCED_WITH_SERVER = 0;
+
     //region onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_history);
+
 
         // SQLiteHelper initialization
         this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
@@ -148,12 +157,66 @@ public class MedicalHistoryActivity extends AppCompatActivity {
             getMedicalHistoryAdapter().selectAll();
         }else if(id == R.id.deleteIcon){
             for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()){
-                Toast.makeText(this, "Record ID "+String.valueOf(medicalRecord.getRecord_id())
-                        +" is deleted!", Toast.LENGTH_LONG).show();
+                getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
+                showDefaultToolBar();
+                showRecyclerView();
+                deleteMedicalRecord(User.getUserId(), String.valueOf(medicalRecord.getRecord_id()));
             }
         }
         return super.onOptionsItemSelected(item);
     }
+    //endregion
+
+    //region Delete medical record from MySQL
+    private void deleteMedicalRecord(final String userId, final String localRecordId){
+        progressDialog.setMessage("Deleting Record ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Method.POST,
+                AppConfig.URL_DELETE_MEDICAL_RECORD, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Medical Record Deleting: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        getSqLiteHandler().deleteMedicalRecord(Integer.parseInt(localRecordId));
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Deleting Error: " + error.getMessage());
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", userId);
+                params.put("local_record_id", localRecordId);
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
     //endregion
 
     //region opendPdf and savePdf Functions
@@ -265,10 +328,11 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                             String contact = medicalRecord.getString(5);
                             String description = medicalRecord.getString(6);
                             String created_at = medicalRecord.getString(7);
+                            String localRecordID = medicalRecord.getString(8);
 
-                            getSqLiteHandler().addMedicalRecord(Integer.parseInt(records.getString(i)),
+                            getSqLiteHandler().addMedicalRecordFromMySQL(Integer.parseInt(localRecordID),
                                     disease, medicine, duration, allergic,
-                                    doctor, contact, description, created_at);
+                                    doctor, contact, description, created_at, SYNCED_WITH_SERVER);
                         }
 
                     } else {
@@ -280,7 +344,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Please activate network access and Try again", Toast.LENGTH_LONG).show();
                 }
 
             }
