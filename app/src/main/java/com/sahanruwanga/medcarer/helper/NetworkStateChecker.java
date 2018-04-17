@@ -51,7 +51,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
 
                 // Getting all the un-synced saved medical records
-                List<MedicalRecord> saveddMedicalRecords = sqLiteHandler.getUnsyncedDeletedMedicalRecords();
+                List<MedicalRecord> saveddMedicalRecords = sqLiteHandler.getUnsyncedSavedMedicalRecords();
                 for(MedicalRecord medicalRecord : saveddMedicalRecords){
                     saveMedicalRecord(medicalRecord);
                 }
@@ -60,6 +60,12 @@ public class NetworkStateChecker extends BroadcastReceiver {
                 List<MedicalRecord> deletedMedicalRecords = sqLiteHandler.getUnsyncedDeletedMedicalRecords();
                 for(MedicalRecord medicalRecord : deletedMedicalRecords){
                     deleteMedicalRecord(String.valueOf(medicalRecord.getRecord_id()));
+                }
+
+                // Getting all the un-synced updated medical records
+                List<MedicalRecord> updatedMedicalRecords = sqLiteHandler.getUnsyncedUpdatedMedicalRecords();
+                for(MedicalRecord medicalRecord : updatedMedicalRecords){
+                    updateMedicalRecord(medicalRecord);
                 }
             }
         }
@@ -150,6 +156,58 @@ public class NetworkStateChecker extends BroadcastReceiver {
             }
 
         };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void updateMedicalRecord(final MedicalRecord medicalRecord){
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATAE_MEDICAL_RECORD, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // Updating the status in SQLite
+                        sqLiteHandler.updateSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
+
+                        // Sending the broadcast to refresh the list
+                        context.sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
+                    } else {
+                        String errorMsg = jObj.getString("error_msg");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", User.getUserId());
+                params.put("local_record_id", String.valueOf(medicalRecord.getRecord_id()));
+                params.put("disease", medicalRecord.getDisease());
+                params.put("medicine", medicalRecord.getMedicine());
+                params.put("duration", medicalRecord.getDuration());
+                params.put("allergic", medicalRecord.getAllergic());
+                params.put("doctor", medicalRecord.getDoctor());
+                params.put("contact", medicalRecord.getContact());
+                params.put("description", medicalRecord.getDescription());
+                return params;
+            }
+        };
+
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq);
     }

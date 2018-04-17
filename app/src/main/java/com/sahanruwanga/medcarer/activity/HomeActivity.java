@@ -1,5 +1,7 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ public class HomeActivity extends AppCompatActivity
 
     private NetworkStateChecker networkStateChecker;
     private IntentFilter intentFilter;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

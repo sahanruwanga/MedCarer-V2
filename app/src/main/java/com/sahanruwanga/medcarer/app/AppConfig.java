@@ -33,6 +33,9 @@ public class AppConfig {
     // Server medication schedule url
     public static String URL_MEDICATION_SCHEDULE = "http://192.168.8.101/med_carer/medication_schedule.php";
 
-    // Server medication schedule url
+    // Server delete medical record url
     public static String URL_DELETE_MEDICAL_RECORD = "http://192.168.8.101/med_carer/delete_medical_record.php";
+
+    // Server update medical record url
+    public static String URL_UPDATAE_MEDICAL_RECORD = "http://192.168.8.101/med_carer/update_medical_record.php";
 }

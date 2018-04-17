@@ -298,18 +298,28 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void makeDeletedMedicalRecord(int recordID, int syncStatus){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_STATUS_TYPE, "DELETED");
+        contentValues.put(KEY_STATUS_TYPE, DELETED);
         contentValues.put(KEY_SYNC_STATUS, syncStatus);
         db.update(TABLE_MEDICAL_HISTORY, contentValues, KEY_RECORD_ID + "=" + recordID, null);
         db.close();
     }
 
     // Update medical record details
-    public boolean updateMedicalRecord(int recordID, int syncStatus) {
+    public boolean updateMedicalRecord(int recordId, String disease, String medicine,
+                                       String duration, String allergic, String doctor,
+                                       String contact, String description, int syncStatus) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_DISEASE, disease);
+        contentValues.put(KEY_MEDICINE, medicine);
+        contentValues.put(KEY_DURATION, duration);
+        contentValues.put(KEY_ALLERGIC, allergic);
+        contentValues.put(KEY_DOCTOR, doctor);
+        contentValues.put(KEY_CONTACT, contact);
+        contentValues.put(KEY_DESCRIPTION, description);
         contentValues.put(KEY_SYNC_STATUS, syncStatus);
-        db.update(TABLE_MEDICAL_HISTORY, contentValues, KEY_RECORD_ID + "=" + recordID, null);
+        contentValues.put(KEY_STATUS_TYPE, UPDATED);
+        db.update(TABLE_MEDICAL_HISTORY, contentValues, KEY_RECORD_ID + "=" + recordId, null);
         db.close();
         return true;
     }
@@ -326,7 +336,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
-                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + SAVED;
+                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + SAVED + ";";
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
 
@@ -354,7 +364,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
-                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + DELETED;
+                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + DELETED + ";";
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
 
@@ -382,7 +392,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
-                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + UPDATED;
+                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + UPDATED + ";";
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
 

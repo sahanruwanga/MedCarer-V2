@@ -120,6 +120,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
             clearAll();
             saveMedicalRecord(String.valueOf(localId), disease, medicine, duration, allergic,
                     doctor, contact, description, createdAt);
+            finish();
         }else{
             Toast.makeText(this, "Please enter required details!", Toast.LENGTH_LONG).show();
         }

@@ -4,11 +4,13 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,6 +46,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MedicalHistoryActivity extends AppCompatActivity {
@@ -67,7 +70,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_history);
-
 
         // SQLiteHelper initialization
         this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
@@ -156,14 +158,48 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         }else if(id == R.id.selectAllIcon){
             getMedicalHistoryAdapter().selectAll();
         }else if(id == R.id.deleteIcon){
-            for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()){
-                getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
-                showDefaultToolBar();
-                showRecyclerView();
-                deleteMedicalRecord(User.getUserId(), String.valueOf(medicalRecord.getRecord_id()));
-            }
+            // To confirm the deletion
+            openDialogBox();
         }
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+    //region Dialog Box
+    // Open dialog box after pressing delete icon
+    private void openDialogBox(){
+        int selectedCount = getMedicalHistoryAdapter().getSelectingCount();
+        String message = " record will be deleted.";
+        if(selectedCount > 1)
+            message = " records will be deleted.";
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(String.valueOf(selectedCount) + message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "DELETE",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()) {
+                            getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
+                            showDefaultToolBar();
+                            showRecyclerView();
+                            deleteMedicalRecord(User.getUserId(), String.valueOf(medicalRecord.getRecord_id()));
+                        }
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "CANCEL",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
     //endregion
 
