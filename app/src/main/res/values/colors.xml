@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#80bab0</color>
-    <color name="colorPrimaryDark">#49a399</color>
+    <color name="colorPrimary">#22d3ff</color>
+    <color name="colorPrimaryDark">#6bc2de</color>
     <color name="colorAccent">#67d3e1</color>
+
     <color name="colorHintText">#848383</color>
     <color name="colorBlack">#000000</color>
     <color name="colorLink">#5246ff</color>
-    <color name="colorLiteBlue">#6fcafa</color>
-    <color name="colorBackground">#49a399</color>
+    <color name="colorLiteGreen">#0b994e</color>
+    <color name="colorBackground">#6bc2de</color>
     <color name="colorButton">#67d3e1</color>
     <color name="colorEditText">#d4d4d4</color>
-    <color name="colorWarning">#FFF10004</color>
+    <color name="colorWarning">#eb1b2f</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="colorCardView">#d4b4bc</color>
+    <color name="colorCardView">#e6e6e6</color>
+    <color name="colorText">#0dda76</color>
+    <color name="colorAsh">#c2c2c2</color>
+    <color name="colorBrown">#6f422f</color>
+
+
 
 
 </resources>

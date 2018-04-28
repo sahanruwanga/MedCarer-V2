@@ -50,10 +50,22 @@ public class ViewAppointmentActivity extends AppCompatActivity {
         getVenue().setText(getAppointment().getVenue());
         getContact().setText(getAppointment().getClinicContact());
         getDate().setText(getAppointment().getDate());
-        getTime().setText(getAppointment().getTime());
+        getTime().setText(getTimeFormat(getAppointment().getTime()));
         getReason().setText(getAppointment().getReason());
         getDoctor().setText(getAppointment().getDoctor());
-        getNotifyTime().setText(getAppointment().getNotifyTime());
+        getNotifyTime().setText(getTimeFormat(getAppointment().getNotifyTime()));
+    }
+
+    // Set the time format to view in details
+    private String getTimeFormat(String time){
+        if(Integer.parseInt(time.substring(0,2)) > 12 ){
+            time = String.valueOf(Integer.parseInt(time.substring(0,2)) - 12) + time.substring(2, 5) + " PM";
+        } else if(time.equals("00")){
+            time = "12" + time.substring(2, 5) + " AM";
+        }else{
+            time = time.substring(0, 5) + " AM";
+        }
+        return time;
     }
 
     @Override

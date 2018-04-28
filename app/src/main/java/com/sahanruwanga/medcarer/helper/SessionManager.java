@@ -25,10 +25,6 @@ public class SessionManager {
     private static final String PREF_NAME = "MedCarerLogin";
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
-    private static final String KEY_IS_MH_CREATED = "isMHCreated";
-    private static final String KEY_IS_APPOINTMENT_CREATED = "isAppointmentCreated";
-    private static final String KEY_IS_ALLERGIC_MEDICINE_CREATED = "isAllergicMedicineCreated";
-    private static final String KEY_IS_MEDICATION_SCHEDULE_CREATED = "isMedicationScheduleCreated";
 
     public SessionManager(Context context) {
         this.setContext(context);
@@ -49,68 +45,6 @@ public class SessionManager {
 
     public boolean isLoggedIn(){
         return getSharedPreferences().getBoolean(KEY_IS_LOGGEDIN, false);
-    }
-    //endregion
-
-    //region Medical History table created event handle
-    public void setMHCreated(boolean isMHCreated) {
-
-        getEditor().putBoolean(KEY_IS_MH_CREATED, isMHCreated);
-
-        // commit changes
-        getEditor().commit();
-
-        Log.d(TAG, "DB create session modified!");
-    }
-
-    public boolean isMHCreated(){
-        return getSharedPreferences().getBoolean(KEY_IS_MH_CREATED, false);
-    }
-    //endregion
-
-    //region Appointment table created event handle
-    public void setAppointmentCreated(boolean isAppointmentCreated) {
-
-        getEditor().putBoolean(KEY_IS_APPOINTMENT_CREATED, isAppointmentCreated);
-
-        // commit changes
-        getEditor().commit();
-
-        Log.d(TAG, "DB create session modified!");
-    }
-
-    public boolean isAppointmentCreated(){
-        return getSharedPreferences().getBoolean(KEY_IS_APPOINTMENT_CREATED, false);
-    }
-    //endregion
-
-    //region Allergic Medicine table created event handle
-    public void setAllergicMedicineCreated(boolean isAllergicMedicineCreated) {
-        getEditor().putBoolean(KEY_IS_ALLERGIC_MEDICINE_CREATED, isAllergicMedicineCreated);
-
-        // commit changes
-        getEditor().commit();
-
-        Log.d(TAG, "DB create session modified!");
-    }
-
-    public boolean isAllergicMedicineCreated(){
-        return getSharedPreferences().getBoolean(KEY_IS_ALLERGIC_MEDICINE_CREATED, false);
-    }
-    //endregion
-
-    //region Medication Schedule table created event handle
-    public void setMedicationScheduleCreated(boolean isMedicationScheduleCreated) {
-        getEditor().putBoolean(KEY_IS_MEDICATION_SCHEDULE_CREATED, isMedicationScheduleCreated);
-
-        // commit changes
-        getEditor().commit();
-
-        Log.d(TAG, "DB create session modified!");
-    }
-
-    public boolean isMedicationScheduleCreated(){
-        return getSharedPreferences().getBoolean(KEY_IS_MEDICATION_SCHEDULE_CREATED, false);
     }
     //endregion
 

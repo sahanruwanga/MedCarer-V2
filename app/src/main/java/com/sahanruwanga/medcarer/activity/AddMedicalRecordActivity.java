@@ -62,7 +62,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         sqLiteHandler = new SQLiteHandler(getApplicationContext());
 
         // Progress dialog
-        pDialog = new ProgressDialog(this);
+        pDialog = new ProgressDialog(getApplicationContext());
         pDialog.setCancelable(false);
 
         // Define all Edit Texts
@@ -133,7 +133,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         String tag_string_req = "req_insert_medical_record";
 
         pDialog.setMessage("Saving record ...");
-        showDialog();
+//        showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_INSERT_MEDICAL_RECORD, new Response.Listener<String>() {
@@ -141,20 +141,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Insert Record: " + response.toString());
-                hideDialog();
+//                hideDialog();
 
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        // Record successfully stored in MySQL
-                        // Now store the record in sqlite
-
-                        // whole comment for previous one
-//                        JSONObject medicalRecord = jObj.getJSONObject("medical_record");
-//                        String record_id = medicalRecord.getString("record_id");
-//                        String created_at = medicalRecord.getString("created_at");
-
                         // Inserting row in users table
                         sqLiteHandler.updateSyncStatus(Integer.parseInt(localId), SYNCED_WITH_SERVER);
                     } else {
@@ -172,7 +164,7 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Registration Error: " + error.getMessage());
-                hideDialog();
+//                hideDialog();
             }
         }) {
 

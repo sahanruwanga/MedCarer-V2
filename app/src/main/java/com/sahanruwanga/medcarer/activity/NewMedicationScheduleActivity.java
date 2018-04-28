@@ -25,6 +25,8 @@ import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +49,9 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
     // Progress Dialog and SQLiteHelper class objects
     private ProgressDialog progressDialog;
     private SQLiteHandler sqLiteHandler;
+
+    private static final int NOTIFICATION_STATUS_ON = 1;
+    private static final int NOTIFICATION_STATUS_OFF = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +110,12 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         String startTime = getStartTime().getText().toString().trim();
         String period = getPeriod();
         String notifyTime = getNotifyTime();
-
+        // Get current date time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createdAt = dateFormat.format(new Date());
         if(!medicine.isEmpty() && !quantity.isEmpty() && !startTime.equals("00:00:00") &&
                 !period.equals("00:00:00") && !notifyTime.equals("00:00:00")){
-            saveScheduleInDatabase(medicine, quantity, startTime, period, notifyTime);
+            saveScheduleInDatabase(medicine, quantity, startTime, period, notifyTime, createdAt, NOTIFICATION_STATUS_ON);
         }else{
             Toast.makeText(this, "Please enter Required Details!", Toast.LENGTH_LONG).show();
         }
@@ -116,7 +123,8 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
     // Save Schedule details in database
     private void saveScheduleInDatabase(final String medicine, final String quantity, final String startTime,
-                                        final String period, final String notifyTime){
+                                        final String period, final String notifyTime, final String createdAt,
+                                        final int notificationStatus){
         // Tag used to cancel the request
         String tag_string_req = "req_insert_medication_schedule";
 
@@ -139,11 +147,10 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
                         JSONObject schedule = jObj.getJSONObject("schedule");
                         String schedule_id = schedule.getString("schedule_id");
-                        String created_at = schedule.getString("created_at");
 
                         // Inserting row in users table
                         getSqLiteHandler().addMedicationSchedule(Integer.parseInt(schedule_id), medicine, quantity,
-                                startTime, period, notifyTime, created_at);
+                                startTime, period, notifyTime, createdAt, notificationStatus);
 
                         Toast.makeText(getApplicationContext(), "New Schedule successfully Created!", Toast.LENGTH_LONG).show();
                         clearAll();
@@ -185,6 +192,8 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
                 params.put("start_time", startTime);
                 params.put("period", period);
                 params.put("notify_time", notifyTime);
+                params.put("created_at", createdAt);
+                params.put("notification_status", String.valueOf(notificationStatus));
 
                 return params;
             }

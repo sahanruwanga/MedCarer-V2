@@ -43,6 +43,7 @@ public class AppointmentActivity extends AppCompatActivity {
     private static final String TAG = MedicalHistoryActivity.class.getSimpleName();
     private Toolbar toolbar;
     private TextView toolBarText;
+    private TextView emptyImage;
     private ImageView backIcon;
     private MaterialSearchView searchView;
     private ProgressDialog progressDialog;
@@ -58,6 +59,8 @@ public class AppointmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment);
 
+        this.emptyImage = findViewById(R.id.emptyMessage);
+
         // SQLiteHelper initialization
         this.setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
         // Session manager
@@ -66,11 +69,6 @@ public class AppointmentActivity extends AppCompatActivity {
         // Progress dialog
         this.setProgressDialog(new ProgressDialog(this));
         getProgressDialog().setCancelable(false);
-
-        //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
-        if(!getSessionManager().isAppointmentCreated()){
-            storeInSQLite(User.getUserId());
-        }
 
         //RecyclerView and layoutmanagrer initialization
         setRecyclerView((RecyclerView)findViewById(R.id.appointmentRecyclerView));
@@ -138,6 +136,9 @@ public class AppointmentActivity extends AppCompatActivity {
     }
     //endregion
 
+    public void showEmptyMessage(int visibility){
+        getEmptyImage().setVisibility(visibility);
+    }
     //region Showing tool bars
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
@@ -150,86 +151,6 @@ public class AppointmentActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.delete_all, menu);
         getToolBarText().setText("");
         getBackIcon().setVisibility(View.INVISIBLE);
-    }
-    //endregion
-
-    //region Store data in SQLite database
-    // Save data into SQLite database from MySQL database
-    private void storeInSQLite(final String user_id){
-        // Tag used to cancel the request
-        String tag_string_req = "req_appointment";
-
-        progressDialog.setMessage("Retrieving data ...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_APPOINTMENT, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Appointment Response: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    if (!error) {
-                        getSessionManager().setAppointmentCreated(true);
-
-                        // Now store appointments in SQLite
-                        JSONArray appointments = jObj.getJSONArray("appointments");
-                        for (int i=0; i<appointments.length();i++){
-                            JSONArray appointment = jObj.getJSONArray(appointments.getString(i));
-                            String reason = appointment.getString(0);
-                            String date = appointment.getString(1);
-                            String time = appointment.getString(2);
-                            String venue = appointment.getString(3);
-                            String doctor = appointment.getString(4);
-                            String clinicContact = appointment.getString(5);
-                            String notifyTime = appointment.getString(6);
-                            String created_at = appointment.getString(7);
-
-                            getSqLiteHandler().addAppointment(Integer.parseInt(appointments.getString(i)), reason, date, time, venue, doctor, clinicContact, notifyTime, created_at);
-                        }
-
-                    } else {
-                        // Error in fetching. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Retrieving Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to appointment url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", user_id);
-
-                return params;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
     //endregion
 
@@ -340,6 +261,14 @@ public class AppointmentActivity extends AppCompatActivity {
 
     public void setBackIcon(ImageView backIcon) {
         this.backIcon = backIcon;
+    }
+
+    public TextView getEmptyImage() {
+        return emptyImage;
+    }
+
+    public void setEmptyImage(TextView emptyImage) {
+        this.emptyImage = emptyImage;
     }
     //endregion
 }

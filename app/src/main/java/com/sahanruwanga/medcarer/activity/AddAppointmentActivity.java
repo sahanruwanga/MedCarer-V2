@@ -26,6 +26,8 @@ import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,9 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
     private SQLiteHandler sqLiteHandler;
+
+    private static final int NOTIFICATION_STATUS_ON = 1;
+    private static final int NOTIFICATION_STATUS_OFF = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,21 +124,41 @@ public class AddAppointmentActivity extends AppCompatActivity {
         String doctor = getDoctorText().getText().toString().trim();
         String clinicNo = getClinicContactText().getText().toString().trim();
         String date = getDateText().getText().toString().trim();
-        String time = getTimeText().getText().toString().trim();
-        String notifyTime = getNotifyTimeText().getText().toString().trim();
-
+        String time = getTimeFormat(getTimeText().getText().toString().trim());
+        String notifyTime = getTimeFormat(getNotifyTimeText().getText().toString().trim());
+        // Get current date time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createdAt = dateFormat.format(new Date());
         // Check for essential data
         if(!reason.isEmpty() && !venue.isEmpty() && !doctor.isEmpty() &&
-                !date.isEmpty() && !time.isEmpty()){
-            saveAppointmentInDatabase(reason, venue, doctor, clinicNo, date, time, notifyTime);
+                !date.isEmpty() && !time.isEmpty() && !notifyTime.isEmpty()){
+            saveAppointmentInDatabase(reason, venue, doctor, clinicNo, date, time, notifyTime,
+                    createdAt, NOTIFICATION_STATUS_ON);
         }else{
             Toast.makeText(this, "Please enter required data", Toast.LENGTH_LONG).show();
         }
 
     }
 
+    // Set time format to save in DB
+    private String getTimeFormat(String time){
+        if(time.substring(6).equals("AM")) {
+            if (time.substring(0, 2).equals("12"))
+                time = "00" + time.substring(2, 5) + ":00";
+            else
+                time = time.substring(0, 5) + ":00";
+        }else{
+            if(time.substring(0, 2).equals("12"))
+                time = time.substring(0, 5) + ":00";
+            else
+                time = String.valueOf(Integer.parseInt(time.substring(0,2)) + 12) + time.substring(2, 5) + ":00";
+        }
+        return time;
+    }
+
     private boolean saveAppointmentInDatabase(final String reason, final String venue, final String doctor, final String clinicNo,
-                                           final String date, final String time, final String notifyTime){
+                                           final String date, final String time, final String notifyTime, final String createdAt,
+                                              final int notificationStatus){
         final boolean[] isSuccessful = {false};
         // Tag used to cancel the request
         String tag_string_req = "req_insert_appointment";
@@ -157,11 +182,10 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
                         JSONObject medicalRecord = jObj.getJSONObject("appointment");
                         String appointment_id = medicalRecord.getString("appointment_id");
-                        String created_at = medicalRecord.getString("created_at");
 
                         // Inserting row in users table
                         sqLiteHandler.addAppointment(Integer.parseInt(appointment_id), reason, date, time,
-                                venue, doctor, clinicNo, notifyTime, created_at);
+                                venue, doctor, clinicNo, notifyTime, createdAt, NOTIFICATION_STATUS_ON);
 
                         Toast.makeText(getApplicationContext(), "Appointment successfully inserted!", Toast.LENGTH_LONG).show();
                         clearAll();
@@ -206,6 +230,8 @@ public class AddAppointmentActivity extends AppCompatActivity {
                 params.put("date", date);
                 params.put("time", time);
                 params.put("notify_time", notifyTime);
+                params.put("created_at", createdAt);
+                params.put("notification_status", String.valueOf(notificationStatus));
 
                 return params;
             }

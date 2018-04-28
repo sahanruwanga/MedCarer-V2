@@ -26,16 +26,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/scheduleMedicine"
-                    android:padding="5dp"
-                    android:text="Sample Medicine"
-                    android:layout_gravity="left"
-                    android:textSize="18sp"
-                    android:textColor="@color/colorBlack"
-                    />
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/scheduleCheckIcon"
+                        android:src="@drawable/ic_check"
+                        android:layout_gravity="right"
+                        android:visibility="gone"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/scheduleMedicine"
+                        android:padding="5dp"
+                        android:text="Sample Medicine"
+                        android:layout_gravity="left"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorBlack"
+                        />
+                </LinearLayout>
+
 
                 <Switch
                     android:layout_width="wrap_content"
@@ -43,13 +57,7 @@
                     android:layout_gravity="right|center_vertical"
                     android:id="@+id/scheduleSwitch"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/scheduleCheckIcon"
-                    android:src="@drawable/ic_check"
-                    android:layout_gravity="right"
-                    android:visibility="invisible"/>
+
 
             </FrameLayout>
 

@@ -43,6 +43,11 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
     public static final int SYNCED_WITH_SERVER = 1;
     public static final int NOT_SYNCED_WITH_SERVER = 0;
 
+    private static final int DELETED = 3;
+    private static final int UPDATED = 2;
+    private static final int SAVED = 1;
+    private static final int LOADED = 0;
+
     private SQLiteHandler sqLiteHandler;
 
     @Override
@@ -51,7 +56,7 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_update_medical_record);
 
         // Progress dialog
-        progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(getApplicationContext());
         progressDialog.setCancelable(false);
 
         this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
@@ -102,11 +107,14 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         String doctor = getDoctor().getText().toString().trim();
         String contact = getContact().getText().toString().trim();
         String description = getDescription().getText().toString().trim();
+        int statusType = SAVED;
+        if(getMedicalRecord().getSyncStatus() != NOT_SYNCED_WITH_SERVER && getMedicalRecord().getStatusType() == SAVED)
+            statusType = UPDATED;
         if(!disease.isEmpty() && !medicine.isEmpty() && !getDate1().getText().toString().isEmpty() &&
                 !getDate2().getText().toString().isEmpty() && !allergic.isEmpty()){
             getSqLiteHandler().updateMedicalRecord(getMedicalRecord().getRecord_id(),
                     disease, medicine, duration, allergic, doctor, contact, description,
-                    NOT_SYNCED_WITH_SERVER);
+                    NOT_SYNCED_WITH_SERVER, statusType);
 
             Toast.makeText(getApplicationContext(), "Record successfully updated!",
                     Toast.LENGTH_LONG).show();
@@ -135,7 +143,7 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
                                    final String description){
 
         getProgressDialog().setMessage("Updating record ...");
-        showDialog();
+//        showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_UPDATAE_MEDICAL_RECORD, new Response.Listener<String>() {
@@ -143,7 +151,7 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Log.d("Update Medical Record", "Update Record: " + response.toString());
-                hideDialog();
+//                hideDialog();
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -163,7 +171,7 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Update Medical Record", "Updating Error: " + error.getMessage());
-                hideDialog();
+//                hideDialog();
             }
         }) {
 

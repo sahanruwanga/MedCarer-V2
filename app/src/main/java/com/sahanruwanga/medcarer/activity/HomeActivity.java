@@ -84,8 +84,6 @@ public class HomeActivity extends AppCompatActivity
      * */
     private void logoutUser() {
         getSessionManager().setLogin(false);
-        getSessionManager().setMHCreated(false);
-        getSessionManager().setAppointmentCreated(false);
         getSqLiteHandler().deleteTables();
 
         // Launching the login activity
@@ -165,6 +163,8 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void openAlternativeMedicine(View view) {
+        Intent intent = new Intent(this, AlternativeMedicineActivity.class);
+        startActivity(intent);
     }
 
     public void openAppointment(View view) {

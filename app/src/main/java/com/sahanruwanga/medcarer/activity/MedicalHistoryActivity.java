@@ -1,69 +1,48 @@
 package com.sahanruwanga.medcarer.activity;
 
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request.Method;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
-import com.sahanruwanga.medcarer.app.AppConfig;
-import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
-import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.PDFCreator;
 import com.sahanruwanga.medcarer.app.User;
-import com.sahanruwanga.medcarer.helper.NetworkStateChecker;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
-import com.sahanruwanga.medcarer.helper.SessionManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MedicalHistoryActivity extends AppCompatActivity {
-    private static final String TAG = MedicalHistoryActivity.class.getSimpleName();
     private Toolbar toolbar;
     private TextView toolBarText;
     private MaterialSearchView searchView;
-    private ProgressDialog progressDialog;
-    private SQLiteHandler sqLiteHandler;
-    private SessionManager sessionManager;
     private RecyclerView recyclerView;
-    private Menu menu;
     private RecyclerView.LayoutManager layoutManager;
-    private MedicalHistoryAdapter medicalHistoryAdapter;
 
-    public static final int SYNCED_WITH_SERVER = 1;
-    public static final int NOT_SYNCED_WITH_SERVER = 0;
+    android.support.v7.widget.SearchView searchView2;
+
+    private SQLiteHandler sqLiteHandler;
+
+    private User user;
+
+    private Menu menu;
+    private MedicalHistoryAdapter medicalHistoryAdapter;
 
     //region onCreate
     @Override
@@ -71,20 +50,24 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_history);
 
+        // Example filtering
+        searchView2 = findViewById(R.id.mSearch);
+
+
+        // Creating User object
+        this.user = new User(this);
+
         // SQLiteHelper initialization
         this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
-        // Session manager
-        this.sessionManager = new SessionManager(getApplicationContext());
 
         //RecyclerView and layout manager initialization
         this.recyclerView = findViewById(R.id.medicalHistoryRecyclerView);
         getRecyclerView().setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         getRecyclerView().setLayoutManager(layoutManager);
+        // From extra to decorate
+        getRecyclerView().setItemAnimator(new DefaultItemAnimator());
 
-        // Progress dialog
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
 
         //Toolbar creation
         setToolbar((Toolbar) findViewById(R.id.toolbar));
@@ -93,11 +76,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
         // TextView in toolbar
         this.setToolBarText((TextView)findViewById(R.id.toolBarText));
-
-        //if(sqlite for medicalhistory doesn't exists netconnection needs to add new data)
-        if(!getSessionManager().isMHCreated()){
-            storeInSQLite(User.getUserId());
-        }
 
         // Add data into RecyclerView
         showRecyclerView();
@@ -120,11 +98,23 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 return false;
             }
         });
         //endregion
+
+        searchView2.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getMedicalHistoryAdapter().getFilter().filter(newText);
+                return false;
+            }
+        });
 
     }
     //endregion
@@ -173,25 +163,26 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         String message = " record will be deleted.";
         if(selectedCount > 1)
             message = " records will be deleted.";
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(String.valueOf(selectedCount) + message);
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(String.valueOf(selectedCount) + message);
+        builder.setCancelable(true);
 
-        builder1.setPositiveButton(
+        builder.setPositiveButton(
                 "DELETE",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()) {
-                            getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
-                            showDefaultToolBar();
-                            showRecyclerView();
-                            deleteMedicalRecord(User.getUserId(), String.valueOf(medicalRecord.getRecord_id()));
-                        }
+//                        for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()) {
+//                            getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
+//                            deleteMedicalRecord(User.getUserId(), String.valueOf(medicalRecord.getRecord_id()));
+//                        }
+                        getUser().deleteMedicalRecord(getMedicalHistoryAdapter().getSelectedRecords());
+                        showDefaultToolBar();
+                        showRecyclerView();
                         dialog.cancel();
                     }
                 });
 
-        builder1.setNegativeButton(
+        builder.setNegativeButton(
                 "CANCEL",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -199,61 +190,9 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
+        AlertDialog alert11 = builder.create();
         alert11.show();
     }
-    //endregion
-
-    //region Delete medical record from MySQL
-    private void deleteMedicalRecord(final String userId, final String localRecordId){
-        progressDialog.setMessage("Deleting Record ...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Method.POST,
-                AppConfig.URL_DELETE_MEDICAL_RECORD, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Medical Record Deleting: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    if (!error) {
-                        getSqLiteHandler().deleteMedicalRecord(Integer.parseInt(localRecordId));
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Deleting Error: " + error.getMessage());
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to medical history url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", userId);
-                params.put("local_record_id", localRecordId);
-
-                return params;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq);
-    }
-
     //endregion
 
     //region opendPdf and savePdf Functions
@@ -328,101 +267,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     }
     //endregion
 
-    //region Store data in SQLite database
-    // Save data into SQLite database from MySQL database
-    private void storeInSQLite(final String user_id){
-        // Tag used to cancel the request
-        String tag_string_req = "req_medical_history";
-
-        progressDialog.setMessage("Retrieving data ...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Method.POST,
-                AppConfig.URL_MEDICAL_HISTORY, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Medical History Response: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    if (!error) {
-                        getSessionManager().setMHCreated(true);
-
-                        // Now store the user in SQLite
-                        JSONArray records= jObj.getJSONArray("records");
-                        for (int i=0; i<records.length();i++){
-                            JSONArray medicalRecord = jObj.getJSONArray(records.getString(i));
-                            String disease = medicalRecord.getString(0);
-                            String medicine = medicalRecord.getString(1);
-                            String duration = medicalRecord.getString(2);
-                            String allergic = medicalRecord.getString(3);
-                            String doctor = medicalRecord.getString(4);
-                            String contact = medicalRecord.getString(5);
-                            String description = medicalRecord.getString(6);
-                            String created_at = medicalRecord.getString(7);
-                            String localRecordID = medicalRecord.getString(8);
-
-                            getSqLiteHandler().addMedicalRecordFromMySQL(Integer.parseInt(localRecordID),
-                                    disease, medicine, duration, allergic,
-                                    doctor, contact, description, created_at, SYNCED_WITH_SERVER);
-                        }
-
-                    } else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Please activate network access and Try again", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Retrieving Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to medical history url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", user_id);
-
-                return params;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-    //endregion
-
-    //region Process Dialog activities
-    private void showDialog() {
-        if (!progressDialog.isShowing())
-            progressDialog.show();
-    }
-
-    private void hideDialog() {
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
-    //endregion
-
     //region Getters and Setters
     public Toolbar getToolbar() {
         return toolbar;
@@ -464,20 +308,20 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         this.sqLiteHandler = sqLiteHandler;
     }
 
-    public SessionManager getSessionManager() {
-        return sessionManager;
-    }
-
-    public void setSessionManager(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
-    }
-
     public TextView getToolBarText() {
         return toolBarText;
     }
 
     public void setToolBarText(TextView toolBarText) {
         this.toolBarText = toolBarText;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

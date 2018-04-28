@@ -34,6 +34,14 @@ public class TimePickerFragment extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Set time in particular time text
+        String hourSign = " AM";
+        if(hourOfDay > 12 ){
+            hourOfDay -= 12;
+            hourSign = " PM";
+        }else if(hourOfDay == 00){
+            hourOfDay = 12;
+        }else if(hourOfDay == 12)
+            hourSign = " PM";
         String newHour = String.valueOf(hourOfDay);
         if(newHour.length() != 2)
             newHour = "0" + hourOfDay;
@@ -41,7 +49,7 @@ public class TimePickerFragment extends DialogFragment
         if(newMinute.length() != 2)
             newMinute = "0" + minute;
         EditText timeText = getActivity().findViewById(timeId);
-        timeText.setText(newHour + ":" + newMinute + ":" +"00");
+        timeText.setText(newHour + ":" + newMinute + hourSign);
 
     }
 }

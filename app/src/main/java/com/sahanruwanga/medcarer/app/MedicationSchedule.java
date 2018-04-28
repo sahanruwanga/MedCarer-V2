@@ -16,6 +16,9 @@ public class MedicationSchedule implements Parcelable {
     private String period;
     private String notifyTime;
     private String createdAt;
+    private int notificationStatus;
+    private int syncStatus;
+    private int statusType;
 
     // Constructor call
     public MedicationSchedule(){}
@@ -113,6 +116,30 @@ public class MedicationSchedule implements Parcelable {
         parcel.writeString(period);
         parcel.writeString(notifyTime);
         parcel.writeString(createdAt);
+    }
+
+    public int getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public void setNotificationStatus(int notificationStatus) {
+        this.notificationStatus = notificationStatus;
+    }
+
+    public int getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(int syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public int getStatusType() {
+        return statusType;
+    }
+
+    public void setStatusType(int statusType) {
+        this.statusType = statusType;
     }
     //endregion
 }

@@ -70,7 +70,7 @@
                 android:padding="5dp"
                 android:drawableLeft="@drawable/ic_create"
                 android:drawablePadding="5dp"
-                android:inputType="textPersonName"/>
+                android:inputType="textCapWords"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -93,7 +93,7 @@
                 android:padding="5dp"
                 android:drawableLeft="@drawable/ic_notification"
                 android:drawablePadding="5dp"
-                android:inputType="text"/>
+                android:inputType="textCapWords"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -116,7 +116,7 @@
                 android:padding="5dp"
                 android:drawableLeft="@drawable/ic_visibility"
                 android:drawablePadding="5dp"
-                android:inputType="text"/>
+                android:inputType="textCapWords"/>
             </android.support.v7.widget.CardView>
 
             <LinearLayout
@@ -223,7 +223,7 @@
                 android:padding="5dp"
                 android:drawableLeft="@drawable/ic_doctor"
                 android:drawablePadding="5dp"
-                android:inputType="textPersonName"/>
+                android:inputType="textPersonName|textCapWords"/>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -270,7 +270,7 @@
                     android:drawableLeft="@drawable/ic_aboutme"
                     android:drawablePadding="5dp"
                     android:maxLines="4"
-                    android:inputType="textMultiLine"
+                    android:inputType="textMultiLine|textCapSentences"
                     android:isScrollContainer="true"/>
             </android.support.v7.widget.CardView>
 

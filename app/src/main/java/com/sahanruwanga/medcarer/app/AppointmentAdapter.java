@@ -43,6 +43,9 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     private ArrayList<ImageView> imageViews;
     private ArrayList<Switch> switches;
 
+    private static final int NOTIFICATION_STATUS_ON = 1;
+    private static final int NOTIFICATION_STATUS_OFF = 0;
+
     public AppointmentAdapter(List<Appointment> appointments, AppointmentActivity context, RecyclerView recyclerView){
         this.appointments = appointments;
         this.context = context;
@@ -53,6 +56,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         this.selectedImageViews = new ArrayList<>();
         this.imageViews = new ArrayList<>();
         this.switches = new ArrayList<>();
+        if(appointments.isEmpty()){
+            getContext().showEmptyMessage(View.VISIBLE);
+        }else
+            getContext().showEmptyMessage(View.INVISIBLE);
     }
 
     @Override
@@ -65,22 +72,24 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Appointment appointment = appointments.get(position);
 
         // Show data in layout
         holder.appointmentVenue.setText(appointment.getVenue());
         holder.appointmentDate.setText(appointment.getDate());
-        holder.appointmentTime.setText(appointment.getTime());
+        holder.appointmentTime.setText(getTimeFormat(appointment.getTime()));
 
         // Make Notification switch on
-//        holder.appointmentSwitch.setChecked(true);
+        int notificationStatus = appointment.getNotificationStatus();
+        if(notificationStatus == NOTIFICATION_STATUS_ON)
+            holder.appointmentSwitch.setChecked(true);
+        else
+            holder.appointmentSwitch.setChecked(false);
 
+        getImageViews().add(holder.checkIcon);
 
-        final ImageView checkIcon = holder.layout.findViewById(R.id.appointmentCheckIcon);
-        getImageViews().add(checkIcon);
-
-        getSwitches().add((Switch) holder.layout.findViewById(R.id.appointmentSwitch));
+        getSwitches().add(holder.appointmentSwitch);
 
         // Call for turning on and off notification
         holder.appointmentSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -124,22 +133,22 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             public boolean onLongClick(View view) {
                 Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show();
 
-                if(checkIcon.isSelected()) {
+                if(holder.checkIcon.isSelected()) {
                     setSelectingCount(getSelectingCount() - 1);
                     getSelectedAppointments().remove(appointment);
-                    getSelectedImageViews().remove(checkIcon);
+                    getSelectedImageViews().remove(holder.checkIcon);
                     if(getSelectingCount() == 0)
                         setVisibleSwitch(View.VISIBLE);
-                    checkIcon.setVisibility(View.INVISIBLE);
-                    checkIcon.setSelected(false);
+                    holder.checkIcon.setVisibility(View.GONE);
+                    holder.checkIcon.setSelected(false);
                 }else{
                     setSelectingCount(getSelectingCount() + 1);
                     getSelectedAppointments().add(appointment);
-                    getSelectedImageViews().add(checkIcon);
+                    getSelectedImageViews().add(holder.checkIcon);
                     if(getSelectingCount() == 1)
-                        setVisibleSwitch(View.INVISIBLE);
-                    checkIcon.setVisibility(View.VISIBLE);
-                    checkIcon.setSelected(true);
+                        setVisibleSwitch(View.GONE);
+                    holder.checkIcon.setVisibility(View.VISIBLE);
+                    holder.checkIcon.setSelected(true);
                 }
                 notifyParent(getSelectingCount());
                 return true;
@@ -160,22 +169,22 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                     context.startActivity(intent);
                 }
                 else{
-                    if(checkIcon.isSelected()) {
+                    if(holder.checkIcon.isSelected()) {
                         setSelectingCount(getSelectingCount() - 1);
                         getSelectedAppointments().remove(appointment);
-                        selectedImageViews.remove(checkIcon);
+                        selectedImageViews.remove(holder.checkIcon);
                         if(getSelectingCount() == 0)
                             setVisibleSwitch(View.VISIBLE);
-                        checkIcon.setVisibility(View.INVISIBLE);
-                        checkIcon.setSelected(false);
+                        holder.checkIcon.setVisibility(View.GONE);
+                        holder.checkIcon.setSelected(false);
                     }else{
                         setSelectingCount(getSelectingCount() + 1);
                         getSelectedAppointments().add(appointment);
-                        selectedImageViews.add(checkIcon);
+                        selectedImageViews.add(holder.checkIcon);
                         if(getSelectingCount() == 1)
-                            setVisibleSwitch(View.INVISIBLE);
-                        checkIcon.setVisibility(View.VISIBLE);
-                        checkIcon.setSelected(true);
+                            setVisibleSwitch(View.GONE);
+                        holder.checkIcon.setVisibility(View.VISIBLE);
+                        holder.checkIcon.setSelected(true);
                     }
                 }
                 notifyParent(getSelectingCount());
@@ -183,6 +192,17 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
         });
 
+    }
+
+    private String getTimeFormat(String time){
+        if(Integer.parseInt(time.substring(0,2)) > 12 ){
+            time = String.valueOf(Integer.parseInt(time.substring(0,2)) - 12) + time.substring(2, 5) + " PM";
+        } else if(time.equals("00")){
+            time = "12" + time.substring(2, 5) + " AM";
+        }else{
+            time = time.substring(0, 5) + " AM";
+        }
+        return time;
     }
 
     @Override
@@ -208,7 +228,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     public void deseleceAll(){
         setSelectingCount(0);
         for(ImageView imageView : selectedImageViews){
-            imageView.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.GONE);
             imageView.setSelected(false);
         }
         for(Switch aSwitch : getSwitches()){
@@ -221,7 +241,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     public void selectAll(){
         for(Switch aSwitch : getSwitches()){
             if(aSwitch.getVisibility() == View.VISIBLE)
-                aSwitch.setVisibility(View.INVISIBLE);
+                aSwitch.setVisibility(View.GONE);
         }
         for(ImageView imageView : imageViews){
             if (!selectedImageViews.contains(imageView)){

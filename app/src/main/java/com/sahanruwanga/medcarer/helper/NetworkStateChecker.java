@@ -2,10 +2,11 @@ package com.sahanruwanga.medcarer.helper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -49,26 +50,68 @@ public class NetworkStateChecker extends BroadcastReceiver {
         if (activeNetwork != null) {
             // If connected to wifi or mobile data
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-
-                // Getting all the un-synced saved medical records
-                List<MedicalRecord> saveddMedicalRecords = sqLiteHandler.getUnsyncedSavedMedicalRecords();
-                for(MedicalRecord medicalRecord : saveddMedicalRecords){
-                    saveMedicalRecord(medicalRecord);
-                }
-
-                // Getting all the un-synced deleted medical records
-                List<MedicalRecord> deletedMedicalRecords = sqLiteHandler.getUnsyncedDeletedMedicalRecords();
-                for(MedicalRecord medicalRecord : deletedMedicalRecords){
-                    deleteMedicalRecord(String.valueOf(medicalRecord.getRecord_id()));
-                }
-
-                // Getting all the un-synced updated medical records
-                List<MedicalRecord> updatedMedicalRecords = sqLiteHandler.getUnsyncedUpdatedMedicalRecords();
-                for(MedicalRecord medicalRecord : updatedMedicalRecords){
-                    updateMedicalRecord(medicalRecord);
-                }
+                if(isUpdateRequired())
+                    openDialogBox();
             }
         }
+    }
+
+    //region Dialog Box for Choosing update details
+    // Open dialog box when network connection is available
+    private void openDialogBox(){
+        String title = "Network Available!";
+        String message = "Update all details!";
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message);
+        builder.setTitle(title);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                "UPDATE",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+//                      // Getting all the un-synced saved medical records
+                        List<MedicalRecord> saveddMedicalRecords = sqLiteHandler.getUnsyncedSavedMedicalRecords();
+                        for(MedicalRecord medicalRecord : saveddMedicalRecords){
+                            saveMedicalRecord(medicalRecord);
+                        }
+
+                        // Getting all the un-synced updated medical records
+                        List<MedicalRecord> updatedMedicalRecords = sqLiteHandler.getUnsyncedUpdatedMedicalRecords();
+                        for(MedicalRecord medicalRecord : updatedMedicalRecords) {
+                            updateMedicalRecord(medicalRecord);
+                        }
+
+                        // Getting all the un-synced deleted medical records
+                        List<MedicalRecord> deletedMedicalRecords = sqLiteHandler.getUnsyncedDeletedMedicalRecords();
+                        for(MedicalRecord medicalRecord : deletedMedicalRecords){
+                            deleteMedicalRecord(String.valueOf(medicalRecord.getRecord_id()));
+
+                        }
+                        dialog.cancel();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "LATER",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder.create();
+        alert11.show();
+    }
+    //endregion
+
+    private boolean isUpdateRequired(){
+        if(sqLiteHandler.getUnsyncedSavedMedicalRecords().size() == 0 &&
+                sqLiteHandler.getUnsyncedUpdatedMedicalRecords().size() == 0 &&
+                sqLiteHandler.getUnsyncedDeletedMedicalRecords().size() == 0)
+            return false;
+        else
+            return true;
     }
 
     private void saveMedicalRecord(final MedicalRecord medicalRecord) {
@@ -84,7 +127,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
                                 sqLiteHandler.updateSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
 
                                 // Sending the broadcast to refresh the list
-                                context.sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
+                                getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -130,7 +173,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
                     if (!error) {
                         sqLiteHandler.deleteMedicalRecord(Integer.parseInt(localRecordId));
                         // Sending the broadcast to refresh the list
-                        context.sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
+                        getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -175,7 +218,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
                         sqLiteHandler.updateSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
 
                         // Sending the broadcast to refresh the list
-                        context.sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
+                        getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
                     } else {
                         String errorMsg = jObj.getString("error_msg");
                     }
@@ -210,5 +253,13 @@ public class NetworkStateChecker extends BroadcastReceiver {
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

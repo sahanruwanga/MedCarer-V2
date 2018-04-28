@@ -43,13 +43,15 @@
         <activity android:name=".activity.ViewAppointmentActivity" />
         <activity android:name=".activity.UpdateAppointmentActivity" />
         <activity android:name=".activity.UpdateMedicationScheduleActivity" />
-        <activity android:name=".activity.NewAllergicMedicineActivity"></activity>
+        <activity android:name=".activity.NewAllergicMedicineActivity" />
 
         <receiver android:name=".helper.NetworkStateChecker">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".activity.AlternativeMedicineActivity"></activity>
     </application>
 
 </manifest>

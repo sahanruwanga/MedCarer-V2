@@ -136,7 +136,6 @@ public class AllergicMedicineActivity extends AppCompatActivity {
 
                     // Check for error node in json
                     if (!error) {
-                        getSessionManager().setAllergicMedicineCreated(true);
 
                         // Store allergic medicine in SQLite
                         JSONArray medicines= jObj.getJSONArray("medicines");
@@ -223,6 +222,13 @@ public class AllergicMedicineActivity extends AppCompatActivity {
     }
     //endregion
 
+
+    public void openAddAllergicMedicine(View view) {
+        Intent intent = new Intent(this, NewAllergicMedicineActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     //region Getters and Setters
     public SQLiteHandler getSqLiteHandler() {
         return sqLiteHandler;
@@ -255,13 +261,6 @@ public class AllergicMedicineActivity extends AppCompatActivity {
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
-    //endregion
-
-    public void openAddAllergicMedicine(View view) {
-        Intent intent = new Intent(this, NewAllergicMedicineActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     public AllergicMedicineAdapter getAllergicMedicineAdapter() {
         return allergicMedicineAdapter;
@@ -270,4 +269,5 @@ public class AllergicMedicineActivity extends AppCompatActivity {
     public void setAllergicMedicineAdapter(AllergicMedicineAdapter allergicMedicineAdapter) {
         this.allergicMedicineAdapter = allergicMedicineAdapter;
     }
+    //endregion
 }

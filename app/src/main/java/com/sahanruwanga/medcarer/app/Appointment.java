@@ -19,6 +19,9 @@ public class Appointment implements Parcelable {
     private String clinicContact;
     private String notifyTime;
     private String created_at;
+    private int notificationStatus;
+    private int syncStatus;
+    private int statusType;
 
     public Appointment(){}
 
@@ -32,6 +35,9 @@ public class Appointment implements Parcelable {
         clinicContact = in.readString();
         notifyTime = in.readString();
         created_at = in.readString();
+        notificationStatus = in.readInt();
+        syncStatus = in.readInt();
+        statusType = in.readInt();
     }
 
     public Appointment(int appointmentId, String reason, String date, String time,
@@ -148,6 +154,30 @@ public class Appointment implements Parcelable {
         parcel.writeString(clinicContact);
         parcel.writeString(notifyTime);
         parcel.writeString(created_at);
+    }
+
+    public int getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public void setNotificationStatus(int notificationStatus) {
+        this.notificationStatus = notificationStatus;
+    }
+
+    public int getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(int syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public int getStatusType() {
+        return statusType;
+    }
+
+    public void setStatusType(int statusType) {
+        this.statusType = statusType;
     }
     //endregion
 }

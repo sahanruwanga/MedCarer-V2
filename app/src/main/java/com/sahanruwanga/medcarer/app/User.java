@@ -16,9 +16,11 @@ import com.sahanruwanga.medcarer.activity.RegisterActivity;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,9 @@ public class User {
 
     private SQLiteHandler sqLiteHandler;
     private SessionManager sessionManager;
+
+    private static final int SYNCED_WITH_SERVER = 1;
+    private static final int NOT_SYNCED_WITH_SERVER = 0;
 
     public User(Context context){
         this.context = context;
@@ -70,7 +75,7 @@ public class User {
 
             @Override
             public void onResponse(String response) {
-                Log.d("User Registration", "Register Response: " + response.toString());
+                Log.d("User Registration", "Register Response: " + response);
                 hideDialog();
 
                 try {
@@ -101,10 +106,6 @@ public class User {
                         // To finish the Registration activity (cast to call finish)
                         ((RegisterActivity)getContext()).finish();
                     } else {
-
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getContext(), "Error occurred, please try again!",
                                 Toast.LENGTH_LONG).show();
                     }
@@ -128,7 +129,7 @@ public class User {
             @Override
             protected Map<String, String> getParams() {
                 // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("user_name", getName());
                 params.put("email", getEmail());
                 params.put("password", getPassword());
@@ -161,7 +162,7 @@ public class User {
 
             @Override
             public void onResponse(String response) {
-                Log.d("User Login", "Login Response: " + response.toString());
+                Log.d("User Login", "Login Response: " + response);
                 hideDialog();
 
                 try {
@@ -186,6 +187,12 @@ public class User {
                         // Inserting row in users table
                         getSqLiteHandler().addUser(Integer.parseInt(user_id), name, email, uid, created_at);
                         User.setUserId(user_id);
+
+                        // Store data in SQLite from MySql
+                        storeMedicalHistoryInSQLite();
+                        storeAppointmentInSQLite();
+                        storeMedicationScheduleInSQLite();
+
                         // Launch main activity
                         Intent intent = new Intent(getContext(), HomeActivity.class);
                         getContext().startActivity(intent);
@@ -217,7 +224,7 @@ public class User {
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("email", getEmail());
                 params.put("password", getPassword());
 
@@ -226,6 +233,284 @@ public class User {
 
         };
 
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void storeMedicalHistoryInSQLite(){
+        progressDialog.setMessage("Retrieving data ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_MEDICAL_HISTORY, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Medical History", "Medical History Response: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        // Now store the user in SQLite
+                        JSONArray records= jObj.getJSONArray("records");
+                        for (int i=0; i<records.length();i++){
+                            JSONArray medicalRecord = jObj.getJSONArray(records.getString(i));
+                            String disease = medicalRecord.getString(0);
+                            String medicine = medicalRecord.getString(1);
+                            String duration = medicalRecord.getString(2);
+                            String allergic = medicalRecord.getString(3);
+                            String doctor = medicalRecord.getString(4);
+                            String contact = medicalRecord.getString(5);
+                            String description = medicalRecord.getString(6);
+                            String created_at = medicalRecord.getString(7);
+                            String localRecordID = medicalRecord.getString(8);
+
+                            getSqLiteHandler().addMedicalRecordFromMySQL(Integer.parseInt(localRecordID),
+                                    disease, medicine, duration, allergic,
+                                    doctor, contact, description, created_at, SYNCED_WITH_SERVER);
+                        }
+
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Please activate network access and Try again", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Medical History", "Retrieving Error: " + error.getMessage());
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", User.getUserId());
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void storeAppointmentInSQLite(){
+        progressDialog.setMessage("Retrieving data ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_APPOINTMENT, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Appointment", "Appointment Response: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        // Now store appointments in SQLite
+                        JSONArray appointments = jObj.getJSONArray("appointments");
+                        for (int i=0; i<appointments.length();i++){
+                            JSONArray appointment = jObj.getJSONArray(appointments.getString(i));
+                            String reason = appointment.getString(0);
+                            String date = appointment.getString(1);
+                            String time = appointment.getString(2);
+                            String venue = appointment.getString(3);
+                            String doctor = appointment.getString(4);
+                            String clinicContact = appointment.getString(5);
+                            String notifyTime = appointment.getString(6);
+                            String created_at = appointment.getString(7);
+                            int notificationStatus = appointment.getInt(8);
+
+                            getSqLiteHandler().addAppointment(Integer.parseInt(appointments.getString(i)),
+                                    reason, date, time, venue, doctor, clinicContact, notifyTime, created_at, notificationStatus);
+                        }
+
+                    } else {
+                        // Error in fetching. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Appointment", "Retrieving Error: " + error.getMessage());
+                Toast.makeText(getContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to appointment url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", User.getUserId());
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void storeMedicationScheduleInSQLite(){
+        getProgressDialog().setMessage("Retrieving data ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_MEDICATION_SCHEDULE, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Medication Schedule", "Medication Schedule Response: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        // Now store the user in SQLite
+                        JSONArray schedules = jObj.getJSONArray("schedule");
+                        for (int i = 0; i < schedules.length(); i++){
+                            JSONArray medicationSchedule = jObj.getJSONArray(schedules.getString(i));
+                            String medicine = medicationSchedule.getString(0);
+                            String quantity = medicationSchedule.getString(1);
+                            String start_time = medicationSchedule.getString(2);
+                            String period = medicationSchedule.getString(3);
+                            String notify_time = medicationSchedule.getString(4);
+                            String created_at = medicationSchedule.getString(5);
+                            int notification_status = medicationSchedule.getInt(6);
+
+                            getSqLiteHandler().addMedicationSchedule(Integer.parseInt(schedules.getString(i)),
+                                    medicine, quantity, start_time, period, notify_time, created_at, notification_status);
+                        }
+
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Medication Schedule", "Retrieving Error: " + error.getMessage());
+                Toast.makeText(getContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", User.getUserId());
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    public void deleteMedicalRecord(ArrayList<MedicalRecord> medicalRecords){
+        for(MedicalRecord medicalRecord : medicalRecords) {
+            if(medicalRecord.getSyncStatus() == NOT_SYNCED_WITH_SERVER && medicalRecord.getStatusType() == SQLiteHandler.SAVED)
+                getSqLiteHandler().deleteMedicalRecord(medicalRecord.getRecord_id());
+            else
+                getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
+            deleteMedicalRecordFromMySql(String.valueOf(medicalRecord.getRecord_id()));
+        }
+    }
+
+    private void deleteMedicalRecordFromMySql(final String recordID){
+        progressDialog.setMessage("Deleting Record ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_DELETE_MEDICAL_RECORD, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Delete Medical Record", "Medical Record Deleting: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        getSqLiteHandler().deleteMedicalRecord(Integer.parseInt(recordID));
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Delete Medical Record", "Deleting Error: " + error.getMessage());
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", getUserId());
+                params.put("local_record_id", recordID);
+
+                return params;
+            }
+
+        };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq);
     }

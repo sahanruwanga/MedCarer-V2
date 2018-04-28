@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,10 +24,13 @@ import java.util.List;
  * Created by Sahan Ruwanga on 3/8/2018.
  */
 
-public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAdapter.ViewHolder> {
+public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAdapter.ViewHolder>
+        implements Filterable{
     private List<MedicalRecord> medicalRecords;
+    private ArrayList<MedicalRecord> filterList;
     private MedicalHistoryActivity context;
     private RecyclerView recyclerView;
+    CustomFilter filter;
 
     private int selectingCount;
     private ArrayList<MedicalRecord> selectedRecords;
@@ -33,14 +38,23 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     private ArrayList<ImageView> imageViews;
 
     public MedicalHistoryAdapter(List<MedicalRecord> medicalRecords, MedicalHistoryActivity context, RecyclerView recyclerView){
-        this.medicalRecords = medicalRecords;
+        this.setMedicalRecords(medicalRecords);
         this.context = context;
         this.recyclerView = recyclerView;
+        // For the search filter
+        filterList = new ArrayList<>();
+        putToFilterList();
 
         this.setSelectingCount(0);
         this.selectedRecords = new ArrayList<>();
         this.selectedImageViews = new ArrayList<>();
         this.imageViews = new ArrayList<>();
+    }
+
+    private void putToFilterList(){
+        for(MedicalRecord medicalRecord : getMedicalRecords()){
+            filterList.add(medicalRecord);
+        }
     }
 
     @Override
@@ -55,7 +69,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final MedicalRecord medicalRecord = medicalRecords.get(position);
+        final MedicalRecord medicalRecord = getMedicalRecords().get(position);
         holder.disease.setText("Disease: "+medicalRecord.getDisease());
         holder.medicine.setText(medicalRecord.getMedicine());
         holder.duration.setText(medicalRecord.getDuration());
@@ -139,7 +153,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
                 imageView.setSelected(true);
             }
         }
-        for(MedicalRecord medicalRecord : medicalRecords){
+        for(MedicalRecord medicalRecord : getMedicalRecords()){
             if(!getSelectedRecords().contains(medicalRecord)){
                 getSelectedRecords().add(medicalRecord);
             }
@@ -159,20 +173,43 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
 
     @Override
     public int getItemCount() {
-        return medicalRecords.size();
+        return getMedicalRecords().size();
     }
 
     public void add(int position, MedicalRecord medicalRecord) {
-        medicalRecords.add(position, medicalRecord);
+        getMedicalRecords().add(position, medicalRecord);
         notifyItemInserted(position);
     }
 
     public void remove(int position) {
-        medicalRecords.remove(position);
+        getMedicalRecords().remove(position);
         notifyItemRemoved(position);
     }
 
+    @Override
+    public Filter getFilter() {
+        if(filter==null)
+        {
+            filter=new CustomFilter(getFilterList(),this);
+        }
+        return filter;
+    }
 
+    public List<MedicalRecord> getFilterList() {
+        return filterList;
+    }
+
+    public void setFilterList(List<MedicalRecord> filterList) {
+        this.filterList = (ArrayList<MedicalRecord>) filterList;
+    }
+
+    public List<MedicalRecord> getMedicalRecords() {
+        return medicalRecords;
+    }
+
+    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
+        this.medicalRecords = medicalRecords;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView disease;

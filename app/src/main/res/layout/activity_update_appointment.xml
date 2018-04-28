@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sahanruwanga.medcarer.activity.UpdateAppointmentActivity"
-    android:background="@drawable/background">
+    android:background="@color/colorAsh">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"

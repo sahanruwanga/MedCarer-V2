@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
@@ -20,6 +22,9 @@ public class MedicationScheduleAdapter extends
     private List<MedicationSchedule> medicationSchedules;
     private MedicationScheduleActivity context;
     private RecyclerView recyclerView;
+
+    private static final int NOTIFICATION_STATUS_ON = 1;
+    private static final int NOTIFICATION_STATUS_OFF = 0;
 
     public MedicationScheduleAdapter(List<MedicationSchedule> medicationSchedules,
                                      MedicationScheduleActivity context, RecyclerView recyclerView){
@@ -43,6 +48,12 @@ public class MedicationScheduleAdapter extends
         holder.medicine.setText(medicationSchedule.getMedicine());
         holder.quantity.setText(medicationSchedule.getQuantity());
         holder.startedAt.setText(medicationSchedule.getStartTime());
+
+        int notificationStatus = medicationSchedule.getNotificationStatus();
+        if(notificationStatus == NOTIFICATION_STATUS_ON)
+            holder.scheduleSwitch.setChecked(true);
+        else
+            holder.scheduleSwitch.setChecked(false);
     }
 
     @Override
@@ -81,6 +92,8 @@ public class MedicationScheduleAdapter extends
         public TextView medicine;
         public TextView quantity;
         public TextView startedAt;
+        public Switch scheduleSwitch;
+        public ImageView scheduleCheckIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -88,6 +101,8 @@ public class MedicationScheduleAdapter extends
             medicine = itemView.findViewById(R.id.scheduleMedicine);
             quantity = itemView.findViewById(R.id.scheduleQuantity);
             startedAt = itemView.findViewById(R.id.scheduleStartedAt);
+            scheduleSwitch = itemView.findViewById(R.id.scheduleSwitch);
+            scheduleCheckIcon = itemView.findViewById(R.id.scheduleCheckIcon);
         }
     }
 }
