@@ -15,6 +15,7 @@ import com.sahanruwanga.medcarer.app.AllergicMedicine;
 import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.MedicationSchedule;
+import com.sahanruwanga.medcarer.app.User;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -52,13 +53,20 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_CREATED_AT = "created_at";
     private static final String KEY_SYNC_STATUS = "sync_status";
     private static final String KEY_NOTIFICATION_STATUS = "notification_status";
+    private static final String KEY_MEDICINE = "medicine";
     private static final String KEY_STATUS_TYPE = "status_type";
 
     // User Table Columns names
     private static final String KEY_NAME = "user_name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_UID = "unique_id";
-    private static  final String KEY_MEDICINE = "medicine";
+    private static final String KEY_GENDER = "gender";
+    private static final String KEY_ADDRESS = "address";
+    private static final String KEY_BLOOD_TYPE = "blood_type";
+    private static final String KEY_NOTE = "note";
+    private static final String KEY_DOB = "dob";
+    private static final String KEY_PHONE_NUMBER = "phone_number";
+    private static final String KEY_IMAGE = "image";
 
     // Medical_history table Columns names
     private static  final String KEY_RECORD_ID = "record_id";
@@ -88,9 +96,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //region Queries for creating tables
     //Create users (login) table query
-    private final String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
-            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-            + KEY_EMAIL + " TEXT UNIQUE," + KEY_UID + " TEXT,"
+    private final String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USER + "("
+            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT," + KEY_EMAIL + " TEXT UNIQUE,"
+            + KEY_UID + " TEXT," + KEY_DOB + " TEXT," + KEY_GENDER + " TEXT," + KEY_ADDRESS + " TEXT,"
+            + KEY_PHONE_NUMBER + " TEXT," + KEY_BLOOD_TYPE + " TEXT," + KEY_IMAGE + " BLOB,"
+            + KEY_NOTE + " TEXT," + KEY_STATUS_TYPE + " TINYINT," + KEY_SYNC_STATUS + " TINYINT,"
             + KEY_CREATED_AT + " TEXT" + ")";
 
     // Create Medical History Table query
@@ -131,7 +141,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // OnCreate for Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_LOGIN_TABLE);
+        db.execSQL(CREATE_USER_TABLE);
         db.execSQL(CREATE_MEDICAL_HISTORY_TABLE);
         db.execSQL(CREATE_ALLERGIC_MEDICINE_TABLE);
         db.execSQL(CREATE_APPOINTMENT_TABLE);
@@ -159,7 +169,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(int user_id, String name, String email, String uid, String created_at) {
+    public void addUser(int user_id, String name, String email, String uid,String created_at) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -174,6 +184,62 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
 
         Log.d(TAG, "New user inserted into sqlite: " + id);
+    }
+
+    public void updatePersonalInfo(String dob, String gender, String bloodType, int syncStatus,
+                                   int statusType){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_DOB, dob);
+        values.put(KEY_GENDER, gender);
+        values.put(KEY_BLOOD_TYPE, bloodType);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_USER, values, KEY_ID + "=" + User.getUserId(), null);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "Personal details are updated in sqlite: " + User.getUserId());
+    }
+
+    public void updateContactInfo(String phoneNo, String address, int syncStatus, int statusType){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_PHONE_NUMBER, phoneNo);
+        values.put(KEY_ADDRESS, address);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_USER, values, KEY_ID + "=" + User.getUserId(), null);
+        db.close();
+    }
+
+    public void updateProfileImage(String image, int syncStatus, int statusType){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_IMAGE, image);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_USER, values, KEY_ID + "=" + User.getUserId(), null);
+        db.close();
+    }
+
+    public void updateOtherNotes(String note, int syncStatus, int statusType){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_NOTE, note);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_USER, values, KEY_ID + "=" + User.getUserId(), null);
+        db.close();
+    }
+
+    public void updateName(String name, int syncStatus, int statusType){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, name);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_USER, values, KEY_ID + "=" + User.getUserId(), null);
+        db.close();
     }
 
     /**
@@ -200,6 +266,36 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Fetching user from Sqlite: " + user.toString());
 
         return user;
+    }
+
+    // Get user object with user details
+    public User getUserDetail(){
+        User user = new User();
+        String query = "SELECT  * FROM " + TABLE_USER;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                user.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                user.setEmail(cursor.getString(cursor.getColumnIndex(KEY_EMAIL)));
+                user.setDob(cursor.getString(cursor.getColumnIndex(KEY_DOB)));
+                user.setGender(cursor.getString(cursor.getColumnIndex(KEY_GENDER)));
+                user.setBloodType(cursor.getString(cursor.getColumnIndex(KEY_BLOOD_TYPE)));
+                user.setPhoneNo(cursor.getString(cursor.getColumnIndex(KEY_PHONE_NUMBER)));
+                user.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+                user.setNote(cursor.getString(cursor.getColumnIndex(KEY_NOTE)));
+                user.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                user.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                user.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+            }while (cursor.moveToNext());
+        }
+        // return user
+        Log.d(TAG, "User details retrieving Sqlite: ");
+
+        return user;
+
+
     }
     //endregion
 

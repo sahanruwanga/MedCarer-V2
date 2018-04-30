@@ -1,7 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.view.MenuItem;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.NetworkStateChecker;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
@@ -26,6 +26,7 @@ import android.content.Intent;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     private SQLiteHandler sqLiteHandler;
     private SessionManager sessionManager;
 

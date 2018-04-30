@@ -3,6 +3,8 @@ package com.sahanruwanga.medcarer.app;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,16 +30,23 @@ import java.util.Map;
  * Created by Sahan Ruwanga on 3/7/2018.
  */
 
-public class User {
+public class User implements Parcelable{
     private static String userId;
     private String name;
     private String address;
-    private String bod;
+    private String dob;
     private String phoneNo;
     private String image;
     private String gender;
     private String email;
     private String password;
+    private String bloodType;
+    private String note;
+    private int age;
+
+    private int syncStatus;
+    private int statusType;
+    private String createdAt;
 
     private ProgressDialog progressDialog;
     private Context context;
@@ -47,6 +56,10 @@ public class User {
 
     private static final int SYNCED_WITH_SERVER = 1;
     private static final int NOT_SYNCED_WITH_SERVER = 0;
+
+    public static final String USER = "user";
+
+    public User(){};
 
     public User(Context context){
         this.context = context;
@@ -65,6 +78,8 @@ public class User {
         getProgressDialog().setCancelable(false);
         this.sqLiteHandler = new SQLiteHandler(getContext());
     }
+
+
 
     public void register(){
         getProgressDialog().setMessage("Registering ...");
@@ -194,9 +209,7 @@ public class User {
                         storeMedicationScheduleInSQLite();
 
                         // Launch main activity
-                        Intent intent = new Intent(getContext(), HomeActivity.class);
-                        getContext().startActivity(intent);
-                        ((LoginActivity)getContext()).finish();
+                        openHomeActivity();
                     } else {
                         // Error in login. Get the error message
                         Toast.makeText(getContext(),
@@ -515,7 +528,20 @@ public class User {
         AppController.getInstance().addToRequestQueue(strReq);
     }
 
-    public void updateUserProfile(){}
+    public User getUserProfile(){
+        return getSqLiteHandler().getUserDetail();
+    }
+
+    private void openHomeActivity(){
+        Intent intent = new Intent(getContext(), HomeActivity.class);
+        getContext().startActivity(intent);
+        ((LoginActivity)getContext()).finish();
+    }
+
+    public void updateUserProfilePersonalInfo(String dob, String gender, String bloodType,
+                                              int syncStatus, int statusType){
+        getSqLiteHandler().updatePersonalInfo(dob, gender, bloodType, syncStatus, statusType);
+    }
 
     private void changeImage(){}
 
@@ -580,12 +606,12 @@ public class User {
         this.address = address;
     }
 
-    public String getBod() {
-        return bod;
+    public String getDob() {
+        return dob;
     }
 
-    public void setBod(String bod) {
-        this.bod = bod;
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
     public String getPhoneNo() {
@@ -659,5 +685,107 @@ public class User {
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public int getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(int syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public int getStatusType() {
+        return statusType;
+    }
+
+    public void setStatusType(int statusType) {
+        this.statusType = statusType;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(address);
+        parcel.writeString(dob);
+        parcel.writeString(phoneNo);
+        parcel.writeString(image);
+        parcel.writeString(gender);
+        parcel.writeString(email);
+        parcel.writeString(password);
+        parcel.writeString(bloodType);
+        parcel.writeString(note);
+        parcel.writeInt(age);
+        parcel.writeInt(syncStatus);
+        parcel.writeInt(statusType);
+        parcel.writeString(createdAt);
+    }
+    //endregion
+
+    //region Creator for Parcelable
+    protected User(Parcel in) {
+        name = in.readString();
+        address = in.readString();
+        dob = in.readString();
+        phoneNo = in.readString();
+        image = in.readString();
+        gender = in.readString();
+        email = in.readString();
+        password = in.readString();
+        bloodType = in.readString();
+        note = in.readString();
+        age = in.readInt();
+        syncStatus = in.readInt();
+        statusType = in.readInt();
+        createdAt = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
     //endregion
 }

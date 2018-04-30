@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/userProfileNoteClear"
+            android:src="@drawable/ic_delete"
+            android:layout_gravity="right"
+            android:padding="10dp"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Other Notes"
+            android:drawableLeft="@drawable/ic_create"
+            android:drawableStart="@drawable/ic_create"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:drawablePadding="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:background="@drawable/edit_text_style">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/userProfileNote"
+                android:padding="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_margin="5dp"
+                android:inputType="textMultiLine"
+                android:background="@drawable/edit_text_design_emptybackground"
+                android:hint="Enter Notes . . .">
+
+            </EditText>
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/userProfileNoteSave"
+            android:text="SAVE"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_shape"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/userProfileNoteCancel"
+            android:text="CANCEL"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/button_shape"
+            android:backgroundTint="@color/colorWarning"/>
+
+    </LinearLayout>
+</RelativeLayout>
