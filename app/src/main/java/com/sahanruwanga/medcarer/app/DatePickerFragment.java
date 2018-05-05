@@ -6,6 +6,7 @@ import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity;
@@ -43,7 +44,7 @@ public class DatePickerFragment extends DialogFragment
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         String date = dateFormat.format(calendar.getTime());
 
-        EditText dateText = getActivity().findViewById(dateId);
+        TextView dateText = getActivity().findViewById(dateId);
         dateText.setText(date);
 
 

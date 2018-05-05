@@ -1,42 +1,38 @@
 package com.sahanruwanga.medcarer.activity;
 
-import android.app.ProgressDialog;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.sahanruwanga.medcarer.R;
-import com.sahanruwanga.medcarer.app.AppConfig;
-import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.User;
-import com.sahanruwanga.medcarer.helper.SQLiteHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class UpdateMedicalRecordActivity extends AppCompatActivity {
     private MedicalRecord medicalRecord;
-    private EditText disease;
     private EditText medicine;
-    private EditText allergic;
-    private static EditText date1;
-    private static EditText date2;
+    private EditText disease;
     private EditText doctor;
     private EditText contact;
-    private EditText description;
+    private EditText note;
+    private LinearLayout moreItemLayout;
+    private Switch moreItemSwitch;
+    private TextView date1;
+    private TextView date2;
+    private Spinner allergic;
+    private Button updateBtn;
+    private Button cancelBtn;
 
     private User user;
 
@@ -50,33 +46,69 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
             this.user = new User(this);
         }
 
+        // Initiating widgets
+        this.medicine = findViewById(R.id.updateMedicalRecordMedicine);
+        this.disease = findViewById(R.id.updateMedicalRecordDisease);
+        this.doctor = findViewById(R.id.updateMedicalRecordDoctor);
+        this.contact = findViewById(R.id.updateMedicalRecordContact);
+        this.note = findViewById(R.id.updateMedicalRecordNote);
+        this.moreItemLayout = findViewById(R.id.moreItemLayout);
+        this.moreItemSwitch = findViewById(R.id.moreSwitch);
+        this.date1 = findViewById(R.id.updateMedicalRecordDate1);
+        this.date2 = findViewById(R.id.updateMedicalRecordDate2);
+        this.allergic = findViewById(R.id.updateMedicalRecordAllergic);
+        this.updateBtn = findViewById(R.id.updateMedicalRecordUpdate);
+        this.cancelBtn = findViewById(R.id.updateMedicalRecordCancel);
+
+        // Set Adapter for Spinner
+        ArrayAdapter<CharSequence> adapterAllergic = ArrayAdapter.createFromResource(this,
+                R.array.allergic_array, android.R.layout.simple_spinner_item);
+        adapterAllergic.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        getAllergic().setAdapter(adapterAllergic);
+
+        // Switch check button change event
+        getMoreItemSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    getMoreItemLayout().setVisibility(View.VISIBLE);
+                else
+                    getMoreItemLayout().setVisibility(View.GONE);
+            }
+        });
+
+        // OnClick listeners for buttons
+        getUpdateBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateMedicalReocrd();
+            }
+        });
+
+        getCancelBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        // OnCick listeners for date Text Views
+        getDate1().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDate(getDate1().getId());
+            }
+        });
+
+        getDate2().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDate(getDate2().getId());
+            }
+        });
+
         this.medicalRecord = getIntent().getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
 
-        setDisease((EditText)findViewById(R.id.diseaseUpdate));
-        setMedicine((EditText)findViewById(R.id.medicineUpdate));
-        setAllergic((EditText)findViewById(R.id.allergicUpdate));
-        setDate1((EditText)findViewById(R.id.date1Update));
-        setDate2((EditText)findViewById(R.id.date2Update));
-        setDoctor((EditText)findViewById(R.id.doctorUpdate));
-        setContact((EditText)findViewById(R.id.contactUpdate));
-        setDescription((EditText)findViewById(R.id.descriptionUpdate));
-
-        getDate1().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setDate(getDate1().getId());
-            }
-        });
-        getDate2().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setDate(getDate2().getId());
-            }
-        });
-
-        // Fill data in edit text boxes
         fillData();
     }
 
@@ -88,14 +120,14 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public void updateMedicalRecord(View view) {
+    private void updateMedicalReocrd(){
         String disease = getDisease().getText().toString().trim();
         String medicine = getMedicine().getText().toString().trim();
         String duration = getDate1().getText().toString().trim() + " - " + getDate2().getText().toString().trim();
-        String allergic = getAllergic().getText().toString().trim();
+        String allergic = getAllergic().getSelectedItem().toString().trim();
         String doctor = getDoctor().getText().toString().trim();
         String contact = getContact().getText().toString().trim();
-        String description = getDescription().getText().toString().trim();
+        String description = getNote().getText().toString().trim();
         int syncStatus = getMedicalRecord().getSyncStatus();
         int statusType = getMedicalRecord().getStatusType();
 
@@ -112,27 +144,27 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         finish();
     }
 
+    // Back Icon on toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
+    }
+
     // Fill current data in boxes
     private void fillData(){
         getDisease().setText(medicalRecord.getDisease());
         getMedicine().setText(medicalRecord.getMedicine());
-        getAllergic().setText(medicalRecord.getAllergic());
+        if(medicalRecord.getAllergic().equals("Yes"))
+            getAllergic().setSelection(0);
+        else
+            getAllergic().setSelection(1);
         getDate1().setText(medicalRecord.getDuration().substring(0,12));
         getDate2().setText(medicalRecord.getDuration().substring(15));
         getDoctor().setText(medicalRecord.getDoctor());
         getContact().setText(medicalRecord.getContact());
-        getDescription().setText(medicalRecord.getDescription());
+        getNote().setText(medicalRecord.getDescription());
     }
 
     //region Getters and Setters
-    public EditText getDisease() {
-        return disease;
-    }
-
-    public void setDisease(EditText disease) {
-        this.disease = disease;
-    }
-
     public EditText getMedicine() {
         return medicine;
     }
@@ -141,12 +173,12 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         this.medicine = medicine;
     }
 
-    public EditText getAllergic() {
-        return allergic;
+    public EditText getDisease() {
+        return disease;
     }
 
-    public void setAllergic(EditText allergic) {
-        this.allergic = allergic;
+    public void setDisease(EditText disease) {
+        this.disease = disease;
     }
 
     public EditText getDoctor() {
@@ -165,28 +197,68 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         this.contact = contact;
     }
 
-    public EditText getDescription() {
-        return description;
+    public EditText getNote() {
+        return note;
     }
 
-    public void setDescription(EditText description) {
-        this.description = description;
+    public void setNote(EditText note) {
+        this.note = note;
     }
 
-    public static EditText getDate1() {
+    public LinearLayout getMoreItemLayout() {
+        return moreItemLayout;
+    }
+
+    public void setMoreItemLayout(LinearLayout moreItemLayout) {
+        this.moreItemLayout = moreItemLayout;
+    }
+
+    public Switch getMoreItemSwitch() {
+        return moreItemSwitch;
+    }
+
+    public void setMoreItemSwitch(Switch moreItemSwitch) {
+        this.moreItemSwitch = moreItemSwitch;
+    }
+
+    public TextView getDate1() {
         return date1;
     }
 
-    public static void setDate1(EditText date1) {
-        UpdateMedicalRecordActivity.date1 = date1;
+    public void setDate1(TextView date1) {
+        this.date1 = date1;
     }
 
-    public static EditText getDate2() {
+    public TextView getDate2() {
         return date2;
     }
 
-    public static void setDate2(EditText date2) {
-        UpdateMedicalRecordActivity.date2 = date2;
+    public void setDate2(TextView date2) {
+        this.date2 = date2;
+    }
+
+    public Spinner getAllergic() {
+        return allergic;
+    }
+
+    public void setAllergic(Spinner allergic) {
+        this.allergic = allergic;
+    }
+
+    public Button getUpdateBtn() {
+        return updateBtn;
+    }
+
+    public void setUpdateBtn(Button updateBtn) {
+        this.updateBtn = updateBtn;
+    }
+
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
+
+    public void setCancelBtn(Button cancelBtn) {
+        this.cancelBtn = cancelBtn;
     }
 
     public MedicalRecord getMedicalRecord() {
@@ -204,5 +276,6 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
     public void setUser(User user) {
         this.user = user;
     }
+
     //endregion
 }

@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
@@ -19,11 +21,13 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText venue;
     private EditText contact;
-    private EditText date;
-    private EditText time;
+    private TextView date;
+    private TextView time;
     private EditText reason;
     private EditText doctor;
-    private EditText notifyTime;
+    private TextView notifyTime;
+    private Button updateBtn;
+    private Button cancelBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,36 +49,38 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
         this.reason = findViewById(R.id.reasonUpdateAppointment);
         this.doctor = findViewById(R.id.doctorUpdateAppointment);
         this.notifyTime = findViewById(R.id.notifyTimeUpdateAppointment);
+        this.updateBtn = findViewById(R.id.updateAppointment);
+        this.cancelBtn = findViewById(R.id.cancelAppointmentUpdate);
 
         // Fill data in edit text boxes
         fillData();
 
-        // Event listeners for opening Calender and Clock
-        getDate().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        // OnClick events for buttons
+        getUpdateBtn().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setDate(getDate().getId());
+            public void onClick(View view) {
+                updateAppointment();
             }
         });
 
-        getTime().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        getCancelBtn().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setTime(getTime().getId());
+            public void onClick(View view) {
+                finish();
             }
         });
 
-        getNotifyTime().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setTime(getNotifyTime().getId());
-            }
-        });
+    }
 
+    public void openCalender(View view) {
+        setDate(getDate().getId());
+    }
+    public void openClockForNotifyTime(View view) {
+        setTime(getNotifyTime().getId());
+    }
 
+    public void openClockForAppointmentTime(View view) {
+        setTime(getTime().getId());
     }
 
     // For fill data in edit text boxes
@@ -106,17 +112,17 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
-    // Cancel icon function on toolbar
-    public void cancelUpdating(View view) {
-        onBackPressed();
-    }
-
     // Save (Update) function on toolbar
-    public void updateAppointment(View view) {
+    public void updateAppointment() {
         Toast.makeText(this, "Should Update database", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, AppointmentActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    // Back Icon click on toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
     }
 
     //region Getters and Setters
@@ -144,19 +150,19 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
         this.contact = contact;
     }
 
-    public EditText getDate() {
+    public TextView getDate() {
         return date;
     }
 
-    public void setDate(EditText date) {
+    public void setDate(TextView date) {
         this.date = date;
     }
 
-    public EditText getTime() {
+    public TextView getTime() {
         return time;
     }
 
-    public void setTime(EditText time) {
+    public void setTime(TextView time) {
         this.time = time;
     }
 
@@ -176,11 +182,11 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
         this.doctor = doctor;
     }
 
-    public EditText getNotifyTime() {
+    public TextView getNotifyTime() {
         return notifyTime;
     }
 
-    public void setNotifyTime(EditText notifyTime) {
+    public void setNotifyTime(TextView notifyTime) {
         this.notifyTime = notifyTime;
     }
 
@@ -190,6 +196,22 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
 
     public void setToolbar(Toolbar toolbar) {
         this.toolbar = toolbar;
+    }
+
+    public Button getUpdateBtn() {
+        return updateBtn;
+    }
+
+    public void setUpdateBtn(Button updateBtn) {
+        this.updateBtn = updateBtn;
+    }
+
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
+
+    public void setCancelBtn(Button cancelBtn) {
+        this.cancelBtn = cancelBtn;
     }
     //endregion
 }

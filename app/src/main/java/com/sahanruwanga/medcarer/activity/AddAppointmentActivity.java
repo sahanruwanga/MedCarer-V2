@@ -6,7 +6,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
@@ -22,9 +24,11 @@ public class AddAppointmentActivity extends AppCompatActivity {
     private EditText venueText;
     private EditText doctorText;
     private EditText clinicContactText;
-    private EditText dateText;
-    private EditText timeText;
-    private EditText notifyTimeText;
+    private TextView dateText;
+    private TextView timeText;
+    private TextView notifyTimeText;
+    private Button saveBtn;
+    private Button cancelBtn;
 
     private User user;
 
@@ -37,7 +41,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
         if(getUser() == null)
             this.user = new User(this);
 
-        // Define all Edit Texts and the switch
+        // Define all widget Edit Texts and the switch
         this.reasonText = findViewById(R.id.reasonAppointment);
         this.venueText  = findViewById(R.id.venueAppointment);
         this.doctorText = findViewById(R.id.doctorAppointment);
@@ -45,6 +49,8 @@ public class AddAppointmentActivity extends AppCompatActivity {
         this.dateText = findViewById(R.id.dateAppointment);
         this.timeText = findViewById(R.id.timeAppointment);
         this.notifyTimeText = findViewById(R.id.notifyTimeAppointment);
+        this.saveBtn = findViewById(R.id.saveAppointment);
+        this.cancelBtn = findViewById(R.id.cancelAppointment);
 
         // Set onFocusListener to open up calender in date text
         getDateText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -71,6 +77,21 @@ public class AddAppointmentActivity extends AppCompatActivity {
                     setTime(getNotifyTimeText().getId());
             }
         });
+
+        // OnClick events for save and cancel buttons
+        getSaveBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveAppointment();
+            }
+        });
+
+        getCancelBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     private void setDate(int dateId){
@@ -89,13 +110,9 @@ public class AddAppointmentActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
-    // Cancel function in toolbar
-    public void cancelSaving(View view) {
-        onBackPressed();
-    }
 
-    // Save function on toolbar
-    public void saveAppointment(View view) {
+    // Save function
+    public void saveAppointment() {
         // Get daata from edit text boxes
         String reason = getReasonText().getText().toString().trim();
         String venue = getVenueText().getText().toString().trim();
@@ -170,6 +187,11 @@ public class AddAppointmentActivity extends AppCompatActivity {
         finish();
     }
 
+    // Back Icon click on toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
+    }
+
     //region Getters and Setters
     public EditText getReasonText() {
         return reasonText;
@@ -203,27 +225,27 @@ public class AddAppointmentActivity extends AppCompatActivity {
         this.clinicContactText = clinicContactText;
     }
 
-    public EditText getDateText() {
+    public TextView getDateText() {
         return dateText;
     }
 
-    public void setDateText(EditText dateText) {
+    public void setDateText(TextView dateText) {
         this.dateText = dateText;
     }
 
-    public EditText getTimeText() {
+    public TextView getTimeText() {
         return timeText;
     }
 
-    public void setTimeText(EditText timeText) {
+    public void setTimeText(TextView timeText) {
         this.timeText = timeText;
     }
 
-    public EditText getNotifyTimeText() {
+    public TextView getNotifyTimeText() {
         return notifyTimeText;
     }
 
-    public void setNotifyTimeText(EditText notifyTimeText) {
+    public void setNotifyTimeText(TextView notifyTimeText) {
         this.notifyTimeText = notifyTimeText;
     }
 
@@ -233,6 +255,22 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Button getSaveBtn() {
+        return saveBtn;
+    }
+
+    public void setSaveBtn(Button saveBtn) {
+        this.saveBtn = saveBtn;
+    }
+
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
+
+    public void setCancelBtn(Button cancelBtn) {
+        this.cancelBtn = cancelBtn;
     }
     //endregion
 }

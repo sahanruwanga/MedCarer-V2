@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import java.util.Date;
 public class NewAllergicMedicineActivity extends AppCompatActivity {
     private AutoCompleteTextView medicine;
     private EditText description;
+    private Button saveBtn;
+    private Button cancelBtn;
 
     private User user;
 
@@ -27,25 +30,39 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
 
         // Create User object
         if(getUser() == null)
-            this.user = new User(this);
+            this.setUser(new User(this));
 
-        // Initializing edit texts
+        // Initializing widgets
         this.medicine = findViewById(R.id.newAllergicMedicine);
         String[] medicines = {"Panadol", "Paracetamol", "Panadol1"};
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, medicines);
         adapterMonth.setDropDownViewResource(R.layout.autocomplete_textview_style);
         getMedicine().setAdapter(adapterMonth);
+
         this.description = findViewById(R.id.newAllergicMedicineNote);
+        this.saveBtn = findViewById(R.id.saveNewAllergicMedicine);
+        this.cancelBtn = findViewById(R.id.cancelNewAllergicMedicine);
+
+        // OnCLick listeners for buttons
+        getSaveBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveMedicine();
+            }
+        });
+
+        getCancelBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
-    // Cancel function in toolbar
-    public void cancelSaving(View view) {
-        onBackPressed();
-    }
 
     // Save function in toolbar
-    public void saveMedicine(View view) {
+    public void saveMedicine() {
         String medicine = getMedicine().getText().toString().trim();
         String description = getDescription().getText().toString().trim();
 
@@ -57,6 +74,11 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
             getUser().saveNewAllergicMedicine(medicine, description, createdAt);
         else
             Toast.makeText(this, "Please add required fields", Toast.LENGTH_SHORT).show();
+    }
+
+    // Back Icon click on toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
     }
 
     //region Getters and Setters
@@ -83,5 +105,22 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
+
+    public void setCancelBtn(Button cancelBtn) {
+        this.cancelBtn = cancelBtn;
+    }
+
+    public Button getSaveBtn() {
+        return saveBtn;
+    }
+
+    public void setSaveBtn(Button saveBtn) {
+        this.saveBtn = saveBtn;
+    }
+
     //endregion
 }

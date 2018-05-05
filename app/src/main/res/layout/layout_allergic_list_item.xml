@@ -18,7 +18,8 @@ android:padding="1dp">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="15dp">
+        android:padding="15dp"
+        android:background="@drawable/black_round_corner_style">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,10 +39,10 @@ android:padding="1dp">
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_check"
                 android:id="@+id/checkIconAllergic"
-                android:visibility="invisible"/>
+                android:visibility="gone"/>
         </RelativeLayout>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sample createdAt"
             android:id="@+id/descriptionAllergic"/>

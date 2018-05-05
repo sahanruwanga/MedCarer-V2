@@ -1,6 +1,7 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +32,8 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
 
         // Get medical record object from intent
         this.medicalRecord = getIntent().getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
+
+        Toast.makeText(this, medicalRecord.getSyncStatus() + " " + medicalRecord.getStatusType(), Toast.LENGTH_SHORT).show();
 
         // Initialize toolbar
         this.toolbar = findViewById(R.id.toolbarVieMedicalRecord);
@@ -75,6 +78,20 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
     // Back icon click on toolbar
     public void backIconClick(View view) {
         onBackPressed();
+    }
+
+    // Dial the Number
+    public void dialNumber(View view) {
+        Uri number = Uri.parse("tel:" + getContact().getText().toString().trim());
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
+    }
+
+    // Message to the number
+    public void messageNumber(View view) {
+        Intent messageIntent = new Intent(Intent.ACTION_SENDTO);
+        messageIntent.setData(Uri.parse("smsto:" + Uri.encode(getContact().getText().toString().trim())));
+        startActivity(messageIntent);
     }
 
     //region Getters and Setters
@@ -150,4 +167,13 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
         this.description = description;
     }
     //endregion
+
+    public static class UpdateAllergicMedicineActivity extends AppCompatActivity {
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_update_allergic_medicine);
+        }
+    }
 }

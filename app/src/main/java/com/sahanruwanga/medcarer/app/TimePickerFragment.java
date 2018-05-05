@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -48,7 +49,7 @@ public class TimePickerFragment extends DialogFragment
         String newMinute = String.valueOf(minute);
         if(newMinute.length() != 2)
             newMinute = "0" + minute;
-        EditText timeText = getActivity().findViewById(timeId);
+        TextView timeText = getActivity().findViewById(timeId);
         timeText.setText(newHour + ":" + newMinute + hourSign);
 
     }

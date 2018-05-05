@@ -1,278 +1,356 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sahanruwanga.medcarer.activity.UpdateMedicalRecordActivity"
-    android:background="@drawable/background">
+    android:background="@color/colorWhite">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/toolbarUpdateMedicalRecord"
         android:background="@color/colorBackground">
-        <TextView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Update Medical Record"
-            android:textSize="25sp"
-            android:drawableLeft="@drawable/ic_profile"
-            android:drawablePadding="15dp"
-            android:textColor="@color/colorBlack"
-            android:fontFamily="cursive"/>
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/backIconUpdateMedicalRecord"
+                android:src="@drawable/ic_action_navigation_arrow_back"
+                android:layout_gravity="center_vertical|left"
+                android:onClick="backIconClick"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Medical Record"
+                android:id="@+id/toolBarText"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center_horizontal|center_vertical"/>
+        </FrameLayout>
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:paddingBottom="10dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbarUpdateMedicalRecord">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/diseaseLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/diseaseUpdate"
-                    android:hint="@string/disease_name"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_create"
-                    android:drawablePadding="5dp"
-                    android:inputType="textPersonName"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/medicineLayout"
-                android:layout_below="@+id/diseaseLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/medicineUpdate"
-                    android:hint="@string/medicine_name"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_notification"
-                    android:drawablePadding="5dp"
-                    android:inputType="text"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/allergicLayout"
-                android:layout_below="@+id/medicineLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/allergicUpdate"
-                    android:hint="@string/allergic_status"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_visibility"
-                    android:drawablePadding="5dp"
-                    android:inputType="text"/>
-            </android.support.v7.widget.CardView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="112dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:weightSum="12"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:id="@+id/durationLayout1"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_below="@+id/allergicLayout">
-                <LinearLayout
+                android:background="@drawable/edit_text_style">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="10dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:text="@string/from"
-                        android:textStyle="bold"
-                        android:layout_gravity="right"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="18sp"/>
+                    android:text="Medicine"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical|left"
+                    android:padding="10dp"
+                    android:textAlignment="gravity"/>
 
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/updateMedicalRecordMedicine"
+                    android:layout_weight="11.9"
+                    android:background="@drawable/edit_text_design"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/colorPrimary"
+                    android:padding="5dp"
+                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
+                    android:layout_gravity="center_vertical|left"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLines="1"
+                    android:maxLength="50"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:weightSum="12"
+                android:orientation="horizontal"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Disease"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical|left"
+                    android:padding="10dp"
+                    android:textAlignment="gravity"/>
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/updateMedicalRecordDisease"
+                    android:layout_weight="11.9"
+                    android:background="@drawable/edit_text_design"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/colorPrimary"
+                    android:padding="5dp"
+                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
+                    android:layout_gravity="center_vertical|left"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLines="1"
+                    android:maxLength="50"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:background="@drawable/edit_text_style">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Duration"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical|left"
+                    android:padding="10dp"
+                    android:textAlignment="gravity"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_gravity="center_horizontal">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:text="@string/to"
-                        android:layout_marginTop="10dp"
-                        android:layout_gravity="right"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="18sp"/>
+                        android:layout_height="wrap_content"
+                        android:id="@+id/updateMedicalRecordDate1"
+                        android:text="Apr 28, 2018"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="10dp"
+                        android:drawableRight="@drawable/ic_add_note"
+                        android:drawablePadding="5dp"
+                        android:background="@drawable/edit_text_style"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/updateMedicalRecordDate2"
+                        android:text="Apr 28, 2018"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:drawableRight="@drawable/ic_add_note"
+                        android:drawablePadding="5dp"
+                        android:background="@drawable/edit_text_style"/>
+
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <android.support.v7.widget.CardView
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_centerHorizontal="true"
-                        android:id="@+id/dateCardView1"
-                        android:layout_below="@+id/dateCardView1"
-                        app:cardCornerRadius="8dp">
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/date1Update"
-                            android:background="@drawable/edit_text_design"
-                            android:padding="5sp"
-                            android:hint="@string/date1"
-                            android:textColor="@color/colorBlack"
-                            android:drawableLeft="@drawable/ic_info"
-                            android:drawablePadding="5dp"
-                            android:inputType="date"/>
-                    </android.support.v7.widget.CardView>
 
-                    <android.support.v7.widget.CardView
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/dateCardView2"
-                        android:layout_below="@+id/durationLayout1"
-                        app:cardCornerRadius="8dp">
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/date2Update"
-                            android:hint="@string/date1"
-                            android:textColor="@color/colorBlack"
-                            android:background="@drawable/edit_text_design"
-                            android:padding="5sp"
-                            android:drawableLeft="@drawable/ic_info"
-                            android:drawablePadding="5dp"
-                            android:inputType="date"/>
-                    </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:weightSum="7"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="6"
+                    android:weightSum="12"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edit_text_style">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Allergic"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <Spinner
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/updateMedicalRecordAllergic"
+                        android:layout_weight="11.7"
+                        android:background="@drawable/edit_text_design"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:maxLines="1"
+                        android:maxLength="3" />
+                </LinearLayout>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/moreSwitch"
+                    android:text="More"
+                    android:textColor="@color/colorHintText"
+                    android:switchPadding="5dp"
+                    android:layout_gravity="bottom|right"
+                    android:gravity="right|bottom"
+                    android:layout_marginLeft="15dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/moreItemLayout"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edit_text_style">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Doctor"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/updateMedicalRecordDoctor"
+                        android:layout_weight="11.9"
+                        android:background="@drawable/edit_text_design"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:inputType="textPersonName|textCapWords"
+                        android:maxLines="1"
+                        android:maxLength="50"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edit_text_style">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Phone"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/updateMedicalRecordContact"
+                        android:layout_weight="11.9"
+                        android:background="@drawable/edit_text_design"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:maxLength="10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/edit_text_style">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Notes"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/updateMedicalRecordNote"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:inputType="text|textMultiLine"
+                        android:background="@drawable/edit_text_design_emptybackground">
+
+                    </EditText>
                 </LinearLayout>
             </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:id="@+id/doctorLayout"
-                android:layout_below="@+id/durationLayout1"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/doctorUpdate"
-                    android:hint="@string/doctor_name"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_doctor"
-                    android:drawablePadding="5dp"
-                    android:inputType="textPersonName"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/contactLayout"
-                android:layout_below="@+id/doctorLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/contactUpdate"
-                    android:hint="@string/contact_number"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_download"
-                    android:drawablePadding="5dp"
-                    android:inputType="phone"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/descriptionLayout"
-                android:layout_below="@+id/contactLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/descriptionUpdate"
-                    android:hint="@string/description"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/edit_text_design"
-                    android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_create"
-                    android:layout_alignTop="@id/descriptionUpdate"
-                    android:drawablePadding="5dp"
-                    android:maxLines="4"
-                    android:inputType="textMultiLine"
-                    android:scrollbarAlwaysDrawVerticalTrack="true"/>
-            </android.support.v7.widget.CardView>
-
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/update"
-                android:layout_below="@id/descriptionLayout"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:onClick="updateMedicalRecord"
-                android:padding="5dp"
-                android:textSize="20dp"
+                android:id="@+id/updateMedicalRecordUpdate"
+                android:text="UPDATE"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/button_shape"/>
 
-        </RelativeLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/updateMedicalRecordCancel"
+                android:text="CANCEL"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="@color/colorWarning"/>
+
+        </LinearLayout>
+
     </ScrollView>
 
 </RelativeLayout>

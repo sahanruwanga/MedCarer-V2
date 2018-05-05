@@ -6,7 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
@@ -16,18 +23,23 @@ import com.sahanruwanga.medcarer.app.User;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AddMedicalRecordActivity extends AppCompatActivity {
-    private EditText disease;
+public class AddMedicalRecordActivity extends AppCompatActivity{
     private EditText medicine;
-    private EditText allergic;
-    private EditText date1;
-    private EditText date2;
-    private EditText doctorName;
+    private EditText disease;
+    private EditText doctor;
     private EditText contact;
-    private EditText description;
+    private EditText note;
+    private LinearLayout moreItemLayout;
+    private Switch moreItemSwitch;
+    private TextView date1;
+    private TextView date2;
+    private Button saveBtn;
+    private Button cancelBtn;
     private Toolbar toolbar;
 
     private User user;
+
+    private static String NOT_ALLERGIC = "No";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,65 +48,87 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
 
         // Create User object
         if(getUser() == null) {
-            this.user = new User(this);
+            this.setUser(new User(this));
         }
 
         // ToolBar initializing
         this.toolbar = findViewById(R.id.toolbarAddMedicalRecord);
         setSupportActionBar(getToolbar());
 
-        // Define all Edit Texts
-        this.disease = findViewById(R.id.disease);
-        this.medicine = findViewById(R.id.medicine);
-        this.allergic = findViewById(R.id.allergic);
-        this.date1 = findViewById(R.id.date1);
-        this.date2 = findViewById(R.id.date2);
-        this.doctorName = findViewById(R.id.doctor);
-        this.contact = findViewById(R.id.contact);
-        this.description = findViewById(R.id.description);
+        // Initiating widgets
+        this.medicine = findViewById(R.id.addMedicalRecordMedicine);
+        this.disease = findViewById(R.id.addMedicalRecordDisease);
+        this.doctor = findViewById(R.id.addMedicalRecordDoctor);
+        this.contact = findViewById(R.id.addMedicalRecordContact);
+        this.note = findViewById(R.id.addMedicalRecordNote);
+        this.moreItemLayout = findViewById(R.id.moreItemLayoutAddMR);
+        this.moreItemSwitch = findViewById(R.id.moreSwitchAddMR);
+        this.date1 = findViewById(R.id.addMedicalRecordDate1);
+        this.date2 = findViewById(R.id.addMedicalRecordDate2);
+        this.saveBtn = findViewById(R.id.addMedicalRecordUpdate);
+        this.cancelBtn = findViewById(R.id.addMedicalRecordCancel);
 
-        // Set onFocusListener to open up calender in date text
-        getDate1().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        // Switch check button change event
+        getMoreItemSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setDate(getDate1().getId());
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    getMoreItemLayout().setVisibility(View.VISIBLE);
+                else
+                    getMoreItemLayout().setVisibility(View.GONE);
             }
         });
-        getDate2().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        // OnClick listeners for buttons
+        getSaveBtn().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus)
-                    setDate(getDate2().getId());
+            public void onClick(View view) {
+                saveRecord();
             }
         });
 
-    }
+        getCancelBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
-    // Cancel function in toolbar
-    public void cancelUpdating(View view) {
-        onBackPressed();
+        // OnCick listeners for date Text Views
+        getDate1().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDate(getDate1().getId());
+            }
+        });
+
+        getDate2().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDate(getDate2().getId());
+            }
+        });
+
     }
 
     // Save function in toolbar
-    public void saveRecord(View view){
+    public void saveRecord(){
         String disease = getDisease().getText().toString().trim();
         String medicine = getMedicine().getText().toString().trim();
         String duration = getDate1().getText().toString().trim() + " - " + getDate2().getText().toString().trim();
-        String allergic = getAllergic().getText().toString().trim();
-        String doctor = getDoctorName().getText().toString().trim();
+        String doctor = getDoctor().getText().toString().trim();
         String contact = getContact().getText().toString().trim();
-        String description = getDescription().getText().toString().trim();
+        String description = getNote().getText().toString().trim();
 
         // Get current date time
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createdAt = dateFormat.format(new Date());
 
         if(!disease.isEmpty() && !medicine.isEmpty() && !getDate1().getText().toString().isEmpty() &&
-                !getDate2().getText().toString().isEmpty() && !allergic.isEmpty()){
+                !getDate2().getText().toString().isEmpty()){
 
             clearAll();
-            getUser().saveNewRecord(disease, medicine, duration, allergic, doctor, contact, description, createdAt);
+            getUser().saveNewRecord(disease, medicine, duration, NOT_ALLERGIC, doctor, contact, description, createdAt);
             finish();
 
         }else{
@@ -108,10 +142,9 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         getMedicine().setText("");
         getDate1().setText("");
         getDate2().setText("");
-        getAllergic().setText("");
-        getDoctorName().setText("");
+        getDoctor().setText("");
         getContact().setText("");
-        getDescription().setText("");
+        getNote().setText("");
     }
 
     @Override
@@ -131,21 +164,19 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
+    // Back Icon click on TooBar
+    public void backIconClick(View view) {
+        onBackPressed();
+    }
+
+
     //region Getters and Setters
-    public EditText getDate2() {
-        return date2;
+    public EditText getMedicine() {
+        return medicine;
     }
 
-    public void setDate2(EditText date2) {
-        this.date2 = date2;
-    }
-
-    public Toolbar getToolbar() {
-        return toolbar;
-    }
-
-    public void setToolbar(Toolbar toolbar) {
-        this.toolbar = toolbar;
+    public void setMedicine(EditText medicine) {
+        this.medicine = medicine;
     }
 
     public EditText getDisease() {
@@ -156,36 +187,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         this.disease = disease;
     }
 
-    public EditText getMedicine() {
-        return medicine;
+    public EditText getDoctor() {
+        return doctor;
     }
 
-    public void setMedicine(EditText medicine) {
-        this.medicine = medicine;
-    }
-
-    public EditText getAllergic() {
-        return allergic;
-    }
-
-    public void setAllergic(EditText allergic) {
-        this.allergic = allergic;
-    }
-
-    public EditText getDate1() {
-        return date1;
-    }
-
-    public void setDate1(EditText date1) {
-        this.date1 = date1;
-    }
-
-    public EditText getDoctorName() {
-        return doctorName;
-    }
-
-    public void setDoctorName(EditText doctorName) {
-        this.doctorName = doctorName;
+    public void setDoctor(EditText doctor) {
+        this.doctor = doctor;
     }
 
     public EditText getContact() {
@@ -196,12 +203,68 @@ public class AddMedicalRecordActivity extends AppCompatActivity {
         this.contact = contact;
     }
 
-    public EditText getDescription() {
-        return description;
+    public EditText getNote() {
+        return note;
     }
 
-    public void setDescription(EditText description) {
-        this.description = description;
+    public void setNote(EditText note) {
+        this.note = note;
+    }
+
+    public LinearLayout getMoreItemLayout() {
+        return moreItemLayout;
+    }
+
+    public void setMoreItemLayout(LinearLayout moreItemLayout) {
+        this.moreItemLayout = moreItemLayout;
+    }
+
+    public Switch getMoreItemSwitch() {
+        return moreItemSwitch;
+    }
+
+    public void setMoreItemSwitch(Switch moreItemSwitch) {
+        this.moreItemSwitch = moreItemSwitch;
+    }
+
+    public TextView getDate1() {
+        return date1;
+    }
+
+    public void setDate1(TextView date1) {
+        this.date1 = date1;
+    }
+
+    public TextView getDate2() {
+        return date2;
+    }
+
+    public void setDate2(TextView date2) {
+        this.date2 = date2;
+    }
+
+    public Button getSaveBtn() {
+        return saveBtn;
+    }
+
+    public void setSaveBtn(Button saveBtn) {
+        this.saveBtn = saveBtn;
+    }
+
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
+
+    public void setCancelBtn(Button cancelBtn) {
+        this.cancelBtn = cancelBtn;
+    }
+
+    public Toolbar getToolbar() {
+        return toolbar;
+    }
+
+    public void setToolbar(Toolbar toolbar) {
+        this.toolbar = toolbar;
     }
 
     public User getUser() {

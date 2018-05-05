@@ -15,6 +15,8 @@ public class AllergicMedicine implements Parcelable{
     private int syncStatus;
     private int statusType;
 
+    public static final String ALLERGIC_MEDICINE = "allergicMedicine";
+
     public AllergicMedicine(){}
 
     protected AllergicMedicine(Parcel in) {

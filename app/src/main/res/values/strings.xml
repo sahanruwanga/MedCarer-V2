@@ -58,4 +58,9 @@
         <item>Female</item>
     </string-array>
 
+    <string-array name="allergic_array">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
 </resources>

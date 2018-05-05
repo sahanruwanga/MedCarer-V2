@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.app;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AllergicMedicineActivity;
+import com.sahanruwanga.medcarer.activity.UpdateAllergicMedicineActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,15 @@ public class AllergicMedicineAdapter extends
 
         holder.medicine.setText(allergicMedicine.getMedicineName());
         holder.description.setText(allergicMedicine.getDescription());
+
+        holder.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), UpdateAllergicMedicineActivity.class);
+                intent.putExtra(AllergicMedicine.ALLERGIC_MEDICINE, allergicMedicine);
+                getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

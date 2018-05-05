@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LoginActivity"
+        <activity
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,50 +27,65 @@
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.RegisterActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.MyProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.MedicalHistoryActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AddMedicalRecordActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AllergicMedicineActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AppointmentActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.ViewMedicalRecordActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.UpdateMedicalRecordActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AddAppointmentActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.MedicationScheduleActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.NewMedicationScheduleActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.ViewAppointmentActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.UpdateAppointmentActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.UpdateMedicationScheduleActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.NewAllergicMedicineActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AlternativeMedicineActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MyProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MedicalHistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddMedicalRecordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AllergicMedicineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AppointmentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ViewMedicalRecordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.UpdateMedicalRecordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddAppointmentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MedicationScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.NewMedicationScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ViewAppointmentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.UpdateAppointmentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.UpdateMedicationScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.NewAllergicMedicineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AlternativeMedicineActivity"
+            android:screenOrientation="portrait" />
 
         <receiver android:name=".app.NotificationHandler" />
-
         <receiver android:name=".helper.NetworkStateChecker">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
-
+        <activity android:name=".activity.UpdateAllergicMedicineActivity"></activity>
     </application>
 
 </manifest>

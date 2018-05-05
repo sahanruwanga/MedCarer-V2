@@ -58,14 +58,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Disease"
-                    android:textColor="@color/colorBlack"/>
+                    android:text="Medicine"
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/diseaseTextDetail"
+                    android:id="@+id/medicineTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:padding="5dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -78,14 +80,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Medicine"
-                    android:textColor="@color/colorBlack"/>
+                    android:text="Disease"
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/medicineTextDetail"
+                    android:id="@+id/diseaseTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:padding="5dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -99,13 +103,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Allergic"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/allergicTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:padding="5dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -119,13 +125,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Duration"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/durationTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:padding="5dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -139,13 +147,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Doctor"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/doctorTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:padding="5dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -158,14 +168,31 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Contact"
-                    android:textColor="@color/colorBlack"/>
+                    android:text="Phone"
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/contactTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:text="0710730961"
+                    android:padding="5dp"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_call"
+                    android:layout_gravity="right"
+                    android:paddingHorizontal="20dp"
+                    android:onClick="dialNumber"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_sms"
+                    android:layout_gravity="right"
+                    android:paddingHorizontal="20dp"
+                    android:onClick="messageNumber"/>
             </LinearLayout>
 
             <LinearLayout
@@ -178,14 +205,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Description"
-                    android:textColor="@color/colorBlack"/>
+                    android:text="Note"
+                    android:textColor="@color/colorBlack"
+                    android:padding="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/descriptionTextDetail"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:padding="5dp"/>
             </LinearLayout>
 
             </LinearLayout>

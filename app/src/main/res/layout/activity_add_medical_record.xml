@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity"
-    android:background="@drawable/background">
+    android:background="@color/colorWhite">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -15,266 +14,303 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="15dp">
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/backIconNewMedicalRecord"
+                android:src="@drawable/ic_action_navigation_arrow_back"
+                android:layout_gravity="center_vertical|left"
+                android:onClick="backIconClick"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
+                android:text="New Medical Record"
+                android:id="@+id/toolBarText"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
                 android:textColor="@color/colorBlack"
-                android:layout_gravity="left"
-                android:textSize="18sp"
-                android:onClick="cancelUpdating"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="right"
-                android:text="Save"
-                android:textColor="@color/colorBlack"
-                android:layout_gravity="right"
-                android:textSize="18sp"
-                android:onClick="saveRecord"/>
+                android:layout_gravity="center_horizontal|center_vertical"/>
         </FrameLayout>
+
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:paddingBottom="10dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbarAddMedicalRecord">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/diseaseLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/disease"
-                android:hint="@string/disease_name"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_create"
-                android:drawablePadding="5dp"
-                android:inputType="textCapWords"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/medicineLayout"
-                android:layout_below="@+id/diseaseLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/medicine"
-                android:hint="@string/medicine_name"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_notification"
-                android:drawablePadding="5dp"
-                android:inputType="textCapWords"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/allergicLayout"
-                android:layout_below="@+id/medicineLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/allergic"
-                android:hint="@string/allergic_status"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_visibility"
-                android:drawablePadding="5dp"
-                android:inputType="textCapWords"/>
-            </android.support.v7.widget.CardView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="112dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:weightSum="12"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:id="@+id/durationLayout1"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_below="@+id/allergicLayout">
-                <LinearLayout
+                android:background="@drawable/edit_text_style">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="10dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:text="@string/from"
-                        android:textStyle="bold"
-                        android:layout_gravity="right"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="18sp"/>
+                    android:text="Medicine"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical|left"
+                    android:padding="10dp"
+                    android:textAlignment="gravity"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:text="@string/to"
-                        android:layout_marginTop="10dp"
-                        android:layout_gravity="right"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="18sp"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <android.support.v7.widget.CardView
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_centerHorizontal="true"
-                        android:id="@+id/dateCardView1"
-                        android:layout_below="@+id/dateCardView1"
-                        app:cardCornerRadius="8dp">
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/date1"
-                            android:background="@drawable/edit_text_design"
-                            android:padding="5sp"
-                            android:hint="@string/date1"
-                            android:textColor="@color/colorBlack"
-                            android:drawableLeft="@drawable/ic_info"
-                            android:drawablePadding="5dp"
-                            android:inputType="date"/>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/dateCardView2"
-                        android:layout_below="@+id/durationLayout1"
-                        app:cardCornerRadius="8dp">
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/date2"
-                            android:hint="@string/date1"
-                            android:textColor="@color/colorBlack"
-                            android:background="@drawable/edit_text_design"
-                            android:padding="5sp"
-                            android:drawableLeft="@drawable/ic_info"
-                            android:drawablePadding="5dp"
-                            android:inputType="date"/>
-                    </android.support.v7.widget.CardView>
-            </LinearLayout>
-            </LinearLayout>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:id="@+id/doctorLayout"
-                android:layout_below="@+id/durationLayout1"
-                app:cardCornerRadius="8dp">
-                <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/doctor"
-                android:hint="@string/doctor_name"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_doctor"
-                android:drawablePadding="5dp"
-                android:inputType="textPersonName|textCapWords"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/contactLayout"
-                android:layout_below="@+id/doctorLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/contact"
-                android:hint="@string/contact_number"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/edit_text_design"
-                android:padding="5dp"
-                android:drawableLeft="@drawable/ic_download"
-                android:drawablePadding="5dp"
-                android:inputType="phone"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:id="@+id/descriptionLayout"
-                android:layout_below="@+id/contactLayout"
-                app:cardCornerRadius="8dp">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/description"
-                    android:hint="@string/description"
-                    android:textColor="@color/colorBlack"
+                    android:id="@+id/addMedicalRecordMedicine"
+                    android:layout_weight="11.9"
                     android:background="@drawable/edit_text_design"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/colorPrimary"
                     android:padding="5dp"
-                    android:drawableLeft="@drawable/ic_aboutme"
-                    android:drawablePadding="5dp"
-                    android:maxLines="4"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:isScrollContainer="true"/>
-            </android.support.v7.widget.CardView>
+                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
+                    android:layout_gravity="center_vertical|left"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLines="1"
+                    android:maxLength="50"/>
+            </LinearLayout>
 
-        </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:weightSum="12"
+                android:orientation="horizontal"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Disease"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical|left"
+                    android:padding="10dp"
+                    android:textAlignment="gravity"/>
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/addMedicalRecordDisease"
+                    android:layout_weight="11.9"
+                    android:background="@drawable/edit_text_design"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/colorPrimary"
+                    android:padding="5dp"
+                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
+                    android:layout_gravity="center_vertical|left"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLines="1"
+                    android:maxLength="50"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:background="@drawable/edit_text_style">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Duration"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical|left"
+                    android:padding="10dp"
+                    android:textAlignment="gravity"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/addMedicalRecordDate1"
+                        android:text="Apr 28, 2018"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="10dp"
+                        android:drawableRight="@drawable/ic_add_note"
+                        android:drawablePadding="5dp"
+                        android:background="@drawable/edit_text_style"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/addMedicalRecordDate2"
+                        android:text="Apr 28, 2018"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:drawableRight="@drawable/ic_add_note"
+                        android:drawablePadding="5dp"
+                        android:background="@drawable/edit_text_style"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moreSwitchAddMR"
+                android:text="More"
+                android:textColor="@color/colorHintText"
+                android:paddingHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:switchPadding="15dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/moreItemLayoutAddMR"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edit_text_style">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Doctor"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/addMedicalRecordDoctor"
+                        android:layout_weight="11.9"
+                        android:background="@drawable/edit_text_design"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:inputType="textPersonName|textCapWords"
+                        android:maxLines="1"
+                        android:maxLength="50"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edit_text_style">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Phone"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/addMedicalRecordContact"
+                        android:layout_weight="11.9"
+                        android:background="@drawable/edit_text_design"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:maxLength="10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/edit_text_style">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Notes"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical|left"
+                        android:padding="10dp"
+                        android:textAlignment="gravity"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/addMedicalRecordNote"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorPrimary"
+                        android:padding="5dp"
+                        android:paddingLeft="15dp"
+                        android:paddingStart="15dp"
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center_vertical|left"
+                        android:inputType="text|textMultiLine"
+                        android:background="@drawable/edit_text_design_emptybackground">
+
+                    </EditText>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/addMedicalRecordUpdate"
+                android:text="SAVE"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_shape"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/addMedicalRecordCancel"
+                android:text="CANCEL"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="@color/colorWarning"/>
+
+        </LinearLayout>
+
     </ScrollView>
 
 </RelativeLayout>
