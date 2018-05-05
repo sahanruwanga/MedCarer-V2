@@ -11,15 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
 import com.sahanruwanga.medcarer.app.PDFCreator;
@@ -31,14 +30,11 @@ import java.io.File;
 public class MedicalHistoryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView toolBarText;
-    private MaterialSearchView searchView;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    android.support.v7.widget.SearchView searchView2;
-
+    private SearchView searchView;
     private SQLiteHandler sqLiteHandler;
-
     private User user;
 
     private Menu menu;
@@ -50,9 +46,10 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medical_history);
 
-        // Example filtering
-        searchView2 = findViewById(R.id.mSearch);
-
+        // SearchView for filtering
+        this.searchView = findViewById(R.id.searchViewMH);
+        getSearchView().onActionViewExpanded();
+        getSearchView().clearFocus();
 
         // Creating User object
         this.user = new User(this);
@@ -68,11 +65,9 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         // From extra to decorate
         getRecyclerView().setItemAnimator(new DefaultItemAnimator());
 
-
         //Toolbar creation
         setToolbar((Toolbar) findViewById(R.id.toolbar));
         setSupportActionBar(getToolbar());
-        getToolbar().setLogo(R.drawable.ic_download);
 
         // TextView in toolbar
         this.setToolBarText((TextView)findViewById(R.id.toolBarText));
@@ -80,30 +75,8 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         // Add data into RecyclerView
         showRecyclerView();
 
-        //region Search Bar Functions
-        setSearchView((MaterialSearchView) findViewById(R.id.searchViewMH));
-        getSearchView().setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-            }
-            @Override
-            public void onSearchViewClosed() {
-            }
-        });
-        getSearchView().setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        //endregion
-
-        searchView2.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        // SearchBar function
+        getSearchView().setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -131,9 +104,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         this.menu = menu;
-        getMenuInflater().inflate(R.menu.search_view, menu);
-        MenuItem item = menu.findItem(R.id.itemSearch);
-        getSearchView().setMenuItem(item);
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
@@ -228,12 +198,8 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     //region Showing tool bars
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
-        getMenuInflater().inflate(R.menu.search_view, menu);
-        MenuItem item = menu.findItem(R.id.itemSearch);
-        getSearchView().setMenuItem(item);
         getMenuInflater().inflate(R.menu.home, menu);
         getToolBarText().setText("Medical History");
-        getToolbar().setLogo(R.drawable.ic_download);
     }
 
     public void showDeletingToolBar() {
@@ -248,8 +214,8 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     // Back press event
     @Override
     public void onBackPressed() {
-        if(getSearchView().isSearchOpen()){
-            getSearchView().closeSearch();
+        if(getSearchView().isFocused()){
+            getSearchView().clearFocus();
         }else if (getMedicalHistoryAdapter().getSelectingCount() > 0){
             getMedicalHistoryAdapter().deseleceAll();
             showDefaultToolBar();
@@ -257,6 +223,11 @@ public class MedicalHistoryActivity extends AppCompatActivity {
             super.onBackPressed();
     }
     //endregion
+
+    // Back icon click on toolbr
+    public void backIconClick(View view) {
+        onBackPressed();
+    }
 
     //region open Add Medical Record activity
     // Open new activity to add new medical record
@@ -274,14 +245,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     public void setToolbar(Toolbar toolbar) {
         this.toolbar = toolbar;
-    }
-
-    public MaterialSearchView getSearchView() {
-        return searchView;
-    }
-
-    public void setSearchView(MaterialSearchView searchView) {
-        this.searchView = searchView;
     }
 
     public RecyclerView getRecyclerView() {
@@ -323,5 +286,14 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public SearchView getSearchView() {
+        return searchView;
+    }
+
+    public void setSearchView(SearchView searchView) {
+        this.searchView = searchView;
+    }
+
     //endregion
 }

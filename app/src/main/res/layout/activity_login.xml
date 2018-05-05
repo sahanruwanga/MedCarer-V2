@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sahanruwanga.medcarer.activity.LoginActivity"
-    android:background="@drawable/background">
+    android:background="@color/colorWhite">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:layout_marginTop="175dp"
             android:maxLines="1"
             android:inputType="textEmailAddress"
-            android:background="@drawable/edit_text_design"/>
+            android:background="@drawable/edit_text_style"/>
 
         <EditText
             android:id="@+id/password"
@@ -37,7 +37,7 @@
             android:layout_marginTop="15dp"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:background="@drawable/edit_text_design"/>
+            android:background="@drawable/edit_text_style"/>
 
         <Button
             android:id="@+id/registerButton"
@@ -47,7 +47,8 @@
             android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
             android:text="@string/button_login"
-            android:onClick="doLogin"/>
+            android:onClick="doLogin"
+            android:background="@drawable/button_shape"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -68,7 +69,8 @@
             android:textColor="@color/colorLink"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:textStyle="italic"
             android:onClick="openRegisterActivity"/>
     </RelativeLayout>
 </ScrollView>

@@ -10,7 +10,9 @@ import android.widget.EditText;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Sahan Ruwanga on 3/12/2018.
@@ -35,20 +37,16 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Do something with the date chosen by the user
-        String monthNew = String.valueOf(month);
-        String dayNew = String.valueOf(day);
-        if(month < 10) {
-            monthNew = "0"+month;
-        }
-        if(day < 10){
-            dayNew = "0"+day;
-        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+        String date = dateFormat.format(calendar.getTime());
+
         EditText dateText = getActivity().findViewById(dateId);
-        dateText.setText(year+"-"+monthNew+"-"+dayNew);
-//        if(dateNum.equals("date1"))
-//            AddMedicalRecordActivity.getDate1().setText(year+"-"+monthNew+"-"+dayNew);
-//        else if(dateNum.equals("date2"))
-//            AddMedicalRecordActivity.getDate2().setText(year+"-"+monthNew+"-"+dayNew);
+        dateText.setText(date);
+
+
     }
+
 }

@@ -30,10 +30,10 @@
                 android:id="@+id/toolBarTextAppointment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="cursive"
                 android:text="Appointment"
                 android:textColor="@color/colorBlack"
-                android:textSize="25sp"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
                 android:layout_gravity="center_vertical|center_horizontal"/>
         </FrameLayout>
 
@@ -52,12 +52,11 @@
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_create"
+            android:src="@drawable/ic_add_alarm"
             app:rippleColor="@color/colorBlack"
             android:layout_gravity="bottom|right"
             android:onClick="openAddAppointment"
-            android:foregroundGravity="right|bottom"
-            android:backgroundTint="@color/colorCardView"/>
+            android:foregroundGravity="right|bottom"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

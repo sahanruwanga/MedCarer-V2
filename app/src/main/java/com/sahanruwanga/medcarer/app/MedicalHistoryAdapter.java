@@ -2,6 +2,7 @@ package com.sahanruwanga.medcarer.app;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.MedicalHistoryActivity;
@@ -70,12 +72,11 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final MedicalRecord medicalRecord = getMedicalRecords().get(position);
-        holder.disease.setText("Disease: "+medicalRecord.getDisease());
+        holder.disease.setText(medicalRecord.getDisease());
         holder.medicine.setText(medicalRecord.getMedicine());
         holder.duration.setText(medicalRecord.getDuration());
         String allergic = medicalRecord.getAllergic();
-        setCardColor(holder.layout, allergic);
-        holder.allergic.setText(allergic);
+        setAllergicImage(holder.allergic, allergic);
         final ImageView checkIcon = holder.layout.findViewById(R.id.checkIconMH);
         imageViews.add(checkIcon);
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -103,7 +104,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
             public void onClick(View view) {
                 if(getSelectingCount() == 0) {
                     Intent intent = new Intent(context, ViewMedicalRecordActivity.class);
-                    intent.putExtra("MedicalRecord", medicalRecord);
+                    intent.putExtra(MedicalRecord.MEDICAL_RECORD, medicalRecord);
                     context.startActivity(intent);
                 }
                 else{
@@ -162,12 +163,11 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     }
 
 
-    private void setCardColor(View view, String allergic){
-        CardView cardView = view.findViewById(R.id.cardViewMH);
+    private void setAllergicImage(ImageView view, String allergic){
         if(allergic.equals("Yes")){
-            cardView.setCardBackgroundColor(Color.parseColor("#FFF10004"));
+            view.setImageResource(R.drawable.allergic_yes_image);
         }else{
-            cardView.setCardBackgroundColor(Color.parseColor("#FF9893D6"));
+            view.setImageResource(R.drawable.allergic_no_image);
         }
     }
 
@@ -215,7 +215,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         public TextView disease;
         public TextView medicine;
         public TextView duration;
-        public TextView allergic;
+        public ImageView allergic;
         public View layout;
 
         public ViewHolder(View itemView) {

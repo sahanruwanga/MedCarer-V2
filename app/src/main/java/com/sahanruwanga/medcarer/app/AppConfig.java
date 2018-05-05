@@ -4,7 +4,6 @@ package com.sahanruwanga.medcarer.app;
  * Created by Sahan Ruwanga on 3/5/2018.
  */
 
-
 public class AppConfig {
     // Server user login url
     public static String URL_LOGIN = "http://192.168.8.101/med_carer/login.php";
@@ -37,5 +36,8 @@ public class AppConfig {
     public static String URL_DELETE_MEDICAL_RECORD = "http://192.168.8.101/med_carer/delete_medical_record.php";
 
     // Server update medical record url
-    public static String URL_UPDATAE_MEDICAL_RECORD = "http://192.168.8.101/med_carer/update_medical_record.php";
+    public static String URL_UPDATE_MEDICAL_RECORD = "http://192.168.8.101/med_carer/update_medical_record.php";
+
+    // Server insert allergic medicine url
+    public static String URL_INSERT_ALLERGIC_MEDICINE = "http://192.168.8.101/med_carer/insert_allergic_medicine.php";
 }

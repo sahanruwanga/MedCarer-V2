@@ -13,7 +13,7 @@
     <string name="show_register">Do not have an account?</string>
     <string name="show_login">Already have an account?</string>
     <string name="navigate_register">Register here...</string>
-    <string name="navigate_login">Go to Login</string>
+    <string name="navigate_login">Go to Login...</string>
     <string name="save">Save</string>
     <string name="preview">Preview</string>
     <string name="update">Update</string>

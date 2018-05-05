@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.sahanruwanga.medcarer.activity.AllergicMedicineActivity"
-    android:background="@drawable/background">
+    android:background="@color/colorWhite">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/toolbarAllergicMedicine"
-        app:logo="@drawable/ic_create"
         android:background="@color/colorBackground">
-        <TextView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Allergic Medicine"
-            android:id="@+id/toolBarTextAllergicMedicine"
-            android:textSize="25sp"
-            android:textColor="@color/colorBlack"
-            android:fontFamily="cursive"/>
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/backIconAllergicMedicine"
+                android:src="@drawable/ic_action_navigation_arrow_back"
+                android:layout_gravity="center_vertical|left"
+                android:onClick="backIconClick"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Allergic Medicine"
+                android:id="@+id/toolBarTextAllergicMedicine"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center_horizontal|center_vertical"/>
+        </FrameLayout>
     </android.support.v7.widget.Toolbar>
 
-    <com.miguelcatalan.materialsearchview.MaterialSearchView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchViewAllergicMedicine"
-        />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -37,17 +45,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchViewAllergicMedicine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:defaultQueryHint="Search..."
+                android:background="@drawable/edit_text_style"/>
+
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
                 android:id="@+id/allergicMedicineRecyclerView"/>
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_create"
+            android:src="@drawable/ic_add_note"
             android:background="@color/colorButton"
             android:layout_gravity="bottom|right"
             android:onClick="openAddAllergicMedicine"

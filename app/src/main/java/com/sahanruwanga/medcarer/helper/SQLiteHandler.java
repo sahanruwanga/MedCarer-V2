@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.security.keystore.KeyNotYetValidException;
 import android.util.Log;
 
 import com.sahanruwanga.medcarer.app.AllergicMedicine;
@@ -24,11 +25,17 @@ import java.util.List;
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = SQLiteHandler.class.getSimpleName();
+
     public static final int DELETED = 3;
     public static final int UPDATED = 2;
     public static final int SAVED = 1;
     public static final int LOADED = 0;
 
+    public static final int SYNCED_WITH_SERVER = 1;
+    public static final int NOT_SYNCED_WITH_SERVER = 0;
+
+    public static final int NOTIFICATION_STATUS_ON = 1;
+    public static final int NOTIFICATION_STATUS_OFF = 0;
 
     // All Static variables
     // Database Version
@@ -112,7 +119,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Create Appointment table query
     private final String CREATE_APPOINTMENT_TABLE = "CREATE TABLE " + TABLE_APPOINTMENT + "("
-            + KEY_APPOINTMENT_ID + " INTEGER PRIMARY KEY," + KEY_REASON + " TEXT,"
+            + KEY_APPOINTMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_REASON + " TEXT,"
             + KEY_DATE + " TEXT," + KEY_TIME + " TEXT," + KEY_VENUE + " TEXT,"
             + KEY_DOCTOR + " TEXT," + KEY_CLINIC_CONTACT + " TEXT," + KEY_NOTIFY_TIME + " TEXT,"
             + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT," + KEY_STATUS_TYPE + " TINYINT,"
@@ -120,15 +127,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Create Medication Schedule table query
     private final String CREATE_MEDICATION_SCHEDULE_TABLE = "CREATE TABLE " + TABLE_MEDICATION_SCHEDULE + "("
-            + KEY_SCHEDULE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
+            + KEY_SCHEDULE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_MEDICINE + " TEXT,"
             + KEY_QUANTITY + " TEXT," + KEY_START_TIME + " TEXT," + KEY_PERIOD + " TEXT,"
             + KEY_NOTIFY_TIME + " TEXT," + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT,"
             + KEY_STATUS_TYPE + " TINYINT," + KEY_NOTIFICATION_STATUS + " TINYINT" + ")";
 
     // Create Allergic Medicine table query
     private final String CREATE_ALLERGIC_MEDICINE_TABLE = "CREATE TABLE " + TABLE_ALLERGIC_MEDICINE + "("
-            + KEY_ALLERGIC_MEDICINE_ID + " INTEGER PRIMARY KEY," + KEY_MEDICINE + " TEXT,"
-            + KEY_DESCRIPTION + " TEXT," + KEY_CREATED_AT + " TEXT" + ")";
+            + KEY_ALLERGIC_MEDICINE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_MEDICINE + " TEXT,"
+            + KEY_DESCRIPTION + " TEXT," + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT,"
+            + KEY_STATUS_TYPE + " TINYINT" + ")";
 
     //endregion
 
@@ -303,7 +311,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Storing Medical Record in database
     public long addMedicalRecord(String disease, String medicine, String duration,
                                  String allergic, String doctor, String contact, String description,
-                                 String createdAt, int syncStatus) {
+                                 String createdAt, int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -316,7 +324,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_DESCRIPTION, description); // Description
         values.put(KEY_CREATED_AT, createdAt);      // Created At
         values.put(KEY_SYNC_STATUS, syncStatus);
-        values.put(KEY_STATUS_TYPE, SAVED);
+        values.put(KEY_STATUS_TYPE, statusType);
 
         // Inserting Row
         long id = db.insert(TABLE_MEDICAL_HISTORY, null, values);
@@ -329,7 +337,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Storing Medical Record in database from centralized database
     public void addMedicalRecordFromMySQL(int recordId, String disease, String medicine, String duration,
                                  String allergic, String doctor, String contact, String description,
-                                 String createdAt, int syncStatus) {
+                                 String createdAt, int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -343,7 +351,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_DESCRIPTION, description); // Description
         values.put(KEY_CREATED_AT, createdAt);      // Created At
         values.put(KEY_SYNC_STATUS, syncStatus);
-        values.put(KEY_STATUS_TYPE, LOADED);
+        values.put(KEY_STATUS_TYPE, statusType);
 
         // Inserting Row
         long id = db.insert(TABLE_MEDICAL_HISTORY, null, values);
@@ -355,7 +363,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Getting medical records from database
     public List<MedicalRecord> getMedicalRecords() {
         List<MedicalRecord> medicalRecords = new LinkedList<>();
-        String query = "SELECT  * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " + KEY_STATUS_TYPE + " IN (0,1,2);";
+        String query = "SELECT  * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " + KEY_STATUS_TYPE +
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
@@ -384,7 +393,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     // Update the sync status in SQLite
-    public boolean updateSyncStatus(int recordID, int syncStatus) {
+    public boolean updateMedicalRecordSyncStatus(int recordID, int syncStatus) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_SYNC_STATUS, syncStatus);
@@ -520,14 +529,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //endregion
 
     //region Appointment Details
-    // Storing Appointment in database
-    public void addAppointment(int appointment_id, String reason, String date, String time,
+    // Save new Appointment in SQLite
+    public long addAppointment(String reason, String date, String time,
                                  String venue, String doctor, String clinic_contact, String notify_time,
-                               String created_at, int notificationStatus) {
+                               String created_at, int notificationStatus, int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_APPOINTMENT_ID, appointment_id); // Appointment ID
         values.put(KEY_REASON, reason); // Reason
         values.put(KEY_DATE, date); // Date
         values.put(KEY_TIME, time); // Time
@@ -537,6 +545,36 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_NOTIFY_TIME, notify_time); // Notify Time
         values.put(KEY_CREATED_AT, created_at);     // Created date and time
         values.put(KEY_NOTIFICATION_STATUS, notificationStatus);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+
+        // Inserting Row
+        long id = db.insert(TABLE_APPOINTMENT, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New medical record is inserted into sqlite: " + id);
+        return id;
+    }
+
+    // Storing Appointment in SQLIte form MySQL
+    public void addAppointmentFromMySQL(int appointmentId, String reason, String date, String time,
+                               String venue, String doctor, String clinic_contact, String notify_time,
+                               String created_at, int notificationStatus, int syncStatus, int statusType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_APPOINTMENT_ID, appointmentId);
+        values.put(KEY_REASON, reason); // Reason
+        values.put(KEY_DATE, date); // Date
+        values.put(KEY_TIME, time); // Time
+        values.put(KEY_VENUE, venue); // Venue
+        values.put(KEY_DOCTOR, doctor); // Doctor
+        values.put(KEY_CLINIC_CONTACT, clinic_contact); // Clinic Contact
+        values.put(KEY_NOTIFY_TIME, notify_time); // Notify Time
+        values.put(KEY_CREATED_AT, created_at);     // Created date and time
+        values.put(KEY_NOTIFICATION_STATUS, notificationStatus);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
 
         // Inserting Row
         long id = db.insert(TABLE_APPOINTMENT, null, values);
@@ -545,10 +583,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New medical record is inserted into sqlite: " + id);
     }
 
-    // Getting medical records from database
-    public List<Appointment> getAppointmentDetails() {
+    // Getting appointment from database
+    public List<Appointment> getAppointment() {
         List<Appointment> appointments = new LinkedList<>();
-        String query = "SELECT  * FROM " + TABLE_APPOINTMENT;
+        String query = "SELECT  * FROM " + TABLE_APPOINTMENT + " WHERE " + KEY_STATUS_TYPE +
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         Appointment appointment;
@@ -565,6 +604,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 appointment.setClinicContact(cursor.getString(cursor.getColumnIndex(KEY_CLINIC_CONTACT)));
                 appointment.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
                 appointment.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                appointment.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                appointment.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
                 appointments.add(appointment);
             }while (cursor.moveToNext());
         }
@@ -573,18 +614,178 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return appointments;
     }
+
+    // Update the sync status in SQLite
+    public boolean updateAppointmentSyncStatus(int appointmentID, int syncStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_APPOINTMENT, contentValues, KEY_APPOINTMENT_ID + "=" + appointmentID, null);
+        db.close();
+        return true;
+    }
+
+    // Make disappear when deleted in offline
+    public void makeDeletedAppointment(int appointmentID, int syncStatus){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_STATUS_TYPE, DELETED);
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_APPOINTMENT, contentValues, KEY_APPOINTMENT_ID + "=" + appointmentID, null);
+        db.close();
+    }
+
+    // Update appointment details
+    public boolean updateAppointment(int appointmentId, String reason, String date, String time,
+                                     String venue, String doctor, String clinicContact, String notifyTime,
+                                     int notificationStatus, int syncStatus, int statusType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_REASON, reason);
+        contentValues.put(KEY_DATE, date);
+        contentValues.put(KEY_TIME, time);
+        contentValues.put(KEY_VENUE, venue);
+        contentValues.put(KEY_DOCTOR, doctor);
+        contentValues.put(KEY_CLINIC_CONTACT, clinicContact);
+        contentValues.put(KEY_NOTIFY_TIME, notifyTime);
+        contentValues.put(KEY_NOTIFICATION_STATUS, notificationStatus);
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        contentValues.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_APPOINTMENT, contentValues, KEY_APPOINTMENT_ID + "=" + appointmentId, null);
+        db.close();
+        return true;
+    }
+
+    // Permanently delete from SQLite
+    public void deleteAppointment(int appointmentId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_APPOINTMENT, KEY_APPOINTMENT_ID + "=" + appointmentId, null);
+        db.close();
+    }
+
+    // Get saved medical records in offline
+    public List<Appointment> getUnsyncedSavedAppointment() {
+        List<Appointment> unSyncedAppointment = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_APPOINTMENT + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + SAVED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        Appointment appointment;
+
+        if(cursor.moveToFirst()){
+            do{
+                appointment = new Appointment();
+                appointment.setAppointmentId(cursor.getInt(cursor.getColumnIndex(KEY_APPOINTMENT_ID)));
+                appointment.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
+                appointment.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+                appointment.setTime(cursor.getString(cursor.getColumnIndex(KEY_TIME)));
+                appointment.setVenue(cursor.getString(cursor.getColumnIndex(KEY_VENUE)));
+                appointment.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                appointment.setClinicContact(cursor.getString(cursor.getColumnIndex(KEY_CLINIC_CONTACT)));
+                appointment .setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                appointment.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                appointment.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                appointment.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedAppointment.add(appointment);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedAppointment;
+    }
+
+    // Get deleted appointments in offline
+    public List<Appointment> getUnsyncedDeletedAppointment() {
+        List<Appointment> unSyncedAppointment = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_APPOINTMENT + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + DELETED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        Appointment appointment;
+
+        if(cursor.moveToFirst()){
+            do{
+                appointment = new Appointment();
+                appointment.setAppointmentId(cursor.getInt(cursor.getColumnIndex(KEY_APPOINTMENT_ID)));
+                appointment.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
+                appointment.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+                appointment.setTime(cursor.getString(cursor.getColumnIndex(KEY_TIME)));
+                appointment.setVenue(cursor.getString(cursor.getColumnIndex(KEY_VENUE)));
+                appointment.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                appointment.setClinicContact(cursor.getString(cursor.getColumnIndex(KEY_CLINIC_CONTACT)));
+                appointment .setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                appointment.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                appointment.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                appointment.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedAppointment.add(appointment);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedAppointment;
+    }
+
+    // Get updated medical records in offline
+    public List<Appointment> getUnsyncedUpdatedAppointment() {
+        List<Appointment> unSyncedAppointment = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_APPOINTMENT + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + UPDATED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        Appointment appointment;
+
+        if(cursor.moveToFirst()){
+            do{
+                appointment = new Appointment();
+                appointment.setAppointmentId(cursor.getInt(cursor.getColumnIndex(KEY_APPOINTMENT_ID)));
+                appointment.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
+                appointment.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+                appointment.setTime(cursor.getString(cursor.getColumnIndex(KEY_TIME)));
+                appointment.setVenue(cursor.getString(cursor.getColumnIndex(KEY_VENUE)));
+                appointment.setDoctor(cursor.getString(cursor.getColumnIndex(KEY_DOCTOR)));
+                appointment.setClinicContact(cursor.getString(cursor.getColumnIndex(KEY_CLINIC_CONTACT)));
+                appointment .setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                appointment.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                appointment.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                appointment.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedAppointment.add(appointment);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedAppointment;
+    }
+
     //endregion
 
     //region Allergic Medicine Details
     // Storing Allergic Medicine in database
-    public void addAllergicMedicine(int allergic_medicine_id, String medicine, String description, String createdAt) {
+    public long addAllergicMedicine(String medicine, String description, String createdAt,
+                                    int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ALLERGIC_MEDICINE_ID, allergic_medicine_id); // Allergic Medicine ID
         values.put(KEY_MEDICINE, medicine); // Medicine
         values.put(KEY_DESCRIPTION, description);   // Description
         values.put(KEY_CREATED_AT, createdAt); // Created At
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+
+        // Inserting Row
+        long id = db.insert(TABLE_ALLERGIC_MEDICINE, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New allergic medicine is inserted into sqlite: " + id);
+        return id;
+    }
+
+    // Storing Allergic medicine in SQLIte form MySQL
+    public void addAllergicMedicineFromMySQL(int allergicMedicineId, String medicine,
+                                             String description, String createdAt,
+                                             int syncStatus, int statusType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ALLERGIC_MEDICINE_ID, allergicMedicineId); // Allergic Medicine ID
+        values.put(KEY_MEDICINE, medicine); // Medicine
+        values.put(KEY_DESCRIPTION, description);   // Description
+        values.put(KEY_CREATED_AT, createdAt); // Created At
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
 
         // Inserting Row
         long id = db.insert(TABLE_ALLERGIC_MEDICINE, null, values);
@@ -594,9 +795,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     // Getting allergic medicine from database
-    public List<AllergicMedicine> getAllergicMedicineDetails() {
+    public List<AllergicMedicine> getAllergiceMedicine() {
         List<AllergicMedicine> allergicMedicines = new LinkedList<>();
-        String query = "SELECT  * FROM " + TABLE_ALLERGIC_MEDICINE;
+        String query = "SELECT  * FROM " + TABLE_ALLERGIC_MEDICINE + " WHERE " + KEY_STATUS_TYPE +
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         AllergicMedicine allergicMedicine;
@@ -608,6 +810,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 allergicMedicine.setMedicineName(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
                 allergicMedicine.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
                 allergicMedicine.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                allergicMedicine.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                allergicMedicine.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
                 allergicMedicines.add(allergicMedicine);
             }while (cursor.moveToNext());
         }
@@ -616,12 +820,154 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return allergicMedicines;
     }
+
+    // Update the sync status in SQLite
+    public boolean updateAllergicMedicineSyncStatus(int allergicMedicineId, int syncStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_ALLERGIC_MEDICINE, contentValues, KEY_ALLERGIC_MEDICINE_ID + " = " + allergicMedicineId, null);
+        db.close();
+        return true;
+    }
+
+    // Make disappear when deleted in offline
+    public void makeDeletedAllergicMedicine(int allergicMedicineId, int syncStatus){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_STATUS_TYPE, DELETED);
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_ALLERGIC_MEDICINE, contentValues, KEY_ALLERGIC_MEDICINE_ID + "=" + allergicMedicineId, null);
+        db.close();
+    }
+
+    // Update allergic medicine details
+    public boolean updateAllergicMedicine(int allergicMedicineId, String medicine,
+                                          String description, int syncStatus, int statusType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_MEDICINE, medicine);
+        contentValues.put(KEY_DESCRIPTION, description);
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        contentValues.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_ALLERGIC_MEDICINE, contentValues, KEY_ALLERGIC_MEDICINE_ID + "=" + allergicMedicineId, null);
+        db.close();
+        return true;
+    }
+
+    // Permanently delete from SQLite
+    public void deleteAllergicMedicine(int allergicMedicineId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_ALLERGIC_MEDICINE, KEY_ALLERGIC_MEDICINE_ID + " = " + allergicMedicineId, null);
+        db.close();
+    }
+
+    // Get saved allergic medicine in offline
+    public List<AllergicMedicine> getUnsyncedSavedAllergicMedicine() {
+        List<AllergicMedicine> unSyncedAllergicMedicine = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALLERGIC_MEDICINE + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + SAVED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        AllergicMedicine allergicMedicine;
+
+        if(cursor.moveToFirst()){
+            do{
+                allergicMedicine = new AllergicMedicine();
+                allergicMedicine.setAllergicMedicineId(cursor.getInt(cursor.getColumnIndex(KEY_ALLERGIC_MEDICINE_ID)));
+                allergicMedicine.setMedicineName(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                allergicMedicine.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                allergicMedicine.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                allergicMedicine.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                allergicMedicine.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedAllergicMedicine.add(allergicMedicine);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedAllergicMedicine;
+    }
+
+    // Get deleted aallergic medicine in offline
+    public List<AllergicMedicine> getUnsyncedDeletedAllergicMedicine() {
+        List<AllergicMedicine> unSyncedAllergicMedicine = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALLERGIC_MEDICINE + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + DELETED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        AllergicMedicine allergicMedicine;
+
+        if(cursor.moveToFirst()){
+            do{
+                allergicMedicine = new AllergicMedicine();
+                allergicMedicine.setAllergicMedicineId(cursor.getInt(cursor.getColumnIndex(KEY_ALLERGIC_MEDICINE_ID)));
+                allergicMedicine.setMedicineName(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                allergicMedicine.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                allergicMedicine.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                allergicMedicine.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                allergicMedicine.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedAllergicMedicine.add(allergicMedicine);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedAllergicMedicine;
+    }
+
+    // Get updated allergic medicine in offline
+    public List<AllergicMedicine> getUnsyncedUpdatedAllergicMedicine() {
+        List<AllergicMedicine> unSyncedAllergicMedicine = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALLERGIC_MEDICINE + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + UPDATED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        AllergicMedicine allergicMedicine;
+
+        if(cursor.moveToFirst()){
+            do{
+                allergicMedicine = new AllergicMedicine();
+                allergicMedicine.setAllergicMedicineId(cursor.getInt(cursor.getColumnIndex(KEY_ALLERGIC_MEDICINE_ID)));
+                allergicMedicine.setMedicineName(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                allergicMedicine.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                allergicMedicine.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                allergicMedicine.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                allergicMedicine.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedAllergicMedicine.add(allergicMedicine);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedAllergicMedicine;
+    }
     //endregion
 
     //region Medication Schedule Details
-    // Storing Medication Schedule in database
-    public void addMedicationSchedule(int schedule_id, String medicine, String quantity, String startTime,
-                                      String period, String notifyTime, String createdAt, int notificationStatus) {
+    // Storing Medication Schedule in SQLite
+    public long addMedicationSchedule(String medicine, String quantity, String startTime,
+                                      String period, String notifyTime, String createdAt, int notificationStatus,
+                                      int syncStatus, int statusType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Put Content Values to save in SQLite
+        ContentValues values = new ContentValues();
+        values.put(KEY_MEDICINE, medicine); // Medicine
+        values.put(KEY_QUANTITY, quantity);   // Quantity
+        values.put(KEY_START_TIME, startTime); // Start Time
+        values.put(KEY_PERIOD, period); // Period
+        values.put(KEY_NOTIFY_TIME, notifyTime);   // Notify Time
+        values.put(KEY_CREATED_AT, createdAt); // Created At
+        values.put(KEY_NOTIFICATION_STATUS, notificationStatus);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
+
+        // Inserting Row
+        long id = db.insert(TABLE_MEDICATION_SCHEDULE, null, values);
+
+        // Closing database connection
+        db.close();
+
+        Log.d(TAG, "New Medication Schedule is inserted into sqlite: " + id);
+        return id;
+    }
+
+    // Storing Medication Schedule in SQLite from MySQL
+    public void addMedicationScheduleFromMySQL(int schedule_id, String medicine, String quantity, String startTime,
+                                      String period, String notifyTime, String createdAt, int notificationStatus,
+                                               int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Put Content Values to save in SQLite
@@ -634,6 +980,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_NOTIFY_TIME, notifyTime);   // Notify Time
         values.put(KEY_CREATED_AT, createdAt); // Created At
         values.put(KEY_NOTIFICATION_STATUS, notificationStatus);
+        values.put(KEY_SYNC_STATUS, syncStatus);
+        values.put(KEY_STATUS_TYPE, statusType);
 
         // Inserting Row
         long id = db.insert(TABLE_MEDICATION_SCHEDULE, null, values);
@@ -645,9 +993,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     // Getting medication schedule from database
-    public List<MedicationSchedule> getMedicationScheduleDetails() {
+    public List<MedicationSchedule> getMedicationSchedule() {
         List<MedicationSchedule> medicationSchedules = new LinkedList<>();
-        String query = "SELECT  * FROM " + TABLE_MEDICATION_SCHEDULE;
+        String query = "SELECT  * FROM " + TABLE_MEDICATION_SCHEDULE + " WHERE " + KEY_STATUS_TYPE +
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         MedicationSchedule medicationSchedule;
@@ -663,12 +1012,144 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
                 medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
                 medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                medicationSchedule.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
                 medicationSchedules.add(medicationSchedule);
             }while (cursor.moveToNext());
         }
         Log.d(TAG, "Fetching medication schedule from Sqlite: ");
 
         return medicationSchedules;
+    }
+
+    // Update the sync status in SQLite
+    public boolean updateMedicationScheduleSyncStatus(int scheduleId, int syncStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_MEDICATION_SCHEDULE, contentValues, KEY_SCHEDULE_ID + "=" + scheduleId, null);
+        db.close();
+        return true;
+    }
+
+    // Make disappear when deleted in offline
+    public void makeDeletedMedicationSchedule(int scheduleId, int syncStatus){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_STATUS_TYPE, DELETED);
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        db.update(TABLE_MEDICATION_SCHEDULE, contentValues, KEY_SCHEDULE_ID + "=" + scheduleId, null);
+        db.close();
+    }
+
+    // Update medication schedule details
+    public boolean updateMedicationSchedule(int scheduleId, String medicine, String quantity, String startTime,
+                                            String period, String notifyTime, int notificationStatus,
+                                            int syncStatus, int statusType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_MEDICINE, medicine);
+        contentValues.put(KEY_QUANTITY, quantity);
+        contentValues.put(KEY_START_TIME, startTime);
+        contentValues.put(KEY_PERIOD, period);
+        contentValues.put(KEY_NOTIFY_TIME, notifyTime);
+        contentValues.put(KEY_NOTIFICATION_STATUS, notificationStatus);
+        contentValues.put(KEY_SYNC_STATUS, syncStatus);
+        contentValues.put(KEY_STATUS_TYPE, statusType);
+        db.update(TABLE_MEDICATION_SCHEDULE, contentValues, KEY_SCHEDULE_ID + "=" + scheduleId, null);
+        db.close();
+        return true;
+    }
+
+    // Permanently delete from SQLite
+    public void deleteMedicationSchedule(int scheduleId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MEDICATION_SCHEDULE, KEY_SCHEDULE_ID + "=" + scheduleId, null);
+        db.close();
+    }
+
+    // Get saved medication schedule in offline
+    public List<MedicationSchedule> getUnsyncedSavedMedicationSchedule() {
+        List<MedicationSchedule> unSyncedMedicationSchedule = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MEDICATION_SCHEDULE + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + SAVED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        MedicationSchedule medicationSchedule;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicationSchedule = new MedicationSchedule();
+                medicationSchedule.setScheduleId(cursor.getInt(cursor.getColumnIndex(KEY_SCHEDULE_ID)));
+                medicationSchedule.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicationSchedule.setQuantity(cursor.getString(cursor.getColumnIndex(KEY_QUANTITY)));
+                medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
+                medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
+                medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                medicationSchedule.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedMedicationSchedule.add(medicationSchedule);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedMedicationSchedule;
+    }
+
+    // Get deleted medication schedule in offline
+    public List<MedicationSchedule> getUnsyncedDeletedMedicationSchedule() {
+        List<MedicationSchedule> unSyncedMedicationSchedule = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MEDICATION_SCHEDULE + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + DELETED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        MedicationSchedule medicationSchedule;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicationSchedule = new MedicationSchedule();
+                medicationSchedule.setScheduleId(cursor.getInt(cursor.getColumnIndex(KEY_SCHEDULE_ID)));
+                medicationSchedule.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicationSchedule.setQuantity(cursor.getString(cursor.getColumnIndex(KEY_QUANTITY)));
+                medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
+                medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
+                medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                medicationSchedule.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedMedicationSchedule.add(medicationSchedule);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedMedicationSchedule;
+    }
+
+    // Get updated medical records in offline
+    public List<MedicationSchedule> getUnsyncedUpdatedMedicationSchedule() {
+        List<MedicationSchedule> unSyncedMedicationSchedule = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MEDICATION_SCHEDULE + " WHERE " +
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + UPDATED + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        MedicationSchedule medicationSchedule;
+
+        if(cursor.moveToFirst()){
+            do{
+                medicationSchedule = new MedicationSchedule();
+                medicationSchedule.setScheduleId(cursor.getInt(cursor.getColumnIndex(KEY_SCHEDULE_ID)));
+                medicationSchedule.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                medicationSchedule.setQuantity(cursor.getString(cursor.getColumnIndex(KEY_QUANTITY)));
+                medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
+                medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
+                medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
+                medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
+                medicationSchedule.setStatusType(cursor.getInt(cursor.getColumnIndex(KEY_STATUS_TYPE)));
+                unSyncedMedicationSchedule.add(medicationSchedule);
+            }while (cursor.moveToNext());
+        }
+        return unSyncedMedicationSchedule;
     }
     //endregion
 

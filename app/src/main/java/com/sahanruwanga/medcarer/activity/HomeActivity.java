@@ -1,9 +1,14 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,12 +22,14 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.NetworkStateChecker;
+import com.sahanruwanga.medcarer.helper.RequestPermissionHandler;
 import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 import com.sahanruwanga.medcarer.helper.SessionManager;
 
 //from blog
 
 import android.content.Intent;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,28 +40,19 @@ public class HomeActivity extends AppCompatActivity
     private NetworkStateChecker networkStateChecker;
     private IntentFilter intentFilter;
     private BroadcastReceiver broadcastReceiver;
+    private RequestPermissionHandler requestPermissionHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        this.requestPermissionHandler = new RequestPermissionHandler();
+        requestPermission();
+
         this.networkStateChecker = new NetworkStateChecker();
         this.intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(getNetworkStateChecker(), getIntentFilter());
-
-        MaterialSearchView searchView = findViewById(R.id.searchViewMH);
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -76,6 +74,26 @@ public class HomeActivity extends AppCompatActivity
             logoutUser();
         }
         //endregion
+    }
+
+    private void requestPermission(){
+        getRequestPermissionHandler().requestPermission(this, new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+        }, 123, new RequestPermissionHandler.RequestPermissionListener() {
+            @Override
+            public void onSuccess() {
+            }
+            @Override
+            public void onFailed() {
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        getRequestPermissionHandler().onRequestPermissionsResult(requestCode, permissions,
+                grantResults);
     }
 
     //region From Blog
@@ -212,5 +230,13 @@ public class HomeActivity extends AppCompatActivity
 
     public void setIntentFilter(IntentFilter intentFilter) {
         this.intentFilter = intentFilter;
+    }
+
+    public RequestPermissionHandler getRequestPermissionHandler() {
+        return requestPermissionHandler;
+    }
+
+    public void setRequestPermissionHandler(RequestPermissionHandler requestPermissionHandler) {
+        this.requestPermissionHandler = requestPermissionHandler;
     }
 }

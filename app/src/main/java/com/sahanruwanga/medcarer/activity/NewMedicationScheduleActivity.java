@@ -46,17 +46,16 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
     // ToolBar
     private Toolbar toolbar;
 
-    // Progress Dialog and SQLiteHelper class objects
-    private ProgressDialog progressDialog;
-    private SQLiteHandler sqLiteHandler;
-
-    private static final int NOTIFICATION_STATUS_ON = 1;
-    private static final int NOTIFICATION_STATUS_OFF = 0;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_medication_schedule);
+
+        // Create User object
+        if(getUser() == null)
+            this.user = new User(this);
 
         // Define EditTexts
         this.medicine = findViewById(R.id.medicineMedicationSchedule);
@@ -71,14 +70,6 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
         // Define Toolbar
         this.toolbar = findViewById(R.id.toolbarNewMedicationSchedule);
-
-        // Initializing progress dialog instant
-        this.progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-
-        // Initializing SQLiteHelper instant
-        this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
-
     }
 
     // Clock icon function in Start Time
@@ -113,105 +104,17 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         // Get current date time
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createdAt = dateFormat.format(new Date());
+
         if(!medicine.isEmpty() && !quantity.isEmpty() && !startTime.equals("00:00:00") &&
                 !period.equals("00:00:00") && !notifyTime.equals("00:00:00")){
-            saveScheduleInDatabase(medicine, quantity, startTime, period, notifyTime, createdAt, NOTIFICATION_STATUS_ON);
+            clearAll();
+            getUser().saveNewMedicationSchedule(medicine, quantity, startTime, period, notifyTime, createdAt);
+
         }else{
             Toast.makeText(this, "Please enter Required Details!", Toast.LENGTH_LONG).show();
         }
     }
 
-    // Save Schedule details in database
-    private void saveScheduleInDatabase(final String medicine, final String quantity, final String startTime,
-                                        final String period, final String notifyTime, final String createdAt,
-                                        final int notificationStatus){
-        // Tag used to cancel the request
-        String tag_string_req = "req_insert_medication_schedule";
-
-        getProgressDialog().setMessage("Saving Schedule ...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_INSERT_MEDICATION_SCHEDULE, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Insert Schedule: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        // Store the schedule in sqlite
-
-                        JSONObject schedule = jObj.getJSONObject("schedule");
-                        String schedule_id = schedule.getString("schedule_id");
-
-                        // Inserting row in users table
-                        getSqLiteHandler().addMedicationSchedule(Integer.parseInt(schedule_id), medicine, quantity,
-                                startTime, period, notifyTime, createdAt, notificationStatus);
-
-                        Toast.makeText(getApplicationContext(), "New Schedule successfully Created!", Toast.LENGTH_LONG).show();
-                        clearAll();
-                        Intent intent = new Intent(getApplicationContext(), MedicationScheduleActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Enter correct details again",Toast.LENGTH_LONG).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", User.getUserId());
-                params.put("medicine", medicine);
-                params.put("quantity", quantity);
-                params.put("start_time", startTime);
-                params.put("period", period);
-                params.put("notify_time", notifyTime);
-                params.put("created_at", createdAt);
-                params.put("notification_status", String.valueOf(notificationStatus));
-
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-    private void showDialog() {
-        if (!getProgressDialog().isShowing())
-            getProgressDialog().show();
-    }
-
-    private void hideDialog() {
-        if (getProgressDialog().isShowing())
-            getProgressDialog().dismiss();
-    }
 
     private void clearAll(){
         getMedicine().setText("");
@@ -352,20 +255,12 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         this.toolbar = toolbar;
     }
 
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
+    public User getUser() {
+        return user;
     }
 
-    public void setProgressDialog(ProgressDialog progressDialog) {
-        this.progressDialog = progressDialog;
-    }
-
-    public SQLiteHandler getSqLiteHandler() {
-        return sqLiteHandler;
-    }
-
-    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
-        this.sqLiteHandler = sqLiteHandler;
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

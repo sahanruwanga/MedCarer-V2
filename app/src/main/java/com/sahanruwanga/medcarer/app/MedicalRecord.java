@@ -20,6 +20,8 @@ public class MedicalRecord implements Parcelable{
     private int syncStatus;
     private int statusType;
 
+    public static final String MEDICAL_RECORD = "medicalRecord";
+
     public MedicalRecord(){}
 
     public MedicalRecord(int record_id, String disease, String medicine, String duration, String allergic,

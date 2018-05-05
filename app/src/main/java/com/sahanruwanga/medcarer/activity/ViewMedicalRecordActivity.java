@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
@@ -28,7 +30,7 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_medical_record);
 
         // Get medical record object from intent
-        medicalRecord = getIntent().getParcelableExtra("MedicalRecord");
+        this.medicalRecord = getIntent().getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
 
         // Initialize toolbar
         this.toolbar = findViewById(R.id.toolbarVieMedicalRecord);
@@ -63,13 +65,16 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if(itemId == R.id.editIcon){
-//            UpdateMedicalRecordFragment dialog = new UpdateMedicalRecordFragment();
-//            dialog.show(getFragmentManager(), "");
             Intent intent = new Intent(this, UpdateMedicalRecordActivity.class);
-            intent.putExtra("medicalRecord", getMedicalRecord());
+            intent.putExtra(MedicalRecord.MEDICAL_RECORD, getMedicalRecord());
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // Back icon click on toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
     }
 
     //region Getters and Setters

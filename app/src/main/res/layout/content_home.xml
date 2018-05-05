@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.sahanruwanga.medcarer.activity.HomeActivity"
     tools:showIn="@layout/app_bar_home"
-    android:background="@drawable/background"
+    android:background="@color/colorWhite"
     android:weightSum="10"
     android:orientation="vertical">
 
@@ -20,8 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/logo2"/>
-
+            android:src="@drawable/logo"/>
     </FrameLayout>
 
     <GridLayout
@@ -35,56 +34,19 @@
         android:padding="14dp">
 
         <android.support.v7.widget.CardView
-            android:background="@color/colorLiteGreen"
+            android:background="@drawable/edit_text_style"
             android:onClick="openMedicalHistory"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:cardElevation="8dp"
             app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="@color/colorButton">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_margin="16dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Medical History"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
-                    android:textSize="16dp"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp"
-            android:onClick="openAllergicMedicine"
-            app:cardBackgroundColor="@color/colorButton">
+            app:cardBackgroundColor="@color/colorWhite">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -97,15 +59,54 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@color/colorLiteGreen"/>
+                    android:src="@drawable/ic_doctor"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Medical History"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16dp"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:cardElevation="8dp"
+            app:cardCornerRadius="8dp"
+            android:onClick="openAllergicMedicine"
+            app:cardBackgroundColor="@color/colorWhite"
+            android:background="@drawable/edit_text_style">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:orientation="vertical"
+                android:layout_margin="16dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_doctor"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Allergic Medicine"
                     android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="16dp"/>
 
             </LinearLayout>
@@ -123,7 +124,8 @@
             app:cardElevation="8dp"
             app:cardCornerRadius="8dp"
             android:onClick="openAlternativeMedicine"
-            app:cardBackgroundColor="@color/colorButton">
+            app:cardBackgroundColor="@color/colorWhite"
+            android:background="@drawable/edit_text_style">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -136,15 +138,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@color/colorLiteGreen"/>
+                    android:src="@drawable/ic_doctor"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Alternative Medicine"
                     android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="16dp"/>
 
             </LinearLayout>
@@ -162,7 +163,8 @@
             app:cardElevation="8dp"
             app:cardCornerRadius="8dp"
             android:onClick="openAppointment"
-            app:cardBackgroundColor="@color/colorButton">
+            app:cardBackgroundColor="@color/colorWhite"
+            android:background="@drawable/edit_text_style">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -175,15 +177,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@color/colorLiteGreen"/>
+                    android:src="@drawable/ic_doctor"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Appointment"
                     android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="16dp"/>
 
             </LinearLayout>
@@ -201,7 +202,8 @@
             app:cardElevation="8dp"
             app:cardCornerRadius="8dp"
             android:onClick="openMedicationSchedule"
-            app:cardBackgroundColor="@color/colorButton">
+            app:cardBackgroundColor="@color/colorWhite"
+            android:background="@drawable/edit_text_style">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -214,15 +216,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@color/colorLiteGreen"/>
+                    android:src="@drawable/ic_doctor"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Medication Schedule"
                     android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="16dp"/>
 
             </LinearLayout>
@@ -240,7 +241,8 @@
             app:cardElevation="8dp"
             app:cardCornerRadius="8dp"
             android:onClick="openPharmacy"
-            app:cardBackgroundColor="@color/colorButton">
+            app:cardBackgroundColor="@color/colorWhite"
+            android:background="@drawable/edit_text_style">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -253,22 +255,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@color/colorLiteGreen"/>
+                    android:src="@drawable/ic_doctor"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Pharmacy Near By"
                     android:textAlignment="center"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="16dp"/>
 
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
-
-
 
     </GridLayout>
 

@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.activity.MyProfileActivity;
 
 /**
  * Created by Sahan Ruwanga on 5/1/2018.
@@ -25,6 +26,8 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
     private EditText bloodType;
     private Button saveBtn;
     private Button cancelBtn;
+
+    private MyProfileActivity myProfileActivity;
 
 
     @Override
@@ -81,7 +84,15 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
     }
 
     private void savePersonalInfo(){
-        Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_SHORT).show();
+        String dob = spinnerMonth.getSelectedItem().toString().trim() + " " +
+                getDobDay().getText().toString().trim() + ", " + getDobYear().getText().toString().trim();
+
+
+        if(getMyProfileActivity() == null)
+            setMyProfileActivity((MyProfileActivity) getActivity());
+        getMyProfileActivity().updatePersonaloInfo(dob, spinnerGender.getSelectedItem().toString().trim(),
+                getBloodType().getText().toString().trim());
     }
 
     private void cancelPersonalInfo(){
@@ -144,6 +155,14 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
 
     public void setCancelBtn(Button cancelBtn) {
         this.cancelBtn = cancelBtn;
+    }
+
+    public MyProfileActivity getMyProfileActivity() {
+        return myProfileActivity;
+    }
+
+    public void setMyProfileActivity(MyProfileActivity myProfileActivity) {
+        this.myProfileActivity = myProfileActivity;
     }
     //endregion
 }

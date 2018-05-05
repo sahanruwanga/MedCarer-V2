@@ -4,11 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AllergicMedicineActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,16 +19,27 @@ import java.util.List;
  */
 
 public class AllergicMedicineAdapter extends
-        RecyclerView.Adapter<AllergicMedicineAdapter.ViewHolder> {
+        RecyclerView.Adapter<AllergicMedicineAdapter.ViewHolder> implements Filterable {
     private List<AllergicMedicine> allergicMedicines;
+    private ArrayList<AllergicMedicine> filterList;
     private AllergicMedicineActivity context;
     private RecyclerView recyclerView;
+    private AllergicMedicineFilter allergicMedicineFilter;
 
     public AllergicMedicineAdapter(List<AllergicMedicine> allergicMedicines,
                                    AllergicMedicineActivity context, RecyclerView recyclerView){
         this.allergicMedicines = allergicMedicines;
         this.context = context;
         this.recyclerView = recyclerView;
+        this.filterList = new ArrayList<>();
+
+        putToFilterList();
+    }
+
+    private void putToFilterList(){
+        for(AllergicMedicine allergicMedicine : getAllergicMedicines()){
+            getFilterList().add(allergicMedicine);
+        }
     }
 
     @Override
@@ -47,6 +61,15 @@ public class AllergicMedicineAdapter extends
     @Override
     public int getItemCount() {
         return allergicMedicines.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        if(getAllergicMedicineFilter() == null)
+        {
+            this.allergicMedicineFilter = new AllergicMedicineFilter(getFilterList(),this);
+        }
+        return getAllergicMedicineFilter();
     }
 
     //region Getters and Setters
@@ -72,6 +95,22 @@ public class AllergicMedicineAdapter extends
 
     public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
+    }
+
+    public AllergicMedicineFilter getAllergicMedicineFilter() {
+        return allergicMedicineFilter;
+    }
+
+    public void setAllergicMedicineFilter(AllergicMedicineFilter allergicMedicineFilter) {
+        this.allergicMedicineFilter = allergicMedicineFilter;
+    }
+
+    public ArrayList<AllergicMedicine> getFilterList() {
+        return filterList;
+    }
+
+    public void setFilterList(ArrayList<AllergicMedicine> filterList) {
+        this.filterList = filterList;
     }
     //endregion
 

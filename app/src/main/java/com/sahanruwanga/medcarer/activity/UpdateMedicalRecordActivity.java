@@ -38,30 +38,19 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
     private EditText contact;
     private EditText description;
 
-    private ProgressDialog progressDialog;
-
-    public static final int SYNCED_WITH_SERVER = 1;
-    public static final int NOT_SYNCED_WITH_SERVER = 0;
-
-    private static final int DELETED = 3;
-    private static final int UPDATED = 2;
-    private static final int SAVED = 1;
-    private static final int LOADED = 0;
-
-    private SQLiteHandler sqLiteHandler;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_medical_record);
 
-        // Progress dialog
-        progressDialog = new ProgressDialog(getApplicationContext());
-        progressDialog.setCancelable(false);
+        // Create User object
+        if(getUser() == null) {
+            this.user = new User(this);
+        }
 
-        this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
-
-        this.medicalRecord = getIntent().getParcelableExtra("medicalRecord");
+        this.medicalRecord = getIntent().getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
 
         setDisease((EditText)findViewById(R.id.diseaseUpdate));
         setMedicine((EditText)findViewById(R.id.medicineUpdate));
@@ -102,27 +91,24 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
     public void updateMedicalRecord(View view) {
         String disease = getDisease().getText().toString().trim();
         String medicine = getMedicine().getText().toString().trim();
-        String duration = getDate1().getText().toString().trim() + " to " + getDate2().getText().toString().trim();
+        String duration = getDate1().getText().toString().trim() + " - " + getDate2().getText().toString().trim();
         String allergic = getAllergic().getText().toString().trim();
         String doctor = getDoctor().getText().toString().trim();
         String contact = getContact().getText().toString().trim();
         String description = getDescription().getText().toString().trim();
-        int statusType = SAVED;
-        if(getMedicalRecord().getSyncStatus() != NOT_SYNCED_WITH_SERVER && getMedicalRecord().getStatusType() == SAVED)
-            statusType = UPDATED;
+        int syncStatus = getMedicalRecord().getSyncStatus();
+        int statusType = getMedicalRecord().getStatusType();
+
         if(!disease.isEmpty() && !medicine.isEmpty() && !getDate1().getText().toString().isEmpty() &&
                 !getDate2().getText().toString().isEmpty() && !allergic.isEmpty()){
-            getSqLiteHandler().updateMedicalRecord(getMedicalRecord().getRecord_id(),
-                    disease, medicine, duration, allergic, doctor, contact, description,
-                    NOT_SYNCED_WITH_SERVER, statusType);
 
-            Toast.makeText(getApplicationContext(), "Record successfully updated!",
-                    Toast.LENGTH_LONG).show();
-            updateMedicalRecordInServer(String.valueOf(getMedicalRecord().getRecord_id()), disease,
-                    medicine, duration, allergic, doctor, contact, description);
-        }else{
+            getUser().updateRecord(getMedicalRecord().getRecord_id(), disease, medicine, duration,
+                    allergic, doctor, contact, description, syncStatus, statusType);
+
+        } else{
             Toast.makeText(this, "Please enter required details!", Toast.LENGTH_LONG).show();
         }
+
         finish();
     }
 
@@ -131,82 +117,12 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         getDisease().setText(medicalRecord.getDisease());
         getMedicine().setText(medicalRecord.getMedicine());
         getAllergic().setText(medicalRecord.getAllergic());
-        getDate1().setText(medicalRecord.getDuration().substring(0,11));
-        getDate2().setText(medicalRecord.getDuration().substring(14));
+        getDate1().setText(medicalRecord.getDuration().substring(0,12));
+        getDate2().setText(medicalRecord.getDuration().substring(15));
         getDoctor().setText(medicalRecord.getDoctor());
         getContact().setText(medicalRecord.getContact());
         getDescription().setText(medicalRecord.getDescription());
     }
-
-    private void updateMedicalRecordInServer(final String localId, final String disease, final String medicine, final String duration,
-                                   final String allergic, final String doctor, final String contact,
-                                   final String description){
-
-        getProgressDialog().setMessage("Updating record ...");
-//        showDialog();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_UPDATAE_MEDICAL_RECORD, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d("Update Medical Record", "Update Record: " + response.toString());
-//                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        sqLiteHandler.updateSyncStatus(Integer.parseInt(localId), SYNCED_WITH_SERVER);
-                    } else {
-                        String errorMsg = jObj.getString("error_msg");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Update Medical Record", "Updating Error: " + error.getMessage());
-//                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", User.getUserId());
-                params.put("local_record_id", localId);
-                params.put("disease", disease);
-                params.put("medicine", medicine);
-                params.put("duration", duration);
-                params.put("allergic", allergic);
-                params.put("doctor", doctor);
-                params.put("contact", contact);
-                params.put("description", description);
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq);
-    }
-
-    //region Process Dialog activities
-    private void showDialog() {
-        if (!getProgressDialog().isShowing())
-            getProgressDialog().show();
-    }
-
-    private void hideDialog() {
-        if (getProgressDialog().isShowing())
-            getProgressDialog().dismiss();
-    }
-    //endregion
 
     //region Getters and Setters
     public EditText getDisease() {
@@ -273,13 +189,6 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         UpdateMedicalRecordActivity.date2 = date2;
     }
 
-    public SQLiteHandler getSqLiteHandler() {
-        return sqLiteHandler;
-    }
-
-    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
-        this.sqLiteHandler = sqLiteHandler;
-    }
     public MedicalRecord getMedicalRecord() {
         return medicalRecord;
     }
@@ -288,12 +197,12 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
         this.medicalRecord = medicalRecord;
     }
 
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
+    public User getUser() {
+        return user;
     }
 
-    public void setProgressDialog(ProgressDialog progressDialog) {
-        this.progressDialog = progressDialog;
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

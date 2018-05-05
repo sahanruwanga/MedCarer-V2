@@ -131,7 +131,7 @@ public class AppointmentActivity extends AppCompatActivity {
 
     //region Show RecyclerView in Appointment
     private void showRecyclerView(){
-        this.appointmentAdapter = new AppointmentAdapter(getSqLiteHandler().getAppointmentDetails(), this, getRecyclerView());
+        this.appointmentAdapter = new AppointmentAdapter(getSqLiteHandler().getAppointment(), this, getRecyclerView());
         getRecyclerView().setAdapter(getAppointmentAdapter());
     }
     //endregion

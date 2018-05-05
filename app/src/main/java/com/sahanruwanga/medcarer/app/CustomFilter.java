@@ -28,7 +28,7 @@ class CustomFilter extends Filter {
             //CHANGE TO UPPER
             charSequence=charSequence.toString().toUpperCase();
             //STORE OUR FILTERED PLAYERS
-            ArrayList<MedicalRecord> filteredPlayers=new ArrayList<>();
+            ArrayList<MedicalRecord> filteredMedicines = new ArrayList<>();
 
             for (int i=0;i<filterList.size();i++)
             {
@@ -36,12 +36,12 @@ class CustomFilter extends Filter {
                 if(filterList.get(i).getMedicine().toUpperCase().contains(charSequence))
                 {
                     //ADD PLAYER TO FILTERED PLAYERS
-                    filteredPlayers.add(filterList.get(i));
+                    filteredMedicines.add(filterList.get(i));
                 }
             }
 
-            results.count=filteredPlayers.size();
-            results.values=filteredPlayers;
+            results.count=filteredMedicines.size();
+            results.values=filteredMedicines;
         }else
         {
             results.count=filterList.size();

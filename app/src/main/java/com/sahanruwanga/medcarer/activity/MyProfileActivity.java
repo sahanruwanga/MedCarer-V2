@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.Frament.UserProfileContactInfoFragment;
 import com.sahanruwanga.medcarer.Frament.UserProfileNameFragment;
@@ -162,5 +163,14 @@ public class MyProfileActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getFragmentManager();
         UserProfileNameFragment nameFragment = new UserProfileNameFragment();
         nameFragment.show(fragmentManager, "Note");
+    }
+
+    public void chooseImage(View view) {
+    }
+
+    public void updatePersonaloInfo(String dob, String gender, String bloodType){
+        getDobTextView().setText(dob);
+        getGenderTextView().setText(gender);
+        getBloodTypeTextView().setText(bloodType);
     }
 }

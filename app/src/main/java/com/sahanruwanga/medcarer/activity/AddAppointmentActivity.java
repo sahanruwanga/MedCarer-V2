@@ -1,39 +1,23 @@
 package com.sahanruwanga.medcarer.activity;
 
-import android.app.ProgressDialog;
+
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.sahanruwanga.medcarer.R;
-import com.sahanruwanga.medcarer.app.AppConfig;
-import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
-import com.sahanruwanga.medcarer.helper.SQLiteHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AddAppointmentActivity extends AppCompatActivity {
-    private static final String TAG = AppointmentActivity.class.getSimpleName();
-
     private EditText reasonText;
     private EditText venueText;
     private EditText doctorText;
@@ -42,22 +26,16 @@ public class AddAppointmentActivity extends AppCompatActivity {
     private EditText timeText;
     private EditText notifyTimeText;
 
-    private ProgressDialog progressDialog;
-    private SQLiteHandler sqLiteHandler;
-
-    private static final int NOTIFICATION_STATUS_ON = 1;
-    private static final int NOTIFICATION_STATUS_OFF = 0;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_appointment);
 
-        // Initialization of progress dialog and SQLiteHelper
-        this.progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-
-        this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
+        // Create User Object
+        if(getUser() == null)
+            this.user = new User(this);
 
         // Define all Edit Texts and the switch
         this.reasonText = findViewById(R.id.reasonAppointment);
@@ -126,14 +104,16 @@ public class AddAppointmentActivity extends AppCompatActivity {
         String date = getDateText().getText().toString().trim();
         String time = getTimeFormat(getTimeText().getText().toString().trim());
         String notifyTime = getTimeFormat(getNotifyTimeText().getText().toString().trim());
+
         // Get current date time
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createdAt = dateFormat.format(new Date());
+
         // Check for essential data
         if(!reason.isEmpty() && !venue.isEmpty() && !doctor.isEmpty() &&
                 !date.isEmpty() && !time.isEmpty() && !notifyTime.isEmpty()){
-            saveAppointmentInDatabase(reason, venue, doctor, clinicNo, date, time, notifyTime,
-                    createdAt, NOTIFICATION_STATUS_ON);
+            getUser().saveNewAppointment(reason, date, time, venue, doctor, clinicNo, notifyTime,
+                    createdAt);
         }else{
             Toast.makeText(this, "Please enter required data", Toast.LENGTH_LONG).show();
         }
@@ -156,92 +136,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
         return time;
     }
 
-    private boolean saveAppointmentInDatabase(final String reason, final String venue, final String doctor, final String clinicNo,
-                                           final String date, final String time, final String notifyTime, final String createdAt,
-                                              final int notificationStatus){
-        final boolean[] isSuccessful = {false};
-        // Tag used to cancel the request
-        String tag_string_req = "req_insert_appointment";
-
-        progressDialog.setMessage("Saving appointment ...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_INSERT_APPOINTMENT, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Insert Appointment: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        // Store the appointment in sqlite
-
-                        JSONObject medicalRecord = jObj.getJSONObject("appointment");
-                        String appointment_id = medicalRecord.getString("appointment_id");
-
-                        // Inserting row in users table
-                        sqLiteHandler.addAppointment(Integer.parseInt(appointment_id), reason, date, time,
-                                venue, doctor, clinicNo, notifyTime, createdAt, NOTIFICATION_STATUS_ON);
-
-                        Toast.makeText(getApplicationContext(), "Appointment successfully inserted!", Toast.LENGTH_LONG).show();
-                        clearAll();
-                        isSuccessful[0] = true;
-                    } else {
-
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                        isSuccessful[0] = false;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Enter correct details again",Toast.LENGTH_LONG).show();
-                    isSuccessful[0] = false;
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
-                isSuccessful[0] = false;
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", User.getUserId());
-                params.put("reason", reason);
-                params.put("venue", venue);
-                params.put("doctor", doctor);
-                params.put("clinic_contact", clinicNo);
-                params.put("date", date);
-                params.put("time", time);
-                params.put("notify_time", notifyTime);
-                params.put("created_at", createdAt);
-                params.put("notification_status", String.valueOf(notificationStatus));
-
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-        return isSuccessful[0];
-    }
-
     // onClick for Calender icon
     public void openCalender(View view) {
         setDate(getDateText().getId());
@@ -256,6 +150,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
     public void openClockForNotifyTime(View view) {
         setTime(getNotifyTimeText().getId());
     }
+
     private void clearAll(){
         getReasonText().setText("");
         getVenueText().setText("");
@@ -266,17 +161,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
         getNotifyTimeText().setText("");
         getReasonText().requestFocus();
     }
-
-    private void showDialog() {
-        if (!progressDialog.isShowing())
-            progressDialog.show();
-    }
-
-    private void hideDialog() {
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -341,6 +225,14 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     public void setNotifyTimeText(EditText notifyTimeText) {
         this.notifyTimeText = notifyTimeText;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

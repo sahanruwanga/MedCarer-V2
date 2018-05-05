@@ -11,27 +11,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:background="@drawable/side_nav_bar">
 
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:id="@+id/myProfileImage"
-            android:layout_gravity="center_horizontal" />
-        <TextView
+            android:src="@drawable/allergic_no_image"
+            android:onClick="chooseImage"/>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/myProfileName"
-            android:text="Gunathilaka"
-            android:layout_gravity="center_horizontal"
-            android:textSize="16sp"
-            android:onClick="openNameForm"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/myProfileAge"
-            android:text="24 years"
-            android:layout_gravity="center_horizontal"/>
+            android:orientation="vertical"
+            android:padding="15dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/myProfileName"
+                android:text="Sahan Ruwanga Gunathilaka"
+                android:textSize="16sp"
+                android:onClick="openNameForm"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/myProfileAge"
+                android:layout_marginTop="5dp"
+                android:text="24 years old"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/myProfileEmailAddress"
+                android:layout_marginTop="5dp"
+                android:text="sahan@123.com"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -59,12 +75,13 @@
                     android:paddingTop="10dp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="20dp"
+                    android:background="@drawable/black_round_corner_style">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Personal Info"
-                        android:textColor="@color/colorBrown"
+                        android:textColor="@color/colorBlack"
                         android:textSize="16sp"/>
 
                     <LinearLayout
@@ -143,12 +160,13 @@
                     android:paddingTop="10dp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="20dp"
+                    android:background="@drawable/black_round_corner_style">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Contact Info"
-                        android:textColor="@color/colorBrown"
+                        android:textColor="@color/colorBlack"
                         android:textSize="16sp"/>
 
                     <LinearLayout
@@ -227,12 +245,13 @@
                 android:paddingTop="10dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:paddingBottom="20dp">
+                android:paddingBottom="20dp"
+                android:background="@drawable/black_round_corner_style">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Other Notes"
-                    android:textColor="@color/colorBrown"
+                    android:textColor="@color/colorBlack"
                     android:textSize="16sp"/>
                 <TextView
                     android:layout_width="match_parent"

@@ -5,22 +5,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/mainLayoutMHList"
-    android:padding="1dp">
+    android:padding="5dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorHintText"
-        app:cardCornerRadius="2dp"
+        app:cardCornerRadius="5dp"
         android:id="@+id/cardViewMH">
+
         <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/black_round_corner_style">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rel1">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -28,36 +31,40 @@
                 android:textSize="20dp"
                 android:textAlignment="center"
                 android:layout_centerHorizontal="true"
-                android:text="Sample"
-                android:textColor="@color/colorBlack"
-                />
+                android:text="Disease"
+                android:textColor="@color/colorBlack"/>
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_check"
                 android:id="@+id/checkIconMH"
                 android:visibility="invisible"/>
+
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:paddingBottom="5dp">
+
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="8"
                 android:layout_marginBottom="2dp"
                 android:orientation="vertical">
+
                     <TextView
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/mrMedicine"
                         android:text="Medicine"
                         android:layout_marginLeft="25dp"
-                        android:textColor="@color/colorBlack"
-                        android:drawableLeft="@drawable/ic_rate"
-                        android:drawablePadding="5dp"
-                        />
+                        android:textColor="@color/colorPrimary"
+                        android:drawablePadding="5dp" />
 
                     <TextView
                         android:id="@+id/mrDate"
@@ -65,21 +72,19 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
                         android:layout_marginTop="5dp"
-                        android:text="Medicine"
-                        android:textColor="@color/colorBlack"
-                        android:drawableLeft="@drawable/ic_info"
+                        android:text="Duration"
+                        android:fontFamily="@font/roboto_light_italic"
+                        android:textSize="12sp"
                         android:drawablePadding="5dp"/>
             </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/mrAllergic"
-                    android:text="Yes"
-                    android:textSize="18dp"
-                    android:layout_marginLeft="25dp"
-                    android:textColor="@color/colorBlack"
-                    android:drawableLeft="@drawable/ic_visibility"
-                    android:drawablePadding="5dp"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:id="@+id/mrAllergic"
+                android:layout_marginLeft="25dp"
+                android:padding="5dp"/>
         </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

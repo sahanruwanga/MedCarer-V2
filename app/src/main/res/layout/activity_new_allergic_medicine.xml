@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.sahanruwanga.medcarer.activity.NewAllergicMedicineActivity"
     android:background="@color/colorWhite">
 
@@ -42,47 +41,74 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbarNewAllergicMedicine"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:padding="10dp">
 
-        <android.support.v7.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardBackgroundColor="@color/colorAsh">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:weightSum="12"
+            android:background="@drawable/edit_text_style">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Medicine"
+                android:textSize="16sp"
+                android:gravity="center_vertical|left"
+                android:padding="10dp"
+                android:textAlignment="gravity"/>
 
-            <LinearLayout
+            <AutoCompleteTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/newAllergicMedicine"
+                android:layout_weight="11.9"
+                android:background="@drawable/edit_text_design"
+                android:textAlignment="gravity"
+                android:padding="5dp"
+                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center_vertical|left"
+                android:inputType="textPersonName|textCapWords"
+                android:maxLines="1">
+
+            </AutoCompleteTextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:background="@drawable/edit_text_style">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Notes"
+                android:textSize="16sp"
+                android:gravity="center_vertical|left"
+                android:padding="10dp"
+                android:textAlignment="gravity"/>
+
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15dp"
-                android:orientation="vertical">
+                android:id="@+id/newAllergicMedicineNote"
+                android:textAlignment="gravity"
+                android:padding="5dp"
+                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center_vertical|left"
+                android:inputType="text|textMultiLine"
+                android:background="@drawable/edit_text_design_emptybackground"
+                >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Medicine"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="20sp"/>
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_create"
-                    android:drawablePadding="5dp"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Description"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="20sp"
-                    android:layout_marginTop="10dp"/>
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_create"
-                    android:inputType="textMultiLine"/>
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
+            </EditText>
+        </LinearLayout>
 
     </LinearLayout>
 

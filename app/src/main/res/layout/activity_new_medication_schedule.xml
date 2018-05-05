@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sahanruwanga.medcarer.activity.NewMedicationScheduleActivity"
-    android:background="@drawable/background">
+    android:background="@color/colorWhite">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                     android:id="@+id/medicineMedicationSchedule"
                     android:hint="@string/medicine_name"
                     android:textColor="@color/colorBlack"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/edit_text_style"
                     android:padding="5dp"
                     android:drawableLeft="@drawable/ic_rate"
                     android:drawableStart="@drawable/ic_rate"
@@ -93,7 +93,7 @@
                     android:id="@+id/quantityMedicationSchedule"
                     android:hint="Quantity"
                     android:textColor="@color/colorBlack"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/edit_text_style"
                     android:padding="5dp"
                     android:drawableLeft="@drawable/ic_rate"
                     android:drawableStart="@drawable/ic_rate"
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="15dp"
-                    android:background="@android:color/transparent">
+                    android:background="@drawable/edit_text_style">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="15dp"
-                    android:background="@android:color/transparent">
+                    android:background="@drawable/edit_text_style">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -284,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="15dp"
-                    android:background="@android:color/transparent">
+                    android:background="@drawable/edit_text_style">
 
                     <LinearLayout
                         android:layout_width="wrap_content"

@@ -126,7 +126,7 @@ public class MedicationScheduleActivity extends AppCompatActivity {
 
     // Show saved data in Recycler View
     private void showRecyclerView() {
-        this.medicationScheduleAdapter = new MedicationScheduleAdapter(getSqLiteHandler().getMedicationScheduleDetails(),
+        this.medicationScheduleAdapter = new MedicationScheduleAdapter(getSqLiteHandler().getMedicationSchedule(),
                 this, getRecyclerView());
         getRecyclerView().setAdapter(getMedicationScheduleAdapter());
     }
@@ -137,6 +137,10 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         finish();
     }
 
+    // Back Icon click on toolbar
+    public void backIconClick(View view) {
+        onBackPressed();
+    }
 
     //region Getters and Setters
     public Toolbar getToolbar() {

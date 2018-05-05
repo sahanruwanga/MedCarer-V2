@@ -124,7 +124,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
                             JSONObject obj = new JSONObject(response);
                             if (!obj.getBoolean("error")) {
                                 // Updating the status in SQLite
-                                sqLiteHandler.updateSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
+                                sqLiteHandler.updateMedicalRecordSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
 
                                 // Sending the broadcast to refresh the list
                                 getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
@@ -206,7 +206,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
     private void updateMedicalRecord(final MedicalRecord medicalRecord){
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_UPDATAE_MEDICAL_RECORD, new Response.Listener<String>() {
+                AppConfig.URL_UPDATE_MEDICAL_RECORD, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -215,7 +215,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         // Updating the status in SQLite
-                        sqLiteHandler.updateSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
+                        sqLiteHandler.updateMedicalRecordSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
 
                         // Sending the broadcast to refresh the list
                         getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
