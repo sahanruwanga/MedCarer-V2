@@ -750,20 +750,20 @@ public class User implements Parcelable{
                             String nextNotifyTime = medicationSchedule.getString(8);
 
                             getSqLiteHandler().addMedicationScheduleFromMySQL(Integer.parseInt(localScheduleId),
-                                    medicine, quantity, start_time, period, notify_time, nextNotifyTime, created_at, notification_status,
-                                    SQLiteHandler.SYNCED_WITH_SERVER, SQLiteHandler.LOADED);
+                                    medicine, quantity, start_time, period, notify_time, nextNotifyTime,
+                                    created_at, notification_status, SQLiteHandler.SYNCED_WITH_SERVER,
+                                    SQLiteHandler.LOADED);
                         }
 
                     } else {
                         // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
+                                "Error occurred, try again later!", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Check Network Connection to load data", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -773,7 +773,7 @@ public class User implements Parcelable{
             public void onErrorResponse(VolleyError error) {
                 Log.e("Medication Schedule", "Retrieving Error: " + error.getMessage());
                 Toast.makeText(getContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                        "Error occurred, try again later!", Toast.LENGTH_LONG).show();
                 hideDialog();
             }
         }) {
@@ -799,14 +799,14 @@ public class User implements Parcelable{
 
     // Save new Medication Schedule in SQLite
     public void saveNewMedicationSchedule(String medicine, String quantity, String startTime,
-                                          String period, String notifyTime, String nextNotificationTime,
+                                          String period, String notifyTime, String nextNotifyTime,
                                           String createdAt){
         long localScheduleId = getSqLiteHandler().addMedicationSchedule(medicine, quantity, startTime, period, notifyTime,
-                nextNotificationTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
+                nextNotifyTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
                 SQLiteHandler.SAVED);
         Toast.makeText(getContext(), "Schedule successfully inserted!", Toast.LENGTH_LONG).show();
         saveNewMedicationScheduleInMySQL(String.valueOf(localScheduleId), medicine, quantity, startTime,
-                period, notifyTime, nextNotificationTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON);
+                period, notifyTime, nextNotifyTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON);
     }
 
     // Save new Medication Schedule in MySQL

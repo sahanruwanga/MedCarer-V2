@@ -14,6 +14,7 @@ import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,8 +24,6 @@ import java.util.Date;
 import java.util.Formatter;
 
 public class NewMedicationScheduleActivity extends AppCompatActivity {
-    private static final String TAG = MedicationScheduleActivity.class.getSimpleName();
-    // EditTexts
     private EditText medicine;
     private EditText quantity;
     private TextView startDate;
@@ -36,10 +35,9 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
     private Button saveBtn;
     private Button cancelBtn;
 
-    // ToolBar
-    private Toolbar toolbar;
-
     private User user;
+
+    private DateTimeFormatting dateTimeFormatting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +47,10 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         // Create User object
         if(getUser() == null)
             this.user = new User(this);
+
+        // Create DateTimeFormatting object
+        if(getDateTimeFormatting() == null)
+            this.dateTimeFormatting = new DateTimeFormatting();
 
         // Define all widgets
         this.medicine = findViewById(R.id.medicineNewMedicationSchedule);
@@ -61,9 +63,6 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         this.notifyMin = findViewById(R.id.notifyMinNewMedicationSchedule);
         this.saveBtn = findViewById(R.id.saveNewMedicationSchedule);
         this.cancelBtn = findViewById(R.id.cancelNewMedicationSchedule);
-
-        // Define Toolbar
-        this.toolbar = findViewById(R.id.toolbarNewMedicationSchedule);
 
         // OnClick listeners for buttons
         getSaveBtn().setOnClickListener(new View.OnClickListener() {
@@ -81,67 +80,83 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         });
     }
 
-    // Clock icon function in Start Time
+    // Open clock to set Start Time
     public void openClock(View view) {
-        setDate(getStartDate().getId());
         setTime(getStartTime().getId());
     }
 
+    // Open calender to set start date
+    public void openCalender(View view) {
+        setDate(getStartDate().getId());
+    }
+
+    //region Methods to open clock and calender
     // Set time using clock
     private void setTime(int timeId){
         Bundle bundle = new Bundle();
-        bundle.putInt("timeId", timeId);
+        bundle.putInt(TimePickerFragment.TIME_ID, timeId);
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
-    // Set date using caender
+    // Set date using calender
     private void setDate(int dateId){
         Bundle bundle = new Bundle();
-        bundle.putInt("dateId", dateId);
+        bundle.putInt(DatePickerFragment.DATE_ID, dateId);
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
-
+    //endregion
 
     // Save function
     public void saveSchedule() {
+        // Get data from Edit texts
         String medicine = getMedicine().getText().toString().trim();
         String quantity = getQuantity().getText().toString().trim();
         String startDate = getStartDate().getText().toString().trim();
         String startTime = getStartTime().getText().toString().trim();
+
         String period = getPeriod();
         String notifyTime = getNotifyTime();
+
         // Get current date time
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String createdAt = dateFormat.format(new Date());
+        String createdAt = getCurrentDateTime();
 
         String fullStartedTime = getFullStartedTime(startDate+ " " + startTime);
 
         String nextNotifyTime = calculateNextNotifyTime(fullStartedTime);
 
-        if(!medicine.isEmpty() && !quantity.isEmpty() && !startTime.equals("00:00:00") &&
-                !period.equals("00:00:00") && !notifyTime.equals("00:00:00")){
+        if(!medicine.isEmpty() && !quantity.isEmpty() && !period.equals("00:00:00") &&
+                !notifyTime.equals("00")){
             clearAll();
-            getUser().saveNewMedicationSchedule(medicine, quantity, fullStartedTime,
-                    period, notifyTime, nextNotifyTime, createdAt);
+            getUser().saveNewMedicationSchedule(medicine, quantity, fullStartedTime, period,
+                    notifyTime, nextNotifyTime, createdAt);
+            finish();
 
         }else{
             Toast.makeText(this, "Please enter Required Details!", Toast.LENGTH_LONG).show();
         }
     }
 
-
+    // Clear all data in text boxes
     private void clearAll(){
+        String dateTime = getDateTimeFormatting().getDateInShowingFormat(getCurrentDateTime());
         getMedicine().setText("");
         getQuantity().setText("");
-        getStartTime().setText("00:00 AM");
+        getStartDate().setText(dateTime.substring(0, 12));
+        getStartTime().setText(dateTime.substring(13));
         getPeriodDay().setText("00");
         getPeriodHour().setText("00");
         getPeriodMin().setText("00");
         getNotifyMin().setText("00");
+    }
+
+    // Get current date time
+    private String getCurrentDateTime(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(new Date());
     }
 
     // Back Icon click on toolbar
@@ -165,6 +180,11 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
     }
 
     private String getPeriod(){
+        if(getPeriodDay().getText().toString().length() == 0)
+            getPeriodDay().setText("00");
+        else if(getPeriodDay().getText().toString().length() == 1)
+            getPeriodDay().setText("0" + getPeriodDay().getText().toString().trim());
+
         if(getPeriodHour().getText().toString().length() == 0)
             getPeriodHour().setText("00");
         else if(getPeriodHour().getText().toString().length() == 1)
@@ -175,11 +195,6 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         else if(getPeriodMin().getText().toString().length() == 1)
             getPeriodMin().setText("0" + getPeriodMin().getText().toString().trim());
 
-        if(getPeriodDay().getText().toString().length() == 0)
-            getPeriodDay().setText("00");
-        else if(getPeriodDay().getText().toString().length() == 1)
-            getPeriodDay().setText("0" + getPeriodDay().getText().toString().trim());
-
         return getPeriodDay().getText().toString().trim() + ":" +
                 getPeriodHour().getText().toString().trim() + ":" +
                 getPeriodMin().getText().toString().trim();
@@ -187,25 +202,29 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
     // Return complete value for "Notify Before" time
     private String getNotifyTime(){
-
         if(getNotifyMin().getText().toString().length() == 0)
             getNotifyMin().setText("00");
         else if(getNotifyMin().getText().toString().length() == 1)
             getNotifyMin().setText("0" + getNotifyMin().getText().toString().trim());
-
 
         return getNotifyMin().getText().toString().trim();
     }
 
     // Calculate next notify time
     private String calculateNextNotifyTime(String dateString){
-        int periodDay = Integer.parseInt(getPeriodDay().getText().toString().trim());
-        int periodHour = Integer.parseInt(getPeriodHour().getText().toString().trim());
-        int periodMin = Integer.parseInt(getPeriodMin().getText().toString().trim());
+        int periodDay = 0, periodHour = 0, periodMin = 0, notifyMin = 0;
+        try {
+            periodDay = Integer.parseInt(getPeriodDay().getText().toString().trim());
+            periodHour = Integer.parseInt(getPeriodHour().getText().toString().trim());
+            periodMin = Integer.parseInt(getPeriodMin().getText().toString().trim());
 
-        int notifyMin = Integer.parseInt(getNotifyMin().getText().toString().trim());
+            notifyMin = Integer.parseInt(getNotifyMin().getText().toString().trim());
+        }catch (NumberFormatException e){
+            Toast.makeText(this, "Only numbers are required for period and notify time",
+                    Toast.LENGTH_SHORT).show();
+        }
 
-        if(periodMin > notifyMin){
+        if(periodMin >= notifyMin){
             periodMin -= notifyMin;
         }else{
             periodHour -= 1;
@@ -213,7 +232,6 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         Date date = null;
         try {
             date = sdf.parse(dateString);
@@ -280,14 +298,6 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         this.notifyMin = notifyMin;
     }
 
-    public Toolbar getToolbar() {
-        return toolbar;
-    }
-
-    public void setToolbar(Toolbar toolbar) {
-        this.toolbar = toolbar;
-    }
-
     public User getUser() {
         return user;
     }
@@ -327,6 +337,15 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
     public void setStartDate(TextView startDate) {
         this.startDate = startDate;
     }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
+    }
+
 
     //endregion
 }

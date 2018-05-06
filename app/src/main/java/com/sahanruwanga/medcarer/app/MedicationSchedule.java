@@ -21,6 +21,8 @@ public class MedicationSchedule implements Parcelable {
     private int syncStatus;
     private int statusType;
 
+    public static final String MEDICATION_SCHEDULE = "medicationSchedule";
+
     // Constructor call
     public MedicationSchedule(){}
 
@@ -31,7 +33,11 @@ public class MedicationSchedule implements Parcelable {
         startTime = in.readString();
         period = in.readString();
         notifyTime = in.readString();
+        nextNotifyTime = in.readString();
         createdAt = in.readString();
+        notificationStatus = in.readInt();
+        syncStatus = in.readInt();
+        statusType = in.readInt();
     }
 
     public static final Creator<MedicationSchedule> CREATOR = new Creator<MedicationSchedule>() {
@@ -103,21 +109,6 @@ public class MedicationSchedule implements Parcelable {
         this.createdAt = createdAt;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(scheduleId);
-        parcel.writeString(medicine);
-        parcel.writeString(quantity);
-        parcel.writeString(startTime);
-        parcel.writeString(period);
-        parcel.writeString(notifyTime);
-        parcel.writeString(createdAt);
-    }
 
     public int getNotificationStatus() {
         return notificationStatus;
@@ -149,6 +140,26 @@ public class MedicationSchedule implements Parcelable {
 
     public void setNextNotifyTime(String nextNotifyTime) {
         this.nextNotifyTime = nextNotifyTime;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(scheduleId);
+        parcel.writeString(medicine);
+        parcel.writeString(quantity);
+        parcel.writeString(startTime);
+        parcel.writeString(period);
+        parcel.writeString(notifyTime);
+        parcel.writeString(nextNotifyTime);
+        parcel.writeString(createdAt);
+        parcel.writeInt(notificationStatus);
+        parcel.writeInt(syncStatus);
+        parcel.writeInt(statusType);
     }
     //endregion
 }

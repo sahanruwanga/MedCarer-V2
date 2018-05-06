@@ -85,7 +85,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.UpdateAllergicMedicineActivity"></activity>
+        <activity android:name=".activity.UpdateAllergicMedicineActivity" />
+        <activity android:name=".activity.ViewMedicationScheduleActivity"></activity>
     </application>
 
 </manifest>

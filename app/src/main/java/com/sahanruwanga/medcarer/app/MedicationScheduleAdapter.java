@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.app;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.MedicationScheduleActivity;
+import com.sahanruwanga.medcarer.activity.ViewMedicationScheduleActivity;
 
 import java.util.List;
 
@@ -54,6 +56,16 @@ public class MedicationScheduleAdapter extends
             holder.scheduleSwitch.setChecked(true);
         else
             holder.scheduleSwitch.setChecked(false);
+
+        // Set OnClick listeners for layouts
+        holder.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ViewMedicationScheduleActivity.class);
+                intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, medicationSchedule);
+                getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

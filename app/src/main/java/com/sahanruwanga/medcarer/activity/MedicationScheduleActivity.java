@@ -43,10 +43,11 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     private MaterialSearchView searchView;
     private RecyclerView recyclerView;
 
-    private SQLiteHandler sqLiteHandler;
     private Menu menu;
     private RecyclerView.LayoutManager layoutManager;
     private MedicationScheduleAdapter medicationScheduleAdapter;
+
+    private User user;
 
     //region OnCreate
     @Override
@@ -54,8 +55,8 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medication_schedule);
 
-        // SQLiteHelper initialization
-        this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
+        // Create User object
+        this.user = new User(this);
 
         //RecyclerView and layout manager initialization
         this.recyclerView = findViewById(R.id.medicationScheduleRecyclerView);
@@ -63,15 +64,15 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         getRecyclerView().setLayoutManager(layoutManager);
 
-        // Add data into RecyclerView
-        showRecyclerView();
-
         // TextView in toolbar
         this.setToolBarText((TextView)findViewById(R.id.toolBarTextMedicationSchedule));
 
         //Toolbar creation
         this.toolbar = findViewById(R.id.toolbarMedicationSchedule);
         setSupportActionBar(getToolbar());
+
+        // Add data into RecyclerView
+        showRecyclerView();
     }
     //endregion
 
@@ -101,7 +102,6 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
         getToolBarText().setText("Medication Schedule");
-        getToolbar().setLogo(R.drawable.ic_download);
     }
 
     public void showDeletingToolBar() {
@@ -126,7 +126,7 @@ public class MedicationScheduleActivity extends AppCompatActivity {
 
     // Show saved data in Recycler View
     private void showRecyclerView() {
-        this.medicationScheduleAdapter = new MedicationScheduleAdapter(getSqLiteHandler().getMedicationSchedule(),
+        this.medicationScheduleAdapter = new MedicationScheduleAdapter(getUser().getMedicationSchedules(),
                 this, getRecyclerView());
         getRecyclerView().setAdapter(getMedicationScheduleAdapter());
     }
@@ -134,7 +134,6 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     public void openNewMedicationSchedule(View view) {
         Intent intent = new Intent(this, NewMedicationScheduleActivity.class);
         startActivity(intent);
-        finish();
     }
 
     // Back Icon click on toolbar
@@ -167,14 +166,6 @@ public class MedicationScheduleActivity extends AppCompatActivity {
         this.searchView = searchView;
     }
 
-    public SQLiteHandler getSqLiteHandler() {
-        return sqLiteHandler;
-    }
-
-    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
-        this.sqLiteHandler = sqLiteHandler;
-    }
-
     public RecyclerView getRecyclerView() {
         return recyclerView;
     }
@@ -205,6 +196,14 @@ public class MedicationScheduleActivity extends AppCompatActivity {
 
     public void setMedicationScheduleAdapter(MedicationScheduleAdapter medicationScheduleAdapter) {
         this.medicationScheduleAdapter = medicationScheduleAdapter;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

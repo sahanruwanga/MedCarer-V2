@@ -46,7 +46,10 @@ public class MedicalRecord implements Parcelable{
         doctor = in.readString();
         contact = in.readString();
         description = in.readString();
+        createdAt = in.readString();
         record_id = in.readInt();
+        syncStatus = in.readInt();
+        statusType = in.readInt();
     }
 
     public static final Creator<MedicalRecord> CREATOR = new Creator<MedicalRecord>() {
@@ -126,23 +129,6 @@ public class MedicalRecord implements Parcelable{
         this.record_id = record_id;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(disease);
-        parcel.writeString(medicine);
-        parcel.writeString(duration);
-        parcel.writeString(allergic);
-        parcel.writeString(doctor);
-        parcel.writeString(contact);
-        parcel.writeString(description);
-        parcel.writeInt(record_id);
-    }
-
     public int getSyncStatus() {
         return syncStatus;
     }
@@ -165,6 +151,26 @@ public class MedicalRecord implements Parcelable{
 
     public void setStatusType(int statusType) {
         this.statusType = statusType;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(disease);
+        parcel.writeString(medicine);
+        parcel.writeString(duration);
+        parcel.writeString(allergic);
+        parcel.writeString(doctor);
+        parcel.writeString(contact);
+        parcel.writeString(description);
+        parcel.writeString(createdAt);
+        parcel.writeInt(record_id);
+        parcel.writeInt(syncStatus);
+        parcel.writeInt(statusType);
     }
     //endregion
 }

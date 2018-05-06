@@ -5,15 +5,10 @@ import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import com.sahanruwanga.medcarer.R;
-import com.sahanruwanga.medcarer.activity.AddMedicalRecordActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Sahan Ruwanga on 3/12/2018.
@@ -21,13 +16,14 @@ import java.util.Date;
 
 public class DatePickerFragment extends DialogFragment
                     implements DatePickerDialog.OnDateSetListener{
-    int dateId;
+    private int dateId;
+    public static final String DATE_ID = "dateId";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
         Bundle bundle = getArguments();
-        dateId = bundle.getInt("dateId");
+        this.dateId = bundle.getInt(DATE_ID);
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -44,10 +40,17 @@ public class DatePickerFragment extends DialogFragment
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         String date = dateFormat.format(calendar.getTime());
 
-        TextView dateText = getActivity().findViewById(dateId);
+        TextView dateText = getActivity().findViewById(getDateId());
         dateText.setText(date);
 
 
     }
 
+    public int getDateId() {
+        return dateId;
+    }
+
+    public void setDateId(int dateId) {
+        this.dateId = dateId;
+    }
 }
