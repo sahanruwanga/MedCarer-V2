@@ -56,6 +56,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_ID = "user_id";
     private static  final String KEY_DOCTOR = "doctor";
     private static  final String KEY_NOTIFY_TIME = "notify_time";
+    private static  final String KEY_NEXT_NOTIFY_TIME = "next_notify_time";
     private static  final String KEY_DESCRIPTION = "description";
     private static final String KEY_CREATED_AT = "created_at";
     private static final String KEY_SYNC_STATUS = "sync_status";
@@ -129,7 +130,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private final String CREATE_MEDICATION_SCHEDULE_TABLE = "CREATE TABLE " + TABLE_MEDICATION_SCHEDULE + "("
             + KEY_SCHEDULE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_MEDICINE + " TEXT,"
             + KEY_QUANTITY + " TEXT," + KEY_START_TIME + " TEXT," + KEY_PERIOD + " TEXT,"
-            + KEY_NOTIFY_TIME + " TEXT," + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT,"
+            + KEY_NOTIFY_TIME + " TEXT," + KEY_NEXT_NOTIFY_TIME + " TEXT," + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT,"
             + KEY_STATUS_TYPE + " TINYINT," + KEY_NOTIFICATION_STATUS + " TINYINT" + ")";
 
     // Create Allergic Medicine table query
@@ -938,7 +939,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //region Medication Schedule Details
     // Storing Medication Schedule in SQLite
     public long addMedicationSchedule(String medicine, String quantity, String startTime,
-                                      String period, String notifyTime, String createdAt, int notificationStatus,
+                                      String period, String notifyTime,String nextNotifyTime, String createdAt, int notificationStatus,
                                       int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -949,6 +950,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_START_TIME, startTime); // Start Time
         values.put(KEY_PERIOD, period); // Period
         values.put(KEY_NOTIFY_TIME, notifyTime);   // Notify Time
+        values.put(KEY_NEXT_NOTIFY_TIME, nextNotifyTime);
         values.put(KEY_CREATED_AT, createdAt); // Created At
         values.put(KEY_NOTIFICATION_STATUS, notificationStatus);
         values.put(KEY_SYNC_STATUS, syncStatus);
@@ -966,7 +968,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Storing Medication Schedule in SQLite from MySQL
     public void addMedicationScheduleFromMySQL(int schedule_id, String medicine, String quantity, String startTime,
-                                      String period, String notifyTime, String createdAt, int notificationStatus,
+                                      String period, String notifyTime, String nextNotifyTime, String createdAt, int notificationStatus,
                                                int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -978,6 +980,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_START_TIME, startTime); // Start Time
         values.put(KEY_PERIOD, period); // Period
         values.put(KEY_NOTIFY_TIME, notifyTime);   // Notify Time
+        values.put(KEY_NEXT_NOTIFY_TIME, nextNotifyTime);
         values.put(KEY_CREATED_AT, createdAt); // Created At
         values.put(KEY_NOTIFICATION_STATUS, notificationStatus);
         values.put(KEY_SYNC_STATUS, syncStatus);
@@ -1010,6 +1013,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
                 medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
                 medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setNextNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NEXT_NOTIFY_TIME)));
                 medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
                 medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
                 medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
@@ -1044,7 +1048,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Update medication schedule details
     public boolean updateMedicationSchedule(int scheduleId, String medicine, String quantity, String startTime,
-                                            String period, String notifyTime, int notificationStatus,
+                                            String period, String notifyTime, String nextNotifyTime, int notificationStatus,
                                             int syncStatus, int statusType) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -1053,6 +1057,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         contentValues.put(KEY_START_TIME, startTime);
         contentValues.put(KEY_PERIOD, period);
         contentValues.put(KEY_NOTIFY_TIME, notifyTime);
+        contentValues.put(KEY_NEXT_NOTIFY_TIME, nextNotifyTime);
         contentValues.put(KEY_NOTIFICATION_STATUS, notificationStatus);
         contentValues.put(KEY_SYNC_STATUS, syncStatus);
         contentValues.put(KEY_STATUS_TYPE, statusType);
@@ -1086,6 +1091,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
                 medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
                 medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setNextNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NEXT_NOTIFY_TIME)));
                 medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
                 medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
                 medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
@@ -1114,6 +1120,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
                 medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
                 medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setNextNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NEXT_NOTIFY_TIME)));
                 medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
                 medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
                 medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
@@ -1142,6 +1149,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 medicationSchedule.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_START_TIME)));
                 medicationSchedule.setPeriod(cursor.getString(cursor.getColumnIndex(KEY_PERIOD)));
                 medicationSchedule.setNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NOTIFY_TIME)));
+                medicationSchedule.setNextNotifyTime(cursor.getString(cursor.getColumnIndex(KEY_NEXT_NOTIFY_TIME)));
                 medicationSchedule.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
                 medicationSchedule.setNotificationStatus(cursor.getInt(cursor.getColumnIndex(KEY_NOTIFICATION_STATUS)));
                 medicationSchedule.setSyncStatus(cursor.getInt(cursor.getColumnIndex(KEY_SYNC_STATUS)));
@@ -1161,6 +1169,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_MEDICAL_HISTORY, null, null);
         db.delete(TABLE_APPOINTMENT, null, null);
         db.delete(TABLE_MEDICATION_SCHEDULE, null, null);
+        db.delete(TABLE_ALLERGIC_MEDICINE, null, null);
         db.close();
 
         Log.d(TAG, "Deleted all user info from sqlite");

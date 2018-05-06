@@ -15,6 +15,7 @@ public class MedicationSchedule implements Parcelable {
     private String startTime;
     private String period;
     private String notifyTime;
+    private String nextNotifyTime;
     private String createdAt;
     private int notificationStatus;
     private int syncStatus;
@@ -140,6 +141,14 @@ public class MedicationSchedule implements Parcelable {
 
     public void setStatusType(int statusType) {
         this.statusType = statusType;
+    }
+
+    public String getNextNotifyTime() {
+        return nextNotifyTime;
+    }
+
+    public void setNextNotifyTime(String nextNotifyTime) {
+        this.nextNotifyTime = nextNotifyTime;
     }
     //endregion
 }

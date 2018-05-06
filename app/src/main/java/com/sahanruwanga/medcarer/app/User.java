@@ -747,9 +747,10 @@ public class User implements Parcelable{
                             String created_at = medicationSchedule.getString(5);
                             int notification_status = medicationSchedule.getInt(6);
                             String localScheduleId = medicationSchedule.getString(7);
+                            String nextNotifyTime = medicationSchedule.getString(8);
 
                             getSqLiteHandler().addMedicationScheduleFromMySQL(Integer.parseInt(localScheduleId),
-                                    medicine, quantity, start_time, period, notify_time, created_at, notification_status,
+                                    medicine, quantity, start_time, period, notify_time, nextNotifyTime, created_at, notification_status,
                                     SQLiteHandler.SYNCED_WITH_SERVER, SQLiteHandler.LOADED);
                         }
 
@@ -798,19 +799,21 @@ public class User implements Parcelable{
 
     // Save new Medication Schedule in SQLite
     public void saveNewMedicationSchedule(String medicine, String quantity, String startTime,
-                                          String period, String notifyTime, String createdAt){
+                                          String period, String notifyTime, String nextNotificationTime,
+                                          String createdAt){
         long localScheduleId = getSqLiteHandler().addMedicationSchedule(medicine, quantity, startTime, period, notifyTime,
-                createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
+                nextNotificationTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
                 SQLiteHandler.SAVED);
         Toast.makeText(getContext(), "Schedule successfully inserted!", Toast.LENGTH_LONG).show();
         saveNewMedicationScheduleInMySQL(String.valueOf(localScheduleId), medicine, quantity, startTime,
-                period, notifyTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON);
+                period, notifyTime, nextNotificationTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON);
     }
 
     // Save new Medication Schedule in MySQL
     private void saveNewMedicationScheduleInMySQL(final String localScheduleId, final String medicine,
                                                   final String quantity, final String startTime, final String period,
-                                                  final String notifyTime, final String createdAt, final int notificationStatus){
+                                                  final String notifyTime, final String nextNotifyTime,
+                                                  final String createdAt, final int notificationStatus){
         getProgressDialog().setMessage("Saving Schedule ...");
 //        showDialog();
 
@@ -856,6 +859,7 @@ public class User implements Parcelable{
                 params.put("start_time", startTime);
                 params.put("period", period);
                 params.put("notify_time", notifyTime);
+                params.put("next_notify_time", nextNotifyTime);
                 params.put("created_at", createdAt);
                 params.put("notification_status", String.valueOf(notificationStatus));
 
