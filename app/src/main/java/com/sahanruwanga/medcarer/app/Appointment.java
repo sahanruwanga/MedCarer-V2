@@ -25,7 +25,20 @@ public class Appointment implements Parcelable {
 
     public Appointment(){}
 
-    protected Appointment(Parcel in){
+    public Appointment(int appointmentId, String reason, String date, String time,
+                       String venue, String doctor, String clinicContact, String notifyTime, String created_at){
+        this.setAppointmentId(appointmentId);
+        this.setReason(reason);
+        this.setDate(date);
+        this.setTime(time);
+        this.setVenue(venue);
+        this.setDoctor(doctor);
+        this.setClinicContact(clinicContact);
+        this.setNotifyTime(notifyTime);
+        this.created_at = created_at;
+    }
+
+    protected Appointment(Parcel in) {
         appointmentId = in.readInt();
         reason = in.readString();
         date = in.readString();
@@ -38,19 +51,6 @@ public class Appointment implements Parcelable {
         notificationStatus = in.readInt();
         syncStatus = in.readInt();
         statusType = in.readInt();
-    }
-
-    public Appointment(int appointmentId, String reason, String date, String time,
-                       String venue, String doctor, String clinicContact, String notifyTime, String created_at){
-        this.setAppointmentId(appointmentId);
-        this.setReason(reason);
-        this.setDate(date);
-        this.setTime(time);
-        this.setVenue(venue);
-        this.setDoctor(doctor);
-        this.setClinicContact(clinicContact);
-        this.setNotifyTime(notifyTime);
-        this.created_at = created_at;
     }
 
     public static final Creator<Appointment> CREATOR = new Creator<Appointment>() {
@@ -138,24 +138,6 @@ public class Appointment implements Parcelable {
         this.created_at = created_at;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(appointmentId);
-        parcel.writeString(reason);
-        parcel.writeString(date);
-        parcel.writeString(time);
-        parcel.writeString(venue);
-        parcel.writeString(doctor);
-        parcel.writeString(clinicContact);
-        parcel.writeString(notifyTime);
-        parcel.writeString(created_at);
-    }
-
     public int getNotificationStatus() {
         return notificationStatus;
     }
@@ -178,6 +160,27 @@ public class Appointment implements Parcelable {
 
     public void setStatusType(int statusType) {
         this.statusType = statusType;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(appointmentId);
+        parcel.writeString(reason);
+        parcel.writeString(date);
+        parcel.writeString(time);
+        parcel.writeString(venue);
+        parcel.writeString(doctor);
+        parcel.writeString(clinicContact);
+        parcel.writeString(notifyTime);
+        parcel.writeString(created_at);
+        parcel.writeInt(notificationStatus);
+        parcel.writeInt(syncStatus);
+        parcel.writeInt(statusType);
     }
     //endregion
 }

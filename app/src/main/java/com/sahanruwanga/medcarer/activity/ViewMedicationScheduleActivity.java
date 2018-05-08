@@ -10,10 +10,6 @@ import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class ViewMedicationScheduleActivity extends AppCompatActivity {
     private TextView medicine;
     private TextView quantity;
@@ -56,9 +52,9 @@ public class ViewMedicationScheduleActivity extends AppCompatActivity {
 
         getMedicine().setText(getMedicationSchedule().getMedicine());
         getQuantity().setText(getMedicationSchedule().getQuantity());
-        getStartedAt().setText(getDateTimeFormatting().getDateInShowingFormat(getMedicationSchedule().getStartTime()));
+        getStartedAt().setText(getDateTimeFormatting().getDateTimeToShowInUI(getMedicationSchedule().getStartTime()));
         getPeriod().setText(getDateTimeFormatting().getPeriodFormatFromDB(getMedicationSchedule().getPeriod()));
-        getNextToTake().setText(getDateTimeFormatting().getDateInShowingFormat(getMedicationSchedule().getNextNotifyTime()));
+        getNextToTake().setText(getDateTimeFormatting().getDateTimeToShowInUI(getMedicationSchedule().getNextNotifyTime()));
         getNotifyBefore().setText(getDateTimeFormatting().getNotifyTimeInSHowinFormat(getMedicationSchedule().getNotifyTime()));
     }
 

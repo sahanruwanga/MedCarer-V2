@@ -1,6 +1,5 @@
 package com.sahanruwanga.medcarer.activity;
 
-import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
+import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 public class UpdateAppointmentActivity extends AppCompatActivity {
     private Appointment appointment;
@@ -29,10 +30,19 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
     private Button updateBtn;
     private Button cancelBtn;
 
+    private User user;
+    private DateTimeFormatting dateTimeFormatting;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_appointment);
+
+        // Create User object
+        this.user = new User(this);
+
+        // Create DateTimeFormatting object
+        this.dateTimeFormatting = new DateTimeFormatting();
 
         // Get appointment object from intent
         this.appointment = getIntent().getParcelableExtra("Appointment");
@@ -87,17 +97,17 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
     public void fillData(){
         getVenue().setText(getAppointment().getVenue());
         getContact().setText(getAppointment().getClinicContact());
-        getDate().setText(getAppointment().getDate());
-        getTime().setText(getAppointment().getTime());
+        getDate().setText(getDateTimeFormatting().getDateTimeToShowInUI(getAppointment().getDate()));
+        getTime().setText(getDateTimeFormatting().getTimeToShowInUI(getAppointment().getTime()));
         getReason().setText(getAppointment().getReason());
         getDoctor().setText(getAppointment().getDoctor());
-        getNotifyTime().setText(getAppointment().getNotifyTime());
+        getNotifyTime().setText(getDateTimeFormatting().getTimeToShowInUI(getAppointment().getNotifyTime()));
     }
 
     // Set Date from calender
     private void setDate(int dateId){
         Bundle bundle = new Bundle();
-        bundle.putInt("dateId", dateId);
+        bundle.putInt(DatePickerFragment.DATE_ID, dateId);
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -106,7 +116,7 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
     // Set Time from clock
     private void setTime(int timeId){
         Bundle bundle = new Bundle();
-        bundle.putInt("timeId", timeId);
+        bundle.putInt(TimePickerFragment.TIME_ID, timeId);
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -114,10 +124,27 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
 
     // Save (Update) function on toolbar
     public void updateAppointment() {
-        Toast.makeText(this, "Should Update database", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, AppointmentActivity.class);
-        startActivity(intent);
-        finish();
+        String venue = getVenue().getText().toString().trim();
+        String reason = getReason().getText().toString().trim();
+        String doctor = getDoctor().getText().toString().trim();
+        String clinicPhone = getContact().getText().toString().trim();
+        String date = getDateTimeFormatting().getDateToSaveInDB(getDate().getText().toString().trim());
+        String time = getDateTimeFormatting().getTimeToSaveInDB(getTime().getText().toString().trim());
+        String notifyTime = getDateTimeFormatting().getTimeToSaveInDB(getNotifyTime().getText().toString().trim());
+        int syncStatus = getAppointment().getSyncStatus();
+        int statusType = getAppointment().getStatusType();
+
+        if(!venue.equals(getAppointment().getVenue()) || !reason.equals(getAppointment().getReason()) ||
+                !doctor.equals(getAppointment().getDoctor()) || !clinicPhone.equals(getAppointment().getClinicContact()) ||
+                !date.equals(getAppointment().getDate()) || !time.equals(getAppointment().getTime()) ||
+                !notifyTime.equals(getAppointment().getNotifyTime())){
+            if(venue.isEmpty() || reason.isEmpty() || doctor.isEmpty())
+                Toast.makeText(this, "Please fill required details!", Toast.LENGTH_SHORT).show();
+            else
+                getUser().updateAppointment(getAppointment().getAppointmentId(), venue, reason,
+                        doctor, clinicPhone, date, time, notifyTime, syncStatus, statusType);
+        }
+        onBackPressed();
     }
 
     // Back Icon click on toolbar
@@ -212,6 +239,22 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
 
     public void setCancelBtn(Button cancelBtn) {
         this.cancelBtn = cancelBtn;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
     }
     //endregion
 }

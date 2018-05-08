@@ -15,6 +15,7 @@ import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +32,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
     private Button cancelBtn;
 
     private User user;
+    private DateTimeFormatting dateTimeFormatting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,9 @@ public class AddAppointmentActivity extends AppCompatActivity {
         // Create User Object
         if(getUser() == null)
             this.user = new User(this);
+
+        // Create DateTimeFormatting object
+        this.dateTimeFormatting = new DateTimeFormatting();
 
         // Define all widget Edit Texts and the switch
         this.reasonText = findViewById(R.id.reasonAppointment);
@@ -96,7 +101,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     private void setDate(int dateId){
         Bundle bundle = new Bundle();
-        bundle.putInt("dateId", dateId);
+        bundle.putInt(DatePickerFragment.DATE_ID, dateId);
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -104,7 +109,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     private void setTime(int timeId){
         Bundle bundle = new Bundle();
-        bundle.putInt("timeId", timeId);
+        bundle.putInt(TimePickerFragment.TIME_ID, timeId);
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -118,9 +123,9 @@ public class AddAppointmentActivity extends AppCompatActivity {
         String venue = getVenueText().getText().toString().trim();
         String doctor = getDoctorText().getText().toString().trim();
         String clinicNo = getClinicContactText().getText().toString().trim();
-        String date = getDateText().getText().toString().trim();
-        String time = getTimeFormat(getTimeText().getText().toString().trim());
-        String notifyTime = getTimeFormat(getNotifyTimeText().getText().toString().trim());
+        String date = getDateTimeFormatting().getDateToSaveInDB(getDateText().getText().toString().trim());
+        String time = getDateTimeFormatting().getTimeToSaveInDB(getTimeText().getText().toString().trim());
+        String notifyTime = getDateTimeFormatting().getTimeToSaveInDB(getNotifyTimeText().getText().toString().trim());
 
         // Get current date time
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -271,6 +276,14 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     public void setCancelBtn(Button cancelBtn) {
         this.cancelBtn = cancelBtn;
+    }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
     }
     //endregion
 }

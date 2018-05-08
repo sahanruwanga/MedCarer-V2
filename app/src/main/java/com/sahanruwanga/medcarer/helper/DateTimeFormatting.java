@@ -10,8 +10,8 @@ import java.util.Date;
 
 public class DateTimeFormatting {
 
-    // Get date format for reviewing (AM/PM)
-    public String getDateInShowingFormat(String dateTime){
+    // Get datetime format for showing (AM/PM)
+    public String getDateTimeToShowInUI(String dateTime){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
@@ -23,6 +23,63 @@ public class DateTimeFormatting {
         SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
         return fmtOut.format(date);
     }
+
+    // Get datetime format for saving in DB (AM/PM)
+    public String getDateTimeToSaveInDB(String dateTime){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(dateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat fmtOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return fmtOut.format(date);
+    }
+
+    // Get date format for saving in DB
+    public String getDateToSaveInDB(String dateFormt){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy");
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(dateFormt);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat fmtOut = new SimpleDateFormat("yyyy-MM-dd");
+        return fmtOut.format(date);
+    }
+
+    // Get time format for saving in DB
+    public String getTimeToSaveInDB(String timeFormat){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm a");
+        Date time = null;
+        try {
+            time = simpleDateFormat.parse(timeFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat fmtOut = new SimpleDateFormat("hh:mm:ss");
+        return fmtOut.format(time);
+    }
+
+    // Get time format for showing in UI
+    public String getTimeToShowInUI(String timeFormat){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
+        Date time = null;
+        try {
+            time = simpleDateFormat.parse(timeFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat fmtOut = new SimpleDateFormat("HH:mm a");
+        return fmtOut.format(time);
+    }
+
 
     // Get period format for reviewing (with days, hours, and mins tag) from DB
     public String getPeriodFormatFromDB(String period){

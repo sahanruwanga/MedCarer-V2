@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.AllergicMedicine;
+import com.sahanruwanga.medcarer.app.User;
 
 public class UpdateAllergicMedicineActivity extends AppCompatActivity {
     private AllergicMedicine allergicMedicine;
@@ -18,10 +19,15 @@ public class UpdateAllergicMedicineActivity extends AppCompatActivity {
     private Button updateBtn;
     private Button cancelBtn;
 
+    private User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_allergic_medicine);
+
+        // Create User Object
+        this.user = new User(this);
 
         // Get Allergic Medicine object from Intent
         this.allergicMedicine = getIntent().getParcelableExtra(AllergicMedicine.ALLERGIC_MEDICINE);
@@ -53,7 +59,17 @@ public class UpdateAllergicMedicineActivity extends AppCompatActivity {
 
     // Update Allergic Medicine
     private void updateAllergicMedicine(){
-        Toast.makeText(this, "Should update", Toast.LENGTH_SHORT).show();
+        String medicine = getMedicine().getText().toString().trim();
+        String note = getNote().getText().toString().trim();
+        if(!medicine.equals(getAllergicMedicine().getMedicineName()) && note.equals(getAllergicMedicine().getDescription())){
+            if (!medicine.isEmpty()){
+                getUser().updateAllergicMedicine(getAllergicMedicine().getAllergicMedicineId(),
+                        medicine, note, getAllergicMedicine().getSyncStatus(), getAllergicMedicine().getStatusType());
+            }else{
+                Toast.makeText(this, "Please fill Medicine field!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        finish();
     }
 
     // Fill data
@@ -106,6 +122,14 @@ public class UpdateAllergicMedicineActivity extends AppCompatActivity {
 
     public void setAllergicMedicine(AllergicMedicine allergicMedicine) {
         this.allergicMedicine = allergicMedicine;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

@@ -249,6 +249,7 @@ public class User implements Parcelable{
         AppController.getInstance().addToRequestQueue(strReq);
     }
 
+
     //region Medical History maintaining
     // Store Medical Records in SQLite from MySql
     private void storeMedicalHistoryInSQLite(){
@@ -345,7 +346,7 @@ public class User implements Parcelable{
     }
 
     // Save new record in MySQL
-    private void saveNewRecordInMySQL(final String localId, final String disease,
+    public void saveNewRecordInMySQL(final String localId, final String disease,
                                       final String medicine, final String duration,
                                       final String allergic, final String doctor,
                                       final String contact, final String description,
@@ -411,16 +412,19 @@ public class User implements Parcelable{
     public void updateRecord(int recordId, String disease, String medicine, String duration,
                              String allergic, String doctor, String contact,
                              String description, int syncStatus, int statusType){
-        if(syncStatus == 0 && statusType == 0) {
-            getSqLiteHandler().updateMedicalRecord(recordId, disease, medicine, duration, allergic,
-                    doctor, contact, description, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
-                    SQLiteHandler.SAVED);
-            Toast.makeText(getContext(), "Not and SAved", Toast.LENGTH_SHORT).show();
-        }else if(syncStatus == SQLiteHandler.SYNCED_WITH_SERVER || statusType == SQLiteHandler.UPDATED) {
+        if(statusType == SQLiteHandler.UPDATED || statusType == SQLiteHandler.LOADED) {
             getSqLiteHandler().updateMedicalRecord(recordId, disease, medicine, duration, allergic,
                     doctor, contact, description, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
                     SQLiteHandler.UPDATED);
-            Toast.makeText(getContext(), "Yes and Updated", Toast.LENGTH_SHORT).show();
+        }else if(statusType == SQLiteHandler.SAVED) {
+            if(syncStatus == SQLiteHandler.SYNCED_WITH_SERVER)
+                getSqLiteHandler().updateMedicalRecord(recordId, disease, medicine, duration, allergic,
+                        doctor, contact, description, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
+                        SQLiteHandler.UPDATED);
+            else
+                getSqLiteHandler().updateMedicalRecord(recordId, disease, medicine, duration, allergic,
+                        doctor, contact, description, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
+                        SQLiteHandler.SAVED);
         }
 
         Toast.makeText(getContext(), "Record successfully updated!", Toast.LENGTH_LONG).show();
@@ -430,7 +434,7 @@ public class User implements Parcelable{
     }
 
     // Update record in MySQL
-    private void updateRecordInMySQL(final String localId, final String disease, final String medicine,
+    public void updateRecordInMySQL(final String localId, final String disease, final String medicine,
                                      final String duration, final String allergic, final String doctor,
                                      final String contact, final String description){
         getProgressDialog().setMessage("Updating record ...");
@@ -489,16 +493,15 @@ public class User implements Parcelable{
     // Delete from SQLite
     public void deleteMedicalRecord(ArrayList<MedicalRecord> medicalRecords){
         for(MedicalRecord medicalRecord : medicalRecords) {
-            if(medicalRecord.getSyncStatus() == SQLiteHandler.NOT_SYNCED_WITH_SERVER && medicalRecord.getStatusType() == SQLiteHandler.SAVED)
-                getSqLiteHandler().deleteMedicalRecord(medicalRecord.getRecord_id());
-            else
+            if(medicalRecord.getStatusType() != SQLiteHandler.DELETED){
                 getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), SQLiteHandler.NOT_SYNCED_WITH_SERVER);
-            deleteMedicalRecordFromMySql(String.valueOf(medicalRecord.getRecord_id()));
+                deleteMedicalRecordFromMySql(String.valueOf(medicalRecord.getRecord_id()));
+            }
         }
     }
 
     // Delete from MySQL
-    private void deleteMedicalRecordFromMySql(final String recordID){
+    public void deleteMedicalRecordFromMySql(final String recordID){
         progressDialog.setMessage("Deleting Record ...");
         showDialog();
 
@@ -547,6 +550,7 @@ public class User implements Parcelable{
         AppController.getInstance().addToRequestQueue(strReq);
     }
     //endregion
+
 
     //region Appointment maintaining
     // Store Appointment in SQLite from MySQL
@@ -627,7 +631,7 @@ public class User implements Parcelable{
     }
 
     // Get appointment from SQLite
-    public List<Appointment> getAppointments(){
+    public List<Appointment> getAppointment(){
         return getSqLiteHandler().getAppointment();
     }
 
@@ -643,7 +647,7 @@ public class User implements Parcelable{
     }
 
     // Save new Appointment in MySQL
-    private void saveNewAppointmentInMySQL(final String localAppointmentId, final String reason, final String date,
+    public void saveNewAppointmentInMySQL(final String localAppointmentId, final String reason, final String date,
                                            final String time, final String venue, final String doctor, final String clinicContact,
                                            final String notifyTime, final String createdAt, final int notificationStatus){
         progressDialog.setMessage("Saving appointment ...");
@@ -703,17 +707,149 @@ public class User implements Parcelable{
     }
 
     // Update Appointment in SQLite
-    public void updateAppointment(){}
+    public void updateAppointment(int appointmentId, String venue, String reason, String doctor,
+                                  String clinicPhone, String date, String time, String notifyTime,
+                                  int syncStatus, int statusType){
+        if(statusType == SQLiteHandler.UPDATED || statusType == SQLiteHandler.LOADED) {
+            getSqLiteHandler().updateAppointment(appointmentId, reason, date, time, venue, doctor,
+                    clinicPhone,notifyTime, SQLiteHandler.NOTIFICATION_STATUS_ON,
+                    SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+        }else if(statusType == SQLiteHandler.SAVED) {
+            if(syncStatus == SQLiteHandler.SYNCED_WITH_SERVER)
+                getSqLiteHandler().updateAppointment(appointmentId, reason, date, time, venue, doctor,
+                        clinicPhone,notifyTime, SQLiteHandler.NOTIFICATION_STATUS_ON,
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+            else
+                getSqLiteHandler().updateAppointment(appointmentId, reason, date, time, venue, doctor,
+                        clinicPhone,notifyTime, SQLiteHandler.NOTIFICATION_STATUS_ON,
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.SAVED);
+        }
+
+        Toast.makeText(getContext(), "Record successfully updated!", Toast.LENGTH_LONG).show();
+        updateAppointmentInMySQL(String.valueOf(appointmentId), reason, date, time, venue, doctor,
+                clinicPhone, notifyTime, String.valueOf(SQLiteHandler.NOTIFICATION_STATUS_ON));
+    }
 
     // Update Appointment in MySQL
-    private void updateAppointmentInMySQL(){}
+    public void updateAppointmentInMySQL(final String localAppointmetId, final String reason, final String date,
+                                          final String time, final String venue, final String doctor, final String clinicPhone,
+                                          final String notifyTime, final String notificationStatus){
+        getProgressDialog().setMessage("Updating...");
+//        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_APPOINTMENT, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Update Appointment", "Update Appointment: " + response.toString());
+//                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        getSqLiteHandler().updateAppointmentSyncStatus(Integer.parseInt(localAppointmetId),
+                                SQLiteHandler.SYNCED_WITH_SERVER);
+                    } else {
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Update Appointment", "Updating Error: " + error.getMessage());
+//                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", User.getUserId());
+                params.put("local_appointment_id", localAppointmetId);
+                params.put("reason", reason);
+                params.put("venue", venue);
+                params.put("doctor", doctor);
+                params.put("clinic_contact", clinicPhone);
+                params.put("date", date);
+                params.put("time", time);
+                params.put("notify_time", notifyTime);
+                params.put("notification_status", notificationStatus);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
 
     // Delete Appointment from SQLite
-    public void deleteAppointment(){}
+    public void deleteAppointment(ArrayList<Appointment> appointments){
+        for(Appointment appointment : appointments) {
+            if(appointment.getStatusType() != SQLiteHandler.DELETED){
+                getSqLiteHandler().makeDeletedAppointment(appointment.getAppointmentId(), SQLiteHandler.NOT_SYNCED_WITH_SERVER);
+                deleteAppointmentFromMySQL(String.valueOf(appointment.getAppointmentId()));
+            }
+        }
+    }
 
     // Delete Appointment from MySQL
-    private void deleteAppointmentFromMySQL(){}
+    public void deleteAppointmentFromMySQL(final String localAppointmentId){
+        progressDialog.setMessage("Deleting...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_DELETE_APPOINTMENT, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Delete Appointment", "Appointment Deleting: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        getSqLiteHandler().deleteAppointment(Integer.parseInt(localAppointmentId));
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Delete Appointment", "Deleting Error: " + error.getMessage());
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", getUserId());
+                params.put("local_appointment_id", localAppointmentId);
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
     //endregion
+
 
     //region Medication Schedule maintaining
     // Store Medication Schedule in SQLite from MySQL
@@ -810,7 +946,7 @@ public class User implements Parcelable{
     }
 
     // Save new Medication Schedule in MySQL
-    private void saveNewMedicationScheduleInMySQL(final String localScheduleId, final String medicine,
+    public void saveNewMedicationScheduleInMySQL(final String localScheduleId, final String medicine,
                                                   final String quantity, final String startTime, final String period,
                                                   final String notifyTime, final String nextNotifyTime,
                                                   final String createdAt, final int notificationStatus){
@@ -872,17 +1008,150 @@ public class User implements Parcelable{
     }
 
     // Update Medication Schedule in SQLite
-    public void updateMedicationSchedule(){}
+    public void updateMedicationSchedule(int localScheduleId, String medicine, String quantity,
+                                         String startTime, String peiod, String notifyTime,
+                                         String nextNotifyTime, int syncStatus, int statusType){
+        if(statusType == SQLiteHandler.UPDATED || statusType == SQLiteHandler.LOADED) {
+            getSqLiteHandler().updateMedicationSchedule(localScheduleId, medicine, quantity, startTime, peiod,
+                    notifyTime, nextNotifyTime, SQLiteHandler.NOTIFICATION_STATUS_ON,
+                    SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+        }else if(statusType == SQLiteHandler.SAVED) {
+            if(syncStatus == SQLiteHandler.SYNCED_WITH_SERVER)
+                getSqLiteHandler().updateMedicationSchedule(localScheduleId, medicine, quantity, startTime, peiod,
+                        notifyTime, nextNotifyTime, SQLiteHandler.NOTIFICATION_STATUS_ON,
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+            else
+                getSqLiteHandler().updateMedicationSchedule(localScheduleId, medicine, quantity, startTime, peiod,
+                        notifyTime, nextNotifyTime, SQLiteHandler.NOTIFICATION_STATUS_ON,
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.SAVED);
+        }
+
+        Toast.makeText(getContext(), "Updated!", Toast.LENGTH_LONG).show();
+        updateMedicationScheduleInMySQL(String.valueOf(localScheduleId), medicine, quantity, startTime,
+                peiod, notifyTime, nextNotifyTime, String.valueOf(SQLiteHandler.NOTIFICATION_STATUS_ON));
+    }
 
     // Update Medication Schedule in MySQL
-    private void updateMedicationScheduleInMySQL(){}
+    public void updateMedicationScheduleInMySQL(final String localScheduleId, final String medicine,
+                                                 final String quantity, final String startTime, final String period,
+                                                 final String notifyTime, final String nextNotifyTime,
+                                                 final String notificationStatus){
+        getProgressDialog().setMessage("Updating...");
+//        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_MEDICATION_SCHEDULE, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Update Medication Schedule", "Update Schedule: " + response.toString());
+//                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        getSqLiteHandler().updateMedicationScheduleSyncStatus(Integer.parseInt(localScheduleId),
+                                SQLiteHandler.SYNCED_WITH_SERVER);
+                    } else {
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Update Medication Schedule", "Updating Error: " + error.getMessage());
+//                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", User.getUserId());
+                params.put("local_schedule_id", localScheduleId);
+                params.put("medicine", medicine);
+                params.put("quantity", quantity);
+                params.put("start_time", startTime);
+                params.put("period", period);
+                params.put("notify_time", notifyTime);
+                params.put("next_notify_time", nextNotifyTime);
+                params.put("notification_status", notificationStatus);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
 
     // Delete Medication Schedule from SQLite
-    public void deleteMedicationSchedule(){}
+    public void deleteMedicationSchedule(ArrayList<MedicationSchedule> medicationSchedules){
+        for(MedicationSchedule medicationSchedule : medicationSchedules) {
+            if(medicationSchedule.getStatusType() != SQLiteHandler.DELETED){
+                getSqLiteHandler().makeDeletedAppointment(medicationSchedule.getScheduleId(),
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER);
+                deleteMedicationScheduleFromMySQL(String.valueOf(medicationSchedule.getScheduleId()));
+            }
+        }
+    }
 
     // Delete Medication Schedule from MySQL
-    private void deleteMedicationScheduleFromMySQL(){}
+    public void deleteMedicationScheduleFromMySQL(final String localScheduleId){
+        progressDialog.setMessage("Deleting...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_DELETE_MEDICATION_SCHEDULE, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Delete Medication Schedule", "Medication Schedule Deleting: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        getSqLiteHandler().deleteMedicationSchedule(Integer.parseInt(localScheduleId));
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Delete Medication Schedule", "Deleting Error: " + error.getMessage());
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", getUserId());
+                params.put("local_schedule_id", localScheduleId);
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
     //endregion
+
 
     //region Allergic Medicine maintaining
     // Store Allergic Medicine in SQLite from MySQL
@@ -972,7 +1241,7 @@ public class User implements Parcelable{
     }
 
     // Save new Allergic Medicine in MySQL
-    private void saveNewAllergicMedicineInMySQL(final String localAllergicMedicineId, final String medicine,
+    public void saveNewAllergicMedicineInMySQL(final String localAllergicMedicineId, final String medicine,
                                                 final String description, final String createdAt){
         getProgressDialog().setMessage("Saving allergic medicine ...");
 //        showDialog();
@@ -1027,17 +1296,136 @@ public class User implements Parcelable{
     }
 
     // Update Allergic Medicine in SQLite
-    public void updateAllergicMedicine(){}
+    public void updateAllergicMedicine(int allergicMedicineId, String medicine, String note,
+                                       int syncStatus, int statusType){
+        if(statusType == SQLiteHandler.UPDATED || statusType == SQLiteHandler.LOADED) {
+            getSqLiteHandler().updateAllergicMedicine(allergicMedicineId, medicine, note,
+                    SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+        }else if(statusType == SQLiteHandler.SAVED) {
+            if(syncStatus == SQLiteHandler.SYNCED_WITH_SERVER)
+                getSqLiteHandler().updateAllergicMedicine(allergicMedicineId, medicine, note,
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+            else
+                getSqLiteHandler().updateAllergicMedicine(allergicMedicineId, medicine, note,
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.SAVED);
+        }
+        Toast.makeText(getContext(), "Updated!", Toast.LENGTH_LONG).show();
+        updateAllergicMedicineInMySQL((String.valueOf(allergicMedicineId)), medicine, note);
+    }
 
     // Update Allergic Medicine in MySQL
-    private void updateAllergicMedicineInMySQL(){}
+    public void updateAllergicMedicineInMySQL(final String localAllergicMedicineId, final String medicine, final String note){
+        getProgressDialog().setMessage("Updating...");
+//        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_ALLERGIC_MEDICINE, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Update Allergic Medicine", "Update Allergic Medicine: " + response.toString());
+//                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        getSqLiteHandler().updateAllergicMedicineSyncStatus(Integer.parseInt(localAllergicMedicineId),
+                                SQLiteHandler.SYNCED_WITH_SERVER);
+                    } else {
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Update Allergic Medicine", "Updating Error: " + error.getMessage());
+//                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", User.getUserId());
+                params.put("local_allergic_medicine_id", localAllergicMedicineId);
+                params.put("medicine", medicine);
+                params.put("description", note);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
 
     // Delete Allergic Medicine from SQLite
-    public void deleteAllergicMedicine(){}
+    public void deleteAllergicMedicine(ArrayList<AllergicMedicine> allergicMedicines){
+        for(AllergicMedicine allergicMedicine : allergicMedicines) {
+            if(allergicMedicine.getStatusType() != SQLiteHandler.DELETED){
+                getSqLiteHandler().makeDeletedAppointment(allergicMedicine.getAllergicMedicineId(),
+                        SQLiteHandler.NOT_SYNCED_WITH_SERVER);
+                deleteAllergicMedicineFromMySQL(String.valueOf(allergicMedicine.getAllergicMedicineId()));
+            }
+        }
+    }
 
     // Delete Allergic Medicine from MySQL
-    private void deleteAllergicMedicineFromMySQL(){}
+    public void deleteAllergicMedicineFromMySQL(final String localAllergicMedicineId){
+        progressDialog.setMessage("Deleting...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_DELETE_ALLERGIC_MEDICINE, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Delete Allergic Medicine", "Allergic Medicine Deleting: " + response);
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        getSqLiteHandler().deleteAllergicMedicine(Integer.parseInt(localAllergicMedicineId));
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Delete Allergic Medicine", "Deleting Error: " + error.getMessage());
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to medical history url
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", getUserId());
+                params.put("local_allergic_medicine_id", localAllergicMedicineId);
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
     //endregion
+
 
     public User getUserProfile(){
         return getSqLiteHandler().getUserDetail();

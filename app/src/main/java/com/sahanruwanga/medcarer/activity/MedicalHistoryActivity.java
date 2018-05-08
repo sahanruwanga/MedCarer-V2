@@ -34,7 +34,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
 
     private SearchView searchView;
-    private SQLiteHandler sqLiteHandler;
+
     private User user;
 
     private Menu menu;
@@ -53,9 +53,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
         // Creating User object
         this.user = new User(this);
-
-        // SQLiteHelper initialization
-        this.sqLiteHandler = new SQLiteHandler(getApplicationContext());
 
         //RecyclerView and layout manager initialization
         this.recyclerView = findViewById(R.id.medicalHistoryRecyclerView);
@@ -94,7 +91,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     //region Show RecyclerView in Medical History
     private void showRecyclerView(){
-        setMedicalHistoryAdapter(new MedicalHistoryAdapter(getSqLiteHandler().getMedicalRecords(),
+        setMedicalHistoryAdapter(new MedicalHistoryAdapter(getUser().getMedicalRecords(),
                 this, getRecyclerView()));
         getRecyclerView().setAdapter(getMedicalHistoryAdapter());
     }
@@ -114,7 +111,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         if (id == R.id.savePDF) {
             savePdf();
         }else if(id == R.id.previewPDF){
-            new PDFCreator(getSqLiteHandler().getMedicalRecords()).createPdf();
+            new PDFCreator(getUser().getMedicalRecords()).createPdf();
             openPdf();
         }else if(id == R.id.selectAllIcon){
             getMedicalHistoryAdapter().selectAll();
@@ -261,14 +258,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     public void setMedicalHistoryAdapter(MedicalHistoryAdapter medicalHistoryAdapter) {
         this.medicalHistoryAdapter = medicalHistoryAdapter;
-    }
-
-    public SQLiteHandler getSqLiteHandler() {
-        return sqLiteHandler;
-    }
-
-    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
-        this.sqLiteHandler = sqLiteHandler;
     }
 
     public TextView getToolBarText() {

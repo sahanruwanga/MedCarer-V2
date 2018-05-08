@@ -46,13 +46,13 @@ public class AppointmentActivity extends AppCompatActivity {
     private TextView emptyImage;
     private ImageView backIcon;
     private MaterialSearchView searchView;
-    private ProgressDialog progressDialog;
-    private SQLiteHandler sqLiteHandler;
-    private SessionManager sessionManager;
+
     private RecyclerView recyclerView;
     private Menu menu;
     private RecyclerView.LayoutManager layoutManager;
     private AppointmentAdapter appointmentAdapter;
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +61,8 @@ public class AppointmentActivity extends AppCompatActivity {
 
         this.emptyImage = findViewById(R.id.emptyMessage);
 
-        // SQLiteHelper initialization
-        this.setSqLiteHandler(new SQLiteHandler(getApplicationContext()));
-        // Session manager
-        this.setSessionManager(new SessionManager(getApplicationContext()));
-
-        // Progress dialog
-        this.setProgressDialog(new ProgressDialog(this));
-        getProgressDialog().setCancelable(false);
+        // Create User Object
+        this.user = new User(this);
 
         //RecyclerView and layoutmanagrer initialization
         setRecyclerView((RecyclerView)findViewById(R.id.appointmentRecyclerView));
@@ -131,7 +125,7 @@ public class AppointmentActivity extends AppCompatActivity {
 
     //region Show RecyclerView in Appointment
     private void showRecyclerView(){
-        this.appointmentAdapter = new AppointmentAdapter(getSqLiteHandler().getAppointment(), this, getRecyclerView());
+        this.appointmentAdapter = new AppointmentAdapter(getUser().getAppointment(), this, getRecyclerView());
         getRecyclerView().setAdapter(getAppointmentAdapter());
     }
     //endregion
@@ -151,18 +145,6 @@ public class AppointmentActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.delete_all, menu);
         getToolBarText().setText("");
         getBackIcon().setVisibility(View.INVISIBLE);
-    }
-    //endregion
-
-    //region Process Dialog activities
-    private void showDialog() {
-        if (!progressDialog.isShowing())
-            progressDialog.show();
-    }
-
-    private void hideDialog() {
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
     }
     //endregion
 
@@ -189,30 +171,6 @@ public class AppointmentActivity extends AppCompatActivity {
 
     public void setSearchView(MaterialSearchView searchView) {
         this.searchView = searchView;
-    }
-
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
-    }
-
-    public void setProgressDialog(ProgressDialog progressDialog) {
-        this.progressDialog = progressDialog;
-    }
-
-    public SQLiteHandler getSqLiteHandler() {
-        return sqLiteHandler;
-    }
-
-    public void setSqLiteHandler(SQLiteHandler sqLiteHandler) {
-        this.sqLiteHandler = sqLiteHandler;
-    }
-
-    public SessionManager getSessionManager() {
-        return sessionManager;
-    }
-
-    public void setSessionManager(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
     }
 
     public RecyclerView getRecyclerView() {
@@ -269,6 +227,14 @@ public class AppointmentActivity extends AppCompatActivity {
 
     public void setEmptyImage(TextView emptyImage) {
         this.emptyImage = emptyImage;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

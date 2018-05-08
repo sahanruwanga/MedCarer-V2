@@ -3,7 +3,6 @@ package com.sahanruwanga.medcarer.activity;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +15,10 @@ import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
 
 public class NewMedicationScheduleActivity extends AppCompatActivity {
     private EditText medicine;
@@ -142,7 +139,7 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
     // Clear all data in text boxes
     private void clearAll(){
-        String dateTime = getDateTimeFormatting().getDateInShowingFormat(getCurrentDateTime());
+        String dateTime = getDateTimeFormatting().getDateTimeToShowInUI(getCurrentDateTime());
         getMedicine().setText("");
         getQuantity().setText("");
         getStartDate().setText(dateTime.substring(0, 12));

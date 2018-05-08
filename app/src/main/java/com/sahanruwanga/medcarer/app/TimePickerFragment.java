@@ -8,7 +8,9 @@ import android.text.format.DateFormat;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Timer;
 
 /**
  * Created by Sahan Ruwanga on 3/12/2018.
@@ -29,11 +31,15 @@ public class TimePickerFragment extends DialogFragment
         int minute = c.get(Calendar.MINUTE);
 
         // Create a new instance of TimePickerDialog and return it
+
         return new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+
+
         // Set time in particular time text
         String hourSign = " AM";
         if(hourOfDay > 12 ){

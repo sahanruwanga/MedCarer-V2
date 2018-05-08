@@ -445,7 +445,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
-                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + SAVED + ";";
+                KEY_SYNC_STATUS + " = " + NOT_SYNCED_WITH_SERVER +" AND " + KEY_STATUS_TYPE + " = " + SAVED + ";";
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
 
@@ -474,7 +474,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
-                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + DELETED + ";";
+                KEY_SYNC_STATUS + " = " + SQLiteHandler.NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + DELETED + ";";
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
 
@@ -503,7 +503,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         List<MedicalRecord> unSyncedMedicalRecords = new LinkedList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " +
-                KEY_SYNC_STATUS + " = 0 AND " + KEY_STATUS_TYPE + " = " + UPDATED + ";";
+                KEY_SYNC_STATUS + " = " + SQLiteHandler.NOT_SYNCED_WITH_SERVER + " AND " + KEY_STATUS_TYPE + " = " + UPDATED + ";";
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
 
