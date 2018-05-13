@@ -5,61 +5,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/mainLayoutScheduleList"
-    android:padding="1dp">
+    android:padding="5dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorHintText"
         app:cardCornerRadius="2dp"
         android:id="@+id/cardViewMedicationSchedule"
         android:elevation="90dp"
-        app:cardBackgroundColor="@color/colorCardView">
+        app:cardBackgroundColor="@color/colorWhite">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:background="@drawable/edit_text_style">
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="20">
 
-                <LinearLayout
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/scheduleCheckIcon"
-                        android:src="@drawable/ic_check"
-                        android:layout_gravity="right"
-                        android:visibility="gone"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/scheduleMedicine"
-                        android:padding="5dp"
-                        android:text="Sample Medicine"
-                        android:layout_gravity="left"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"
-                        />
-                </LinearLayout>
-
+                    android:id="@+id/scheduleCheckIcon"
+                    android:src="@drawable/ic_check"
+                    android:foregroundGravity="right"
+                    android:layout_gravity="right"
+                    android:visibility="gone"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/scheduleMedicine"
+                    android:layout_weight="17"
+                    android:padding="5dp"
+                    android:text="Sample Medicine"
+                    android:layout_gravity="left"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBrown"
+                    />
 
                 <Switch
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right|center_vertical"
-                    android:id="@+id/scheduleSwitch"/>
-
-
-
-            </FrameLayout>
+                    android:id="@+id/scheduleSwitch"
+                    android:layout_weight="3"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,8 +65,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/scheduleQuantity"
                     android:padding="5dp"
-                    android:text="2 per 6hrs"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/colorPrimaryDark"
                     />
 
                 <TextView
@@ -81,7 +74,7 @@
                     android:padding="5dp"
                     android:text="|"
                     android:layout_marginLeft="5dp"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/colorHintText"
                     />
 
                 <TextView
@@ -89,9 +82,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/scheduleStartedAt"
                     android:padding="5dp"
-                    android:text="started at 06:00:00"
                     android:layout_marginLeft="5dp"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/colorWarning"
                     />
 
             </LinearLayout>

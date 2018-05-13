@@ -1,9 +1,6 @@
 package com.sahanruwanga.medcarer.app;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +9,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.MedicalHistoryActivity;
@@ -32,7 +28,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     private ArrayList<MedicalRecord> filterList;
     private MedicalHistoryActivity context;
     private RecyclerView recyclerView;
-    CustomFilter filter;
+    private MedicalRecordFilter filter;
 
     private int selectingCount;
     private ArrayList<MedicalRecord> selectedRecords;
@@ -77,8 +73,11 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         holder.duration.setText(medicalRecord.getDuration());
         String allergic = medicalRecord.getAllergic();
         setAllergicImage(holder.allergic, allergic);
+
+        // Initialize Select Icon and add into all ImageViews
         final ImageView checkIcon = holder.layout.findViewById(R.id.checkIconMH);
         imageViews.add(checkIcon);
+
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -95,7 +94,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
                     checkIcon.setVisibility(View.VISIBLE);
                     checkIcon.setSelected(true);
                 }
-                notifyParent(getSelectingCount());
+                notifyParent();
                 return true;
             }
         });
@@ -122,13 +121,13 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
                         checkIcon.setSelected(true);
                     }
                 }
-                notifyParent(getSelectingCount());
+                notifyParent();
             }
 
         });
     }
 
-    private void notifyParent(int selectingCount){
+    private void notifyParent(){
         if(getSelectingCount() == 0){
             context.showDefaultToolBar();
         }else{
@@ -190,42 +189,9 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     public Filter getFilter() {
         if(filter==null)
         {
-            filter=new CustomFilter(getFilterList(),this);
+            filter=new MedicalRecordFilter(getFilterList(),this);
         }
         return filter;
-    }
-
-    public List<MedicalRecord> getFilterList() {
-        return filterList;
-    }
-
-    public void setFilterList(List<MedicalRecord> filterList) {
-        this.filterList = (ArrayList<MedicalRecord>) filterList;
-    }
-
-    public List<MedicalRecord> getMedicalRecords() {
-        return medicalRecords;
-    }
-
-    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
-        this.medicalRecords = medicalRecords;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView disease;
-        public TextView medicine;
-        public TextView duration;
-        public ImageView allergic;
-        public View layout;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            layout = itemView;
-            disease = itemView.findViewById(R.id.mrDisease);
-            medicine = itemView.findViewById(R.id.mrMedicine);
-            duration = itemView.findViewById(R.id.mrDate);
-            allergic = itemView.findViewById(R.id.mrAllergic);
-        }
     }
 
     //region Getters and Setters
@@ -244,5 +210,48 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
     public void setSelectingCount(int selectingCount) {
         this.selectingCount = selectingCount;
     }
+
+    public List<MedicalRecord> getFilterList() {
+        return filterList;
+    }
+
+    public void setFilterList(List<MedicalRecord> filterList) {
+        this.filterList = (ArrayList<MedicalRecord>) filterList;
+    }
+
+    public List<MedicalRecord> getMedicalRecords() {
+        return medicalRecords;
+    }
+
+    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
+        this.medicalRecords = medicalRecords;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
     //endregion
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView disease;
+        public TextView medicine;
+        public TextView duration;
+        public ImageView allergic;
+        public View layout;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            layout = itemView;
+            disease = itemView.findViewById(R.id.mrDisease);
+            medicine = itemView.findViewById(R.id.mrMedicine);
+            duration = itemView.findViewById(R.id.mrDate);
+            allergic = itemView.findViewById(R.id.mrAllergic);
+        }
+    }
+
 }

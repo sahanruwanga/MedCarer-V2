@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.MedicationScheduleActivity;
 import com.sahanruwanga.medcarer.activity.ViewMedicationScheduleActivity;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +27,14 @@ public class MedicationScheduleAdapter extends
     private MedicationScheduleActivity context;
     private RecyclerView recyclerView;
 
+    private int selectingCount;
+    private ArrayList<MedicationSchedule> selectedSchedules;
+    private ArrayList<ImageView> selectedImageViews;
+    private ArrayList<ImageView> imageViews;
+    private ArrayList<Switch> switches;
+
+    private DateTimeFormatting dateTimeFormatting;
+
     private static final int NOTIFICATION_STATUS_ON = 1;
     private static final int NOTIFICATION_STATUS_OFF = 0;
 
@@ -33,6 +43,14 @@ public class MedicationScheduleAdapter extends
         this.medicationSchedules = medicationSchedules;
         this.context = context;
         this.recyclerView = recyclerView;
+
+        this.setSelectingCount(0);
+        this.selectedSchedules = new ArrayList<>();
+        this.selectedImageViews = new ArrayList<>();
+        this.imageViews = new ArrayList<>();
+        this.switches = new ArrayList<>();
+
+        this.dateTimeFormatting = new DateTimeFormatting();
     }
 
     @Override
@@ -44,12 +62,13 @@ public class MedicationScheduleAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(MedicationScheduleAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final MedicationScheduleAdapter.ViewHolder holder, int position) {
         final MedicationSchedule medicationSchedule = medicationSchedules.get(position);
 
         holder.medicine.setText(medicationSchedule.getMedicine());
         holder.quantity.setText(medicationSchedule.getQuantity());
-        holder.startedAt.setText(medicationSchedule.getStartTime());
+        holder.startedAt.setText(getDateTimeFormatting().getNextTimeToTakeMedicine(
+                medicationSchedule.getNextNotifyTime(), medicationSchedule.getNotifyTime()));
 
         int notificationStatus = medicationSchedule.getNotificationStatus();
         if(notificationStatus == NOTIFICATION_STATUS_ON)
@@ -57,13 +76,63 @@ public class MedicationScheduleAdapter extends
         else
             holder.scheduleSwitch.setChecked(false);
 
+        getImageViews().add(holder.scheduleCheckIcon);
+
+        getSwitches().add(holder.scheduleSwitch);
+
         // Set OnClick listeners for layouts
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ViewMedicationScheduleActivity.class);
-                intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, medicationSchedule);
-                getContext().startActivity(intent);
+                if(getSelectingCount() == 0) {
+                    Intent intent = new Intent(getContext(), ViewMedicationScheduleActivity.class);
+                    intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, medicationSchedule);
+                    getContext().startActivity(intent);
+                }else {
+                    if(holder.scheduleCheckIcon.isSelected()) {
+                        setSelectingCount(getSelectingCount() - 1);
+                        getSelectedSchedules().remove(medicationSchedule);
+                        selectedImageViews.remove(holder.scheduleCheckIcon);
+                        if(getSelectingCount() == 0)
+                            setVisibleSwitch(View.VISIBLE);
+                        holder.scheduleCheckIcon.setVisibility(View.GONE);
+                        holder.scheduleCheckIcon.setSelected(false);
+                    }else{
+                        setSelectingCount(getSelectingCount() + 1);
+                        getSelectedSchedules().add(medicationSchedule);
+                        selectedImageViews.add(holder.scheduleCheckIcon);
+                        if(getSelectingCount() == 1)
+                            setVisibleSwitch(View.GONE);
+                        holder.scheduleCheckIcon.setVisibility(View.VISIBLE);
+                        holder.scheduleCheckIcon.setSelected(true);
+                    }
+                }
+                notifyParent();
+            }
+        });
+
+        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(holder.scheduleCheckIcon.isSelected()) {
+                    setSelectingCount(getSelectingCount() - 1);
+                    getSelectedSchedules().remove(medicationSchedule);
+                    getSelectedImageViews().remove(holder.scheduleCheckIcon);
+                    if(getSelectingCount() == 0)
+                        setVisibleSwitch(View.VISIBLE);
+                    holder.scheduleCheckIcon.setVisibility(View.GONE);
+                    holder.scheduleCheckIcon.setSelected(false);
+                }else{
+                    setSelectingCount(getSelectingCount() + 1);
+                    getSelectedSchedules().add(medicationSchedule);
+                    getSelectedImageViews().add(holder.scheduleCheckIcon);
+                    if(getSelectingCount() == 1)
+                        setVisibleSwitch(View.GONE);
+                    holder.scheduleCheckIcon.setVisibility(View.VISIBLE);
+                    holder.scheduleCheckIcon.setSelected(true);
+                }
+                notifyParent();
+                return true;
             }
         });
     }
@@ -72,6 +141,57 @@ public class MedicationScheduleAdapter extends
     public int getItemCount() {
         return medicationSchedules.size();
     }
+
+    // set switches invisible when check icons are visible or other way around
+    private void setVisibleSwitch(int visibility){
+        for(Switch aSwitch : getSwitches()){
+            aSwitch.setVisibility(visibility);
+        }
+    }
+
+    // Notify parent activity about change in selecting
+    private void notifyParent(){
+        if(getSelectingCount() == 0){
+            context.showDefaultToolBar();
+        }else{
+            context.showDeletingToolBar();
+        }
+    }
+
+    //region SelectAll and DeselectAll functions
+    public void deseleceAll(){
+        setSelectingCount(0);
+        for(ImageView imageView : selectedImageViews){
+            imageView.setVisibility(View.GONE);
+            imageView.setSelected(false);
+        }
+        for(Switch aSwitch : getSwitches()){
+            aSwitch.setVisibility(View.VISIBLE);
+        }
+        getSelectedSchedules().clear();
+        selectedImageViews.clear();
+    }
+
+    public void selectAll(){
+        for(Switch aSwitch : getSwitches()){
+            if(aSwitch.getVisibility() == View.VISIBLE)
+                aSwitch.setVisibility(View.GONE);
+        }
+        for(ImageView imageView : imageViews){
+            if (!selectedImageViews.contains(imageView)){
+                selectedImageViews.add(imageView);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setSelected(true);
+            }
+        }
+        for(MedicationSchedule medicationSchedule : getSelectedSchedules()){
+            if(!getSelectedSchedules().contains(medicationSchedule)){
+                getSelectedSchedules().add(medicationSchedule);
+            }
+        }
+        setSelectingCount(getItemCount());
+    }
+    //endregion
 
     //region Getters and Setters
     public List<MedicationSchedule> getMedicationSchedules() {
@@ -96,6 +216,54 @@ public class MedicationScheduleAdapter extends
 
     public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
+    }
+
+    public int getSelectingCount() {
+        return selectingCount;
+    }
+
+    public void setSelectingCount(int selectingCount) {
+        this.selectingCount = selectingCount;
+    }
+
+    public ArrayList<MedicationSchedule> getSelectedSchedules() {
+        return selectedSchedules;
+    }
+
+    public void setSelectedSchedules(ArrayList<MedicationSchedule> selectedSchedules) {
+        this.selectedSchedules = selectedSchedules;
+    }
+
+    public ArrayList<ImageView> getSelectedImageViews() {
+        return selectedImageViews;
+    }
+
+    public void setSelectedImageViews(ArrayList<ImageView> selectedImageViews) {
+        this.selectedImageViews = selectedImageViews;
+    }
+
+    public ArrayList<ImageView> getImageViews() {
+        return imageViews;
+    }
+
+    public void setImageViews(ArrayList<ImageView> imageViews) {
+        this.imageViews = imageViews;
+    }
+
+    public ArrayList<Switch> getSwitches() {
+        return switches;
+    }
+
+    public void setSwitches(ArrayList<Switch> switches) {
+        this.switches = switches;
+    }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
     }
     //endregion
 

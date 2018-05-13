@@ -1,6 +1,5 @@
 package com.sahanruwanga.medcarer.app;
 
-
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -8,7 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.SystemClock;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
 
@@ -19,14 +19,20 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.AppointmentActivity;
 import com.sahanruwanga.medcarer.activity.ViewAppointmentActivity;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import static android.content.Context.ALARM_SERVICE;
+
 
 /**
  * Created by Sahan Ruwanga on 3/11/2018.
@@ -42,6 +48,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     private ArrayList<ImageView> selectedImageViews;
     private ArrayList<ImageView> imageViews;
     private ArrayList<Switch> switches;
+
+    private DateTimeFormatting dateTimeFormatting;
 
     private static final int NOTIFICATION_STATUS_ON = 1;
     private static final int NOTIFICATION_STATUS_OFF = 0;
@@ -60,6 +68,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             getContext().showEmptyMessage(View.VISIBLE);
         }else
             getContext().showEmptyMessage(View.INVISIBLE);
+
+        this.dateTimeFormatting = new DateTimeFormatting();
     }
 
     @Override
@@ -77,8 +87,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
         // Show data in layout
         holder.appointmentVenue.setText(appointment.getVenue());
-        holder.appointmentDate.setText(appointment.getDate());
-        holder.appointmentTime.setText(getTimeFormat(appointment.getTime()));
+        holder.appointmentDate.setText(getDateTimeFormatting().getDateToShowInUI(appointment.getDate()));
+        holder.appointmentTime.setText(getDateTimeFormatting().getTimeToShowInUI(appointment.getTime()));
 
         // Make Notification switch on
         int notificationStatus = appointment.getNotificationStatus();
@@ -98,31 +108,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             PendingIntent pendingIntent;
             AlarmManager alarmManager;
 
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    notification = getNotification(appointment.getVenue(),
-                            "You have an appointment at " + appointment.getTime());
-                    Intent notificationIntent = new Intent(context, NotificationHandler.class);
-                    int[] id = new int[1];
-                    id[0] = appointment.getAppointmentId();
-                    notificationIntent.putExtra(NotificationHandler.NOTIFICATION_ID, id);
-                    notificationIntent.putExtra(NotificationHandler.NOTIFICATION, notification);
-                    long futureInMillis = SystemClock.elapsedRealtime() + 5000;
-
-                    pendingIntent = PendingIntent.getBroadcast(context, 0,
-                            notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                    alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            futureInMillis,
-                            5000, pendingIntent);
+                    setAlarmNoification(appointment);
 
                 }else{
                     // If the alarm has been set, cancel it.
-                    if (alarmManager!= null) {
-                        alarmManager.cancel(pendingIntent);
-                    }
+
                 }
             }
         });
@@ -131,7 +125,6 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show();
 
                 if(holder.checkIcon.isSelected()) {
                     setSelectingCount(getSelectingCount() - 1);
@@ -150,7 +143,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                     holder.checkIcon.setVisibility(View.VISIBLE);
                     holder.checkIcon.setSelected(true);
                 }
-                notifyParent(getSelectingCount());
+                notifyParent();
                 return true;
             }
         });
@@ -160,12 +153,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             @Override
             public void onClick(View view) {
                 if(getSelectingCount() == 0) {
-                    // OnClick activity on the list
-//                    scheduleNotification(getNotification(appointment.getVenue(),
-//                            "You have an appointment in " + appointment.getNotifyTime()),
-//                            5000, appointment.getAppointmentId());
                     Intent intent = new Intent(context, ViewAppointmentActivity.class);
-                    intent.putExtra("Appointment", appointment);
+                    intent.putExtra(Appointment.APPOINTMENT, appointment);
                     context.startActivity(intent);
                 }
                 else{
@@ -187,23 +176,31 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                         holder.checkIcon.setSelected(true);
                     }
                 }
-                notifyParent(getSelectingCount());
+                notifyParent();
             }
 
         });
 
     }
 
-    private String getTimeFormat(String time){
-        if(Integer.parseInt(time.substring(0,2)) > 12 ){
-            time = String.valueOf(Integer.parseInt(time.substring(0,2)) - 12) + time.substring(2, 5) + " PM";
-        } else if(time.equals("00")){
-            time = "12" + time.substring(2, 5) + " AM";
-        }else{
-            time = time.substring(0, 5) + " AM";
-        }
-        return time;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void setAlarmNoification(Appointment appointment){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            try {
+                calendar.setTime(sdfDate.parse(appointment.getDate()+ " " + appointment.getNotifyTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        Intent intent = new Intent("com.sahanruwanga.medcarer.app.DISPLAY_NOTIFICATION");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 100, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
+
 
     @Override
     public int getItemCount() {
@@ -217,7 +214,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         }
     }
 
-    private void notifyParent(int selectingCount){
+    private void notifyParent(){
         if(getSelectingCount() == 0){
             context.showDefaultToolBar();
         }else{
@@ -225,6 +222,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         }
     }
 
+    //region SelectAll and DeselectAll functions
     public void deseleceAll(){
         setSelectingCount(0);
         for(ImageView imageView : selectedImageViews){
@@ -257,29 +255,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         }
         setSelectingCount(getItemCount());
     }
-
-    private Notification getNotification(String title, String content) {
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_aboutme);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Intent intent = new Intent(context, AppointmentActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        builder.setContentIntent(pendingIntent);
-        // Single notification
-        builder.setContentTitle(title);
-        builder.setContentText(content);
-        builder.setGroup("Appointments");
-        builder.setSmallIcon(R.drawable.ic_notification);
-        // To show more than one notification
-        builder.setLargeIcon(bitmap);
-        builder.setStyle(new NotificationCompat.InboxStyle()
-                .addLine("Alex Faaborg   Check this out")
-                .addLine("Jeff Chang   Launch Party")
-                .setBigContentTitle("2 Appointments"));
-//                .setSummaryText("johndoe@gmail.com"));
-        builder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE);
-        builder.setAutoCancel(true);
-        return builder.build();
-    }
+    //endregion
 
     //region Getter and Setters
     public List<Appointment> getAppointments() {
@@ -344,6 +320,14 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     public void setSwitches(ArrayList<Switch> switches) {
         this.switches = switches;
+    }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
     }
     //endregion
 

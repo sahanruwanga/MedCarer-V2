@@ -1,41 +1,23 @@
 package com.sahanruwanga.medcarer.activity;
 
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.sahanruwanga.medcarer.R;
-import com.sahanruwanga.medcarer.app.AppConfig;
-import com.sahanruwanga.medcarer.app.AppController;
 import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.app.MedicationScheduleAdapter;
 import com.sahanruwanga.medcarer.app.User;
-import com.sahanruwanga.medcarer.helper.SQLiteHandler;
-import com.sahanruwanga.medcarer.helper.SessionManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MedicationScheduleActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -87,28 +69,59 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.selectAllIcon){
-//            getMedicationScheduleAdapter().selectAll();
+            getMedicationScheduleAdapter().selectAll();
         }else if(id == R.id.deleteIcon){
-//            for(MedicationSchedule medicationSchedule : getMedicationScheduleAdapter().getSelectedSchedules()){
-//                Toast.makeText(this, "Schedule ID "+String.valueOf(medicationSchedule.getScheduleId())
-//                        +" is deleted!", Toast.LENGTH_LONG).show();
-//            }
+            openDialogBox();
         }
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+    //region Dialog Box
+    // Open dialog box after pressing delete icon
+    private void openDialogBox(){
+        int selectedCount = getMedicationScheduleAdapter().getSelectingCount();
+        String message = " record will be deleted.";
+        if(selectedCount > 1)
+            message = " records will be deleted.";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(String.valueOf(selectedCount) + message);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                "DELETE",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getUser().deleteMedicationSchedule(getMedicationScheduleAdapter().getSelectedSchedules());
+                        showDefaultToolBar();
+                        showRecyclerView();
+                        dialog.cancel();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "CANCEL",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder.create();
+        alert11.show();
     }
     //endregion
 
     //region Showing tool bars
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
-        getToolBarText().setText("Medication Schedule");
+        getToolBarText().setVisibility(View.VISIBLE);
     }
 
     public void showDeletingToolBar() {
         getToolbar().getMenu().clear();
         getMenuInflater().inflate(R.menu.delete_all, menu);
-        getToolBarText().setText("");
-        getToolbar().setLogo(null);
+        getToolBarText().setVisibility(View.GONE);
     }
     //endregion
 
@@ -116,10 +129,10 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     // Back press event
     @Override
     public void onBackPressed() {
-//        if (getMedicationScheduleAdapter().getSelectingCount() > 0){
-//            getMedicationScheduleAdapter().deseleceAll();
-//            showDefaultToolBar();
-//        }else
+        if (getMedicationScheduleAdapter().getSelectingCount() > 0){
+            getMedicationScheduleAdapter().deseleceAll();
+            showDefaultToolBar();
+        }else
             super.onBackPressed();
     }
     //endregion

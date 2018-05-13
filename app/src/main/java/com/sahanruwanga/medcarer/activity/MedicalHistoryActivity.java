@@ -23,7 +23,6 @@ import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
 import com.sahanruwanga.medcarer.app.PDFCreator;
 import com.sahanruwanga.medcarer.app.User;
-import com.sahanruwanga.medcarer.helper.SQLiteHandler;
 
 import java.io.File;
 
@@ -138,10 +137,6 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                 "DELETE",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-//                        for(MedicalRecord medicalRecord : getMedicalHistoryAdapter().getSelectedRecords()) {
-//                            getSqLiteHandler().makeDeletedMedicalRecord(medicalRecord.getRecord_id(), NOT_SYNCED_WITH_SERVER);
-//                            deleteMedicalRecord(User.getUserId(), String.valueOf(medicalRecord.getRecord_id()));
-//                        }
                         getUser().deleteMedicalRecord(getMedicalHistoryAdapter().getSelectedRecords());
                         showDefaultToolBar();
                         showRecyclerView();
@@ -196,14 +191,13 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
         getMenuInflater().inflate(R.menu.home, menu);
-        getToolBarText().setText("Medical History");
+        getToolBarText().setVisibility(View.VISIBLE);
     }
 
     public void showDeletingToolBar() {
         getToolbar().getMenu().clear();
         getMenuInflater().inflate(R.menu.delete_all, menu);
-        getToolBarText().setText("");
-        getToolbar().setLogo(null);
+        getToolBarText().setVisibility(View.GONE);
     }
     //endregion
 

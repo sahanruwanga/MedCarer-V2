@@ -9,11 +9,11 @@ import java.util.List;
  * Created by Sahan Ruwanga on 4/27/2018.
  */
 
-class CustomFilter extends Filter {
+class MedicalRecordFilter extends Filter {
     MedicalHistoryAdapter medicalHistoryAdapter;
     ArrayList<MedicalRecord> filterList;
 
-    public CustomFilter(List<MedicalRecord> filterList, MedicalHistoryAdapter medicalHistoryAdapter) {
+    public MedicalRecordFilter(List<MedicalRecord> filterList, MedicalHistoryAdapter medicalHistoryAdapter) {
         this.medicalHistoryAdapter = medicalHistoryAdapter;
         this.filterList = (ArrayList<MedicalRecord>) filterList;
     }

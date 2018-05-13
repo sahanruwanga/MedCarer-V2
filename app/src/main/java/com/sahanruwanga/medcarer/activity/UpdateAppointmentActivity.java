@@ -45,7 +45,7 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
         this.dateTimeFormatting = new DateTimeFormatting();
 
         // Get appointment object from intent
-        this.appointment = getIntent().getParcelableExtra("Appointment");
+        this.appointment = getIntent().getParcelableExtra(Appointment.APPOINTMENT);
 
         // Initializing toolbar
         this.toolbar = findViewById(R.id.toolbarUpdateAppointment);
@@ -97,7 +97,7 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
     public void fillData(){
         getVenue().setText(getAppointment().getVenue());
         getContact().setText(getAppointment().getClinicContact());
-        getDate().setText(getDateTimeFormatting().getDateTimeToShowInUI(getAppointment().getDate()));
+        getDate().setText(getDateTimeFormatting().getDateToShowInUI(getAppointment().getDate()));
         getTime().setText(getDateTimeFormatting().getTimeToShowInUI(getAppointment().getTime()));
         getReason().setText(getAppointment().getReason());
         getDoctor().setText(getAppointment().getDoctor());

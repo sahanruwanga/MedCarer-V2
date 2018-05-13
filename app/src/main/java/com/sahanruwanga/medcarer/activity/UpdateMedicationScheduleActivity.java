@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
@@ -94,7 +95,7 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
 
         getPeriodDay().setText(getMedicationSchedule().getPeriod().substring(0, 2));
         getPeriodHour().setText(getMedicationSchedule().getPeriod().substring(3, 5));
-        getPeriodMin().setText(getMedicationSchedule().getPeriod().substring(3, 5));
+        getPeriodMin().setText(getMedicationSchedule().getPeriod().substring(6));
 
         getNotifyMin().setText(getMedicationSchedule().getNotifyTime());
     }
@@ -129,18 +130,32 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
 
     }
 
-    // Clock icon function in Start Time
+    // Open clock to set time
     public void openClock(View view) {
         setTime(getStartTime().getId());
+    }
+
+    // Open calender to set date
+    public void openCalender(View view) {
+        setDate(getStartDate().getId());
     }
 
     // Set time using clock
     private void setTime(int timeId){
         Bundle bundle = new Bundle();
-        bundle.putInt("timeId", timeId);
+        bundle.putInt(TimePickerFragment.TIME_ID, timeId);
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    // Set date using calender
+    private void setDate(int dateId){
+        Bundle bundle = new Bundle();
+        bundle.putInt(DatePickerFragment.DATE_ID, dateId);
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.setArguments(bundle);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     // Back Icon click on toolbar
@@ -291,6 +306,7 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
     public void setUser(User user) {
         this.user = user;
     }
+
     //endregion
 
 }

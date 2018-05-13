@@ -11,6 +11,9 @@ public class AppConfig {
     // Server user register url
     public static String URL_REGISTER = "http://192.168.8.100/med_carer/register.php";
 
+    // Server alternative medicine url
+    public static String URL_ALTERNATIVE_MEDICINE = "http://192.168.8.100/med_carer/alternative_medicine.php";
+
 
     // Server medical history url
     public static String URL_MEDICAL_HISTORY = "http://192.168.8.100/med_carer/medical_history.php";

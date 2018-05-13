@@ -138,7 +138,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="Started At"
+                    android:text="Start"
                     android:textColor="@color/colorHintText"
                     android:padding="5dp"/>
                 <TextView
@@ -164,7 +164,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="Taking Period"
+                    android:text="Period"
                     android:textColor="@color/colorHintText"
                     android:padding="5dp"/>
                 <TextView
@@ -190,7 +190,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="Next Take At"
+                    android:text="Next Time"
                     android:textColor="@color/colorHintText"
                     android:padding="5dp"/>
                 <TextView
@@ -216,7 +216,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="Notify Before"
+                    android:text="Notify"
                     android:textColor="@color/colorHintText"
                     android:padding="5dp"/>
                 <TextView

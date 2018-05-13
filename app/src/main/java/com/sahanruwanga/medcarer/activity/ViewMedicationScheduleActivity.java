@@ -54,7 +54,9 @@ public class ViewMedicationScheduleActivity extends AppCompatActivity {
         getQuantity().setText(getMedicationSchedule().getQuantity());
         getStartedAt().setText(getDateTimeFormatting().getDateTimeToShowInUI(getMedicationSchedule().getStartTime()));
         getPeriod().setText(getDateTimeFormatting().getPeriodFormatFromDB(getMedicationSchedule().getPeriod()));
-        getNextToTake().setText(getDateTimeFormatting().getDateTimeToShowInUI(getMedicationSchedule().getNextNotifyTime()));
+
+        getNextToTake().setText(getDateTimeFormatting().getNextTimeToTakeMedicine(
+                getMedicationSchedule().getNextNotifyTime(), getMedicationSchedule().getNotifyTime()));
         getNotifyBefore().setText(getDateTimeFormatting().getNotifyTimeInSHowinFormat(getMedicationSchedule().getNotifyTime()));
     }
 

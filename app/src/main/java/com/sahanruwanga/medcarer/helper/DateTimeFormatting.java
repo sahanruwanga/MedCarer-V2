@@ -1,7 +1,10 @@
 package com.sahanruwanga.medcarer.helper;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -52,9 +55,23 @@ public class DateTimeFormatting {
         return fmtOut.format(date);
     }
 
+    // Get date format for saving in DB
+    public String getDateToShowInUI(String dateFormt){
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(dateFormt);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd, yyyy");
+        return fmtOut.format(date);
+    }
+
     // Get time format for saving in DB
     public String getTimeToSaveInDB(String timeFormat){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm a");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a");
         Date time = null;
         try {
             time = simpleDateFormat.parse(timeFormat);
@@ -62,13 +79,13 @@ public class DateTimeFormatting {
             e.printStackTrace();
         }
 
-        SimpleDateFormat fmtOut = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat fmtOut = new SimpleDateFormat("HH:mm:ss");
         return fmtOut.format(time);
     }
 
     // Get time format for showing in UI
     public String getTimeToShowInUI(String timeFormat){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         Date time = null;
         try {
             time = simpleDateFormat.parse(timeFormat);
@@ -76,7 +93,7 @@ public class DateTimeFormatting {
             e.printStackTrace();
         }
 
-        SimpleDateFormat fmtOut = new SimpleDateFormat("HH:mm a");
+        SimpleDateFormat fmtOut = new SimpleDateFormat("hh:mm a");
         return fmtOut.format(time);
     }
 
@@ -98,5 +115,21 @@ public class DateTimeFormatting {
     // Get notify time with "mins" tag
     public String getNotifyTimeInSHowinFormat(String notifyTime){
         return notifyTime + " mins";
+    }
+
+    // Calculate next time to take medicine
+    public String getNextTimeToTakeMedicine(String dateTime, String notifyBefore){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            calendar.setTime(simpleDateFormat.parse(dateTime));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        calendar.add(Calendar.MINUTE, Integer.parseInt(notifyBefore));
+
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("MMM dd, yyyy - hh:mm a");
+        return simpleDateFormat1.format(calendar.getTime());
+
     }
 }

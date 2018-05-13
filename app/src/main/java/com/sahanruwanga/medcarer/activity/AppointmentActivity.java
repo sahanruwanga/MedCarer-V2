@@ -1,8 +1,10 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,12 +61,13 @@ public class AppointmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment);
 
+        // Empty appointment message
         this.emptyImage = findViewById(R.id.emptyMessage);
 
         // Create User Object
         this.user = new User(this);
 
-        //RecyclerView and layoutmanagrer initialization
+        //RecyclerView and LayoutManager initialization
         setRecyclerView((RecyclerView)findViewById(R.id.appointmentRecyclerView));
         getRecyclerView().setHasFixedSize(true);
         setLayoutManager(new LinearLayoutManager(this));
@@ -114,12 +117,44 @@ public class AppointmentActivity extends AppCompatActivity {
         if(id == R.id.selectAllIcon){
             getAppointmentAdapter().selectAll();
         }else if(id == R.id.deleteIcon){
-            for(Appointment appointment : getAppointmentAdapter().getSelectedAppointments()){
-                Toast.makeText(this, "Schedule ID "+String.valueOf(appointment.getAppointmentId())
-                        +" is deleted!", Toast.LENGTH_LONG).show();
-            }
+            openDialogBox();
         }
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+    //region Dialog Box
+    // Open dialog box after pressing delete icon
+    private void openDialogBox(){
+        int selectedCount = getAppointmentAdapter().getSelectingCount();
+        String message = " record will be deleted.";
+        if(selectedCount > 1)
+            message = " records will be deleted.";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(String.valueOf(selectedCount) + message);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                "DELETE",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getUser().deleteAppointment(getAppointmentAdapter().getSelectedAppointments());
+                        showDefaultToolBar();
+                        showRecyclerView();
+                        dialog.cancel();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "CANCEL",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder.create();
+        alert11.show();
     }
     //endregion
 
@@ -133,18 +168,18 @@ public class AppointmentActivity extends AppCompatActivity {
     public void showEmptyMessage(int visibility){
         getEmptyImage().setVisibility(visibility);
     }
+
+
     //region Showing tool bars
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
-        getToolBarText().setText("Appointment");
-        getBackIcon().setVisibility(View.VISIBLE);
+        getToolBarText().setVisibility(View.VISIBLE);
     }
 
     public void showDeletingToolBar() {
         getToolbar().getMenu().clear();
         getMenuInflater().inflate(R.menu.delete_all, menu);
-        getToolBarText().setText("");
-        getBackIcon().setVisibility(View.INVISIBLE);
+        getToolBarText().setVisibility(View.GONE);
     }
     //endregion
 

@@ -13,6 +13,7 @@ import android.security.keystore.KeyNotYetValidException;
 import android.util.Log;
 
 import com.sahanruwanga.medcarer.app.AllergicMedicine;
+import com.sahanruwanga.medcarer.app.AlternativeMedicine;
 import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.MedicationSchedule;
@@ -50,6 +51,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_APPOINTMENT = "appointment";
     private static final String TABLE_MEDICATION_SCHEDULE = "medication_schedule";
     private static final String TABLE_ALLERGIC_MEDICINE = "allergic_medicine";
+    private static final String TABLE_ALTERNATIVE_MEDICINE = "alternative_medicine";
 
     //region Table Columns declaration
     // Common columns
@@ -100,6 +102,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Allergic Medicine table Columns names
     private static  final String KEY_ALLERGIC_MEDICINE_ID = "allergic_medicine_id";
 
+    // Alternative Medicine table Columns names
+    private static final String KEY_ALTERNATIVE_MEDICINE_ID = "alternative_medicine_id";
+    private static final String KEY_GENERIC_NAME = "generic_name";
+    private static final String KEY_PRICE = "price";
+
     //endregion
 
     //region Queries for creating tables
@@ -139,6 +146,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             + KEY_DESCRIPTION + " TEXT," + KEY_CREATED_AT + " TEXT," + KEY_SYNC_STATUS + " TINYINT,"
             + KEY_STATUS_TYPE + " TINYINT" + ")";
 
+    // Create Alternative Medicine table query
+    private final String CREATE_ALTERNATIVE_MEDICINE_TABLE = "CREATE TABLE " + TABLE_ALTERNATIVE_MEDICINE + "("
+            + KEY_ALTERNATIVE_MEDICINE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_MEDICINE + " TEXT,"
+            + KEY_GENERIC_NAME + " TEXT," + KEY_PRICE + " TEXT," + KEY_NOTE + " TEXT" + ")";
+
     //endregion
 
     // Constructor call
@@ -155,6 +167,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_ALLERGIC_MEDICINE_TABLE);
         db.execSQL(CREATE_APPOINTMENT_TABLE);
         db.execSQL(CREATE_MEDICATION_SCHEDULE_TABLE);
+        db.execSQL(CREATE_ALTERNATIVE_MEDICINE_TABLE);
 
         Log.d(TAG, "Database tables created");
     }
@@ -168,6 +181,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ALLERGIC_MEDICINE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICATION_SCHEDULE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ALTERNATIVE_MEDICINE);
 
         // Create tables again
         onCreate(db);
@@ -1161,6 +1175,91 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
     //endregion
 
+    //region Alternative Medicine Details
+    // Storing Medical Record in database from centralized database
+    public void addAlternativeMedicineFromMySQL(String medicine, String genericName,
+                                          String price, String note) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_MEDICINE, medicine);
+        values.put(KEY_GENERIC_NAME, genericName);
+        values.put(KEY_PRICE, price);
+        values.put(KEY_NOTE, note);
+
+        // Inserting Row
+        long id = db.insert(TABLE_ALTERNATIVE_MEDICINE, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New medical record is inserted into sqlite: " + id);
+    }
+
+    // Getting alternative medicine from database
+    public List<AlternativeMedicine> getAlternativeMedicine() {
+        List<AlternativeMedicine> alternativeMedicines = new LinkedList<>();
+        String query = "SELECT  * FROM " + TABLE_ALTERNATIVE_MEDICINE ;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        AlternativeMedicine alternativeMedicine;
+
+        if(cursor.moveToFirst()){
+            do{
+                alternativeMedicine = new AlternativeMedicine();
+                alternativeMedicine.setMedicineId(cursor.getInt(cursor.getColumnIndex(KEY_ALTERNATIVE_MEDICINE_ID)));
+                alternativeMedicine.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                alternativeMedicine.setGenericName(cursor.getString(cursor.getColumnIndex(KEY_GENERIC_NAME)));
+                alternativeMedicine.setPrice(cursor.getString(cursor.getColumnIndex(KEY_PRICE)));
+                alternativeMedicine.setNote(cursor.getString(cursor.getColumnIndex(KEY_NOTE)));
+                alternativeMedicines.add(alternativeMedicine);
+            }while (cursor.moveToNext());
+        }
+        // return user
+        Log.d(TAG, "Fetching allergic medicine from Sqlite: ");
+
+        return alternativeMedicines;
+    }
+
+    // Get specific alternative meidicine in offline
+    public List<AlternativeMedicine> getSpeicificAlternativeMedicine(String medicine) {
+        List<AlternativeMedicine> alternativeMedicines = new LinkedList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALTERNATIVE_MEDICINE + " WHERE " +
+                KEY_MEDICINE + " = " + medicine;
+        Cursor cursor = db.rawQuery(query, null);
+        AlternativeMedicine alternativeMedicine;
+
+        if(cursor.moveToFirst()){
+            do{
+                alternativeMedicine = new AlternativeMedicine();
+                alternativeMedicine.setMedicineId(cursor.getInt(cursor.getColumnIndex(KEY_ALTERNATIVE_MEDICINE_ID)));
+                alternativeMedicine.setMedicine(cursor.getString(cursor.getColumnIndex(KEY_MEDICINE)));
+                alternativeMedicine.setNote(cursor.getString(cursor.getColumnIndex(KEY_NOTE)));
+                alternativeMedicine.setGenericName(cursor.getString(cursor.getColumnIndex(KEY_GENERIC_NAME)));
+                alternativeMedicine.setPrice(cursor.getString(cursor.getColumnIndex(KEY_PRICE)));
+                alternativeMedicines.add(alternativeMedicine);
+            }while (cursor.moveToNext());
+        }
+        return alternativeMedicines;
+    }
+
+    // Get generic name of an alternative meidicine in offline
+    public String getGenericName(String medicine) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = new String("SELECT " + KEY_GENERIC_NAME + " FROM " + TABLE_ALTERNATIVE_MEDICINE + " WHERE " +
+                KEY_MEDICINE + " = " + medicine);
+        Cursor cursor = db.rawQuery(query, null);
+        String genericName = null;
+        if(cursor.moveToFirst()){
+            do{
+                genericName = cursor.getString(cursor.getColumnIndex(KEY_GENERIC_NAME));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return genericName;
+    }
+
+    //endregion
+
     //region Delete all tables, called when user log out
     public void deleteTables() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1170,9 +1269,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_APPOINTMENT, null, null);
         db.delete(TABLE_MEDICATION_SCHEDULE, null, null);
         db.delete(TABLE_ALLERGIC_MEDICINE, null, null);
+        db.delete(TABLE_ALTERNATIVE_MEDICINE, null, null);
         db.close();
 
         Log.d(TAG, "Deleted all user info from sqlite");
+    }
+
+    public void deleteAlternativeMedicineTable(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_ALTERNATIVE_MEDICINE, null, null);
+        db.close();
+
     }
     //endregion
 }

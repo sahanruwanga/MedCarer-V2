@@ -23,6 +23,8 @@ public class Appointment implements Parcelable {
     private int syncStatus;
     private int statusType;
 
+    public static final String APPOINTMENT = "appointment";
+
     public Appointment(){}
 
     public Appointment(int appointmentId, String reason, String date, String time,
@@ -182,5 +184,6 @@ public class Appointment implements Parcelable {
         parcel.writeInt(syncStatus);
         parcel.writeInt(statusType);
     }
+
     //endregion
 }

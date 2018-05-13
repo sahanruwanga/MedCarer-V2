@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.Appointment;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 public class ViewAppointmentActivity extends AppCompatActivity {
     private Appointment appointment;
@@ -25,13 +26,17 @@ public class ViewAppointmentActivity extends AppCompatActivity {
     private TextView doctor;
     private TextView notifyTime;
 
+    private DateTimeFormatting dateTimeFormatting;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_appointment);
 
+        this.dateTimeFormatting = new DateTimeFormatting();
+
         // Get appointment object from intent
-        appointment = getIntent().getParcelableExtra("Appointment");
+        appointment = getIntent().getParcelableExtra(Appointment.APPOINTMENT);
 
         // Initialize toolbar
         this.toolbar = findViewById(R.id.toolbarVieAppointment);
@@ -46,26 +51,14 @@ public class ViewAppointmentActivity extends AppCompatActivity {
         this.doctor = findViewById(R.id.doctorAppointmentDetail);
         this.notifyTime = findViewById(R.id.notifyTimeAppointmentDetail);
 
-        // Set text in text views
+        // Fill data in text views
         getVenue().setText(getAppointment().getVenue());
         getContact().setText(getAppointment().getClinicContact());
-        getDate().setText(getAppointment().getDate());
-        getTime().setText(getTimeFormat(getAppointment().getTime()));
+        getDate().setText(getDateTimeFormatting().getDateToShowInUI(getAppointment().getDate()));
+        getTime().setText(getDateTimeFormatting().getTimeToShowInUI(getAppointment().getTime()));
         getReason().setText(getAppointment().getReason());
         getDoctor().setText(getAppointment().getDoctor());
-        getNotifyTime().setText(getTimeFormat(getAppointment().getNotifyTime()));
-    }
-
-    // Set the time format to view in details
-    private String getTimeFormat(String time){
-        if(Integer.parseInt(time.substring(0,2)) > 12 ){
-            time = String.valueOf(Integer.parseInt(time.substring(0,2)) - 12) + time.substring(2, 5) + " PM";
-        } else if(time.equals("00")){
-            time = "12" + time.substring(2, 5) + " AM";
-        }else{
-            time = time.substring(0, 5) + " AM";
-        }
-        return time;
+        getNotifyTime().setText(getDateTimeFormatting().getTimeToShowInUI(getAppointment().getNotifyTime()));
     }
 
     @Override
@@ -79,7 +72,7 @@ public class ViewAppointmentActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if(itemId == R.id.editIcon){
             Intent intent = new Intent(this, UpdateAppointmentActivity.class);
-            intent.putExtra("Appointment", getAppointment());
+            intent.putExtra(Appointment.APPOINTMENT, getAppointment());
             startActivity(intent);
             finish();
         }
@@ -169,6 +162,14 @@ public class ViewAppointmentActivity extends AppCompatActivity {
 
     public void setNotifyTime(TextView notifyTime) {
         this.notifyTime = notifyTime;
+    }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
     }
     //endregion
 }

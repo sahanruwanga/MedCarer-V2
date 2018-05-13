@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
@@ -28,14 +29,24 @@ public class AllergicMedicineAdapter extends
     private RecyclerView recyclerView;
     private AllergicMedicineFilter allergicMedicineFilter;
 
+    private int selectingCount;
+    private ArrayList<AllergicMedicine> selectedMedicines;
+    private ArrayList<ImageView> selectedImageViews;
+    private ArrayList<ImageView> allImageViews;
+
     public AllergicMedicineAdapter(List<AllergicMedicine> allergicMedicines,
                                    AllergicMedicineActivity context, RecyclerView recyclerView){
         this.allergicMedicines = allergicMedicines;
         this.context = context;
         this.recyclerView = recyclerView;
+        // Search filer list creates and put data
         this.filterList = new ArrayList<>();
-
         putToFilterList();
+
+        this.setSelectingCount(0);
+        this.selectedMedicines = new ArrayList<>();
+        this.selectedImageViews = new ArrayList<>();
+        this.allImageViews = new ArrayList<>();
     }
 
     private void putToFilterList(){
@@ -59,14 +70,95 @@ public class AllergicMedicineAdapter extends
         holder.medicine.setText(allergicMedicine.getMedicineName());
         holder.description.setText(allergicMedicine.getDescription());
 
+        // Initialize Select Icon and add it to allImageViews
+        final ImageView imageView = holder.itemView.findViewById(R.id.checkIconAllergic);
+        getAllImageViews().add(imageView);
+
+        // On click listener to open updating layout
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), UpdateAllergicMedicineActivity.class);
-                intent.putExtra(AllergicMedicine.ALLERGIC_MEDICINE, allergicMedicine);
-                getContext().startActivity(intent);
+                if(getSelectingCount() == 0) {
+                    Intent intent = new Intent(getContext(), UpdateAllergicMedicineActivity.class);
+                    intent.putExtra(AllergicMedicine.ALLERGIC_MEDICINE, allergicMedicine);
+                    getContext().startActivity(intent);
+                }else {
+                    if(imageView.isSelected()) {
+                        setSelectingCount(getSelectingCount() - 1);
+                        getSelectedMedicines().remove(allergicMedicine);
+                        selectedImageViews.remove(imageView);
+                        imageView.setVisibility(View.GONE);
+                        imageView.setSelected(false);
+                    }else{
+                        setSelectingCount(getSelectingCount() + 1);
+                        getSelectedMedicines().add(allergicMedicine);
+                        selectedImageViews.add(imageView);
+                        imageView.setVisibility(View.VISIBLE);
+                        imageView.setSelected(true);
+                    }
+                }
+                notifyParent(getSelectingCount());
             }
         });
+
+        // OnLongClick listener to select items
+        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(imageView.isSelected()) {
+                    setSelectingCount(getSelectingCount() - 1);
+                    getSelectedMedicines().remove(allergicMedicine);
+                    selectedImageViews.remove(imageView);
+                    imageView.setVisibility(View.GONE);
+                    imageView.setSelected(false);
+                }else{
+                    setSelectingCount(getSelectingCount() + 1);
+                    getSelectedMedicines().add(allergicMedicine);
+                    selectedImageViews.add(imageView);
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.setSelected(true);
+                }
+                notifyParent(getSelectingCount());
+                return true;
+            }
+        });
+    }
+
+    // Notify the parent activity about selecting and deselecting
+    private void notifyParent(int selectingCount){
+        if(getSelectingCount() == 0){
+            context.showDefaultToolBar();
+        }else{
+            context.showDeletingToolBar();
+        }
+    }
+
+    // Deselect all list items
+    public void deselectAll(){
+        setSelectingCount(0);
+        for(ImageView imageView : getSelectedImageViews()){
+            imageView.setVisibility(View.GONE);
+            imageView.setSelected(false);
+        }
+        getSelectedMedicines().clear();
+        getSelectedImageViews().clear();
+    }
+
+    // Select all list items
+    public void selectAll(){
+        for(ImageView imageView : getAllImageViews()){
+            if (!selectedImageViews.contains(imageView)){
+                selectedImageViews.add(imageView);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setSelected(true);
+            }
+        }
+        for(AllergicMedicine allergicMedicine : getAllergicMedicines()){
+            if(!getSelectedMedicines().contains(allergicMedicine)){
+                getSelectedMedicines().add(allergicMedicine);
+            }
+        }
+        setSelectingCount(getItemCount());
     }
 
     @Override
@@ -122,6 +214,38 @@ public class AllergicMedicineAdapter extends
 
     public void setFilterList(ArrayList<AllergicMedicine> filterList) {
         this.filterList = filterList;
+    }
+
+    public int getSelectingCount() {
+        return selectingCount;
+    }
+
+    public void setSelectingCount(int selectingCount) {
+        this.selectingCount = selectingCount;
+    }
+
+    public ArrayList<AllergicMedicine> getSelectedMedicines() {
+        return selectedMedicines;
+    }
+
+    public void setSelectedMedicines(ArrayList<AllergicMedicine> selectedMedicines) {
+        this.selectedMedicines = selectedMedicines;
+    }
+
+    public ArrayList<ImageView> getSelectedImageViews() {
+        return selectedImageViews;
+    }
+
+    public void setSelectedImageViews(ArrayList<ImageView> selectedImageViews) {
+        this.selectedImageViews = selectedImageViews;
+    }
+
+    public ArrayList<ImageView> getAllImageViews() {
+        return allImageViews;
+    }
+
+    public void setAllImageViews(ArrayList<ImageView> allImageViews) {
+        this.allImageViews = allImageViews;
     }
     //endregion
 

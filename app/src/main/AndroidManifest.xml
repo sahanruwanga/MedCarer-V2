@@ -78,7 +78,12 @@
             android:name=".activity.AlternativeMedicineActivity"
             android:screenOrientation="portrait" />
 
-        <receiver android:name=".app.NotificationHandler" />
+        <receiver android:name=".app.NotificationHandler" >
+            <intent-filter>
+                <action android:name="com.sahanruwanga.medcarer.app.DISPLAY_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name=".helper.NetworkStateChecker">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

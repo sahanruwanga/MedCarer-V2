@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/mainLayoutAppointmentList"
-    android:padding="10dp">
+    android:padding="5dp">
 
     <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -13,48 +13,45 @@
             app:cardCornerRadius="5dp"
             android:id="@+id/cardViewAppointment"
             android:elevation="90dp"
-            app:cardBackgroundColor="@color/colorCardView">
+            app:cardBackgroundColor="@color/colorWhite">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="15dp">
+                android:padding="15dp"
+                android:background="@drawable/edit_text_style">
 
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="20">
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/appointmentCheckIcon"
-                            android:src="@drawable/ic_check"
-                            android:visibility="gone"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/appointmentVenue"
-                            android:padding="5dp"
-                            android:text="Sample Venue"
-                            android:layout_gravity="left"
-                            android:textSize="18sp"
-                            android:textColor="@color/colorBrown"
-                            />
-                    </LinearLayout>
+                        android:id="@+id/appointmentCheckIcon"
+                        android:src="@drawable/ic_check"
+                        android:visibility="gone"/>
 
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/appointmentVenue"
+                        android:padding="5dp"
+                        android:text="Sample Venue"
+                        android:layout_weight="17"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorBrown"
+                        />
 
                     <Switch
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="3"
                         android:layout_gravity="right|center_vertical"
                         android:id="@+id/appointmentSwitch"/>
-
-                </FrameLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -69,6 +66,15 @@
                         android:padding="5dp"
                         android:text="2018-02-03"
                         android:textColor="@color/colorBlack"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="|"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/colorHintText"
                         />
 
                     <TextView

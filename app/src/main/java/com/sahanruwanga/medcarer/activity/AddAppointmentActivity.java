@@ -118,7 +118,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     // Save function
     public void saveAppointment() {
-        // Get daata from edit text boxes
+        // Get data from edit text boxes
         String reason = getReasonText().getText().toString().trim();
         String venue = getVenueText().getText().toString().trim();
         String doctor = getDoctorText().getText().toString().trim();
@@ -140,22 +140,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter required data", Toast.LENGTH_LONG).show();
         }
 
-    }
-
-    // Set time format to save in DB
-    private String getTimeFormat(String time){
-        if(time.substring(6).equals("AM")) {
-            if (time.substring(0, 2).equals("12"))
-                time = "00" + time.substring(2, 5) + ":00";
-            else
-                time = time.substring(0, 5) + ":00";
-        }else{
-            if(time.substring(0, 2).equals("12"))
-                time = time.substring(0, 5) + ":00";
-            else
-                time = String.valueOf(Integer.parseInt(time.substring(0,2)) + 12) + time.substring(2, 5) + ":00";
-        }
-        return time;
     }
 
     // onClick for Calender icon

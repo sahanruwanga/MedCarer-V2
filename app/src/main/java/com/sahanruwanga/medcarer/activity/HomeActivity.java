@@ -37,6 +37,8 @@ public class HomeActivity extends AppCompatActivity
     private SQLiteHandler sqLiteHandler;
     private SessionManager sessionManager;
 
+    private DrawerLayout drawer;
+
     private NetworkStateChecker networkStateChecker;
     private IntentFilter intentFilter;
     private BroadcastReceiver broadcastReceiver;
@@ -54,7 +56,7 @@ public class HomeActivity extends AppCompatActivity
         this.intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(getNetworkStateChecker(), getIntentFilter());
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -130,9 +132,6 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -141,6 +140,9 @@ public class HomeActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void openNaviBar(View view) {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -238,5 +240,14 @@ public class HomeActivity extends AppCompatActivity
 
     public void setRequestPermissionHandler(RequestPermissionHandler requestPermissionHandler) {
         this.requestPermissionHandler = requestPermissionHandler;
+    }
+
+
+    public DrawerLayout getDrawer() {
+        return drawer;
+    }
+
+    public void setDrawer(DrawerLayout drawer) {
+        this.drawer = drawer;
     }
 }

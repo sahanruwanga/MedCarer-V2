@@ -206,6 +206,7 @@ public class User implements Parcelable{
                         storeAppointmentInSQLite();
                         storeMedicationScheduleInSQLite();
                         storeAllergicMedicineInSQLite();
+                        storeAlternativeMedicineInSQLite();
 
                         // Launch main activity
                         openHomeActivity();
@@ -1423,6 +1424,86 @@ public class User implements Parcelable{
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq);
+    }
+    //endregion
+
+    //region Alternative Medicine maintaining
+    public void storeAlternativeMedicineInSQLite(){
+        getProgressDialog().setMessage("Retrieving data ...");
+//        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_ALTERNATIVE_MEDICINE, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("Alternative Medicine", "Alternative Medicine Response: " + response.toString());
+//                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+
+                        // Store allergic medicine in SQLite
+                        JSONArray medicines= jObj.getJSONArray("medicines");
+                        for (int i=0; i<medicines.length();i++){
+                            JSONArray alternativeMedicine = jObj.getJSONArray(medicines.getString(i));
+                            String medicine = alternativeMedicine.getString(0);
+                            String genericName = alternativeMedicine.getString(1);
+                            String price = alternativeMedicine.getString(2);
+                            String note = alternativeMedicine.getString(3);
+
+                            getSqLiteHandler().addAlternativeMedicineFromMySQL(medicine, genericName,
+                                    price, note);
+                        }
+
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Alternative Medicine", "Retrieving Error: " + error.getMessage());
+                Toast.makeText(getContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+//                hideDialog();
+            }
+        });
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    // Get Alternative Medicines from SQLite
+    public List<AlternativeMedicine> getAlternativeMedicine(){
+        return getSqLiteHandler().getAlternativeMedicine();
+    }
+
+    // Get Specific Alternative Medicines from SQLite
+    public List<AlternativeMedicine> getSpecificAlternativeMedicine(String medicine){
+        return getSqLiteHandler().getSpeicificAlternativeMedicine(medicine);
+    }
+
+    // Get Generic Name of an Alternative Medicines from SQLite
+    public String getGenericName(String medicine){
+        return getSqLiteHandler().getGenericName(medicine);
+    }
+
+    public void deleteAlternativeMedicineTable(){
+        getSqLiteHandler().deleteAlternativeMedicineTable();
     }
     //endregion
 
