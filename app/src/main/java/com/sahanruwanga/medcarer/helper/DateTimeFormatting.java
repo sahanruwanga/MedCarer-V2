@@ -15,16 +15,19 @@ public class DateTimeFormatting {
 
     // Get datetime format for showing (AM/PM)
     public String getDateTimeToShowInUI(String dateTime){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = simpleDateFormat.parse(dateTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        if(dateTime != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = null;
+            try {
+                date = simpleDateFormat.parse(dateTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-        SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
-        return fmtOut.format(date);
+            SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+            return fmtOut.format(date);
+        }else
+            return "";
     }
 
     // Get datetime format for saving in DB (AM/PM)
@@ -57,16 +60,19 @@ public class DateTimeFormatting {
 
     // Get date format for saving in DB
     public String getDateToShowInUI(String dateFormt){
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = null;
-        try {
-            date = simpleDateFormat.parse(dateFormt);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        if(dateFormt != null) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            try {
+                date = simpleDateFormat.parse(dateFormt);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-        SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd, yyyy");
-        return fmtOut.format(date);
+            SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd, yyyy");
+            return fmtOut.format(date);
+        }else
+            return "";
     }
 
     // Get time format for saving in DB

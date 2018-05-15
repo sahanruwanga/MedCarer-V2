@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.activity.MyProfileActivity;
+import com.sahanruwanga.medcarer.app.User;
 
 /**
  * Created by Sahan Ruwanga on 5/1/2018.
@@ -23,12 +25,19 @@ public class UserProfileNoteFragment extends DialogFragment {
     private Button cancelBtn;
     private ImageView clearIcon;
 
+    private User user;
+    private MyProfileActivity myProfileActivity;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_user_profile_note, null);
         this.setCancelable(false);
         getDialog().setCanceledOnTouchOutside(false);
+
+        // Get User form activity
+        Bundle bundle = getArguments();
+        this.user = bundle.getParcelable(User.USER);
 
         // Initializing EditText, ImageView icon and Buttons
         this.note = view.findViewById(R.id.userProfileNote);
@@ -48,7 +57,6 @@ public class UserProfileNoteFragment extends DialogFragment {
         getCancelBtn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancelNote();
                 dismiss();
             }
         });
@@ -59,15 +67,24 @@ public class UserProfileNoteFragment extends DialogFragment {
                 clearNote();
             }
         });
+
+        fillData();
         return view;
     }
 
-    private void saveNote(){
-        Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_SHORT).show();
+
+    private void fillData(){
+        getNote().setText(getUser().getNote());
     }
 
-    private void cancelNote(){
-        Toast.makeText(getActivity(), "Cancel Button", Toast.LENGTH_SHORT).show();
+    private void saveNote(){
+        String note = getNote().getText().toString().trim();
+        if(!note.equals(getUser().getNote())){
+            new User(getActivity()).updateUserNote(note);
+
+            this.myProfileActivity = (MyProfileActivity) getActivity();
+            getMyProfileActivity().updateNote(note);
+        }
     }
 
     private void clearNote(){
@@ -105,6 +122,22 @@ public class UserProfileNoteFragment extends DialogFragment {
 
     public void setClearIcon(ImageView clearIcon) {
         this.clearIcon = clearIcon;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public MyProfileActivity getMyProfileActivity() {
+        return myProfileActivity;
+    }
+
+    public void setMyProfileActivity(MyProfileActivity myProfileActivity) {
+        this.myProfileActivity = myProfileActivity;
     }
     //endregion
 }

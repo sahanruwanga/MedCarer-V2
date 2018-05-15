@@ -317,8 +317,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "User details retrieving Sqlite: ");
 
         return user;
-
-
     }
     //endregion
 

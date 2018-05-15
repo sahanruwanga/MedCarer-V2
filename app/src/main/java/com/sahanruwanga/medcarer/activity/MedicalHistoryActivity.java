@@ -110,7 +110,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         if (id == R.id.savePDF) {
             savePdf();
         }else if(id == R.id.previewPDF){
-            new PDFCreator(getUser().getMedicalRecords()).createPdf();
+            new PDFCreator(getUser().getMedicalRecords(), getUser()).createPdf();
             openPdf();
         }else if(id == R.id.selectAllIcon){
             getMedicalHistoryAdapter().selectAll();
@@ -159,12 +159,11 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     //region opendPdf and savePdf Functions
     private void openPdf(){
-        String dir="/Medical_History";
+        String dir = "/Medical_History";
         File file = new File(Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_DOCUMENTS)+dir+ "/MedicalHistory.pdf");
 
         if(file.exists()) {
-//            Toast.makeText(getApplication(), file.toString() , Toast.LENGTH_LONG).show();
             Intent target = new Intent(Intent.ACTION_VIEW);
             target.setDataAndType(Uri.fromFile(file), "application/pdf");
             target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -174,11 +173,12 @@ public class MedicalHistoryActivity extends AppCompatActivity {
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
                 // Instruct the user to install a PDF reader here, or something
-                Toast.makeText(this, "You don't have any PDF reader.\nPlease install one and try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You don't have any PDF reader." +
+                                "\nPlease install one and try again!", Toast.LENGTH_LONG).show();
             }
         }
         else
-            Toast.makeText(getApplication(), "File path is incorrect." , Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication(), "File is deleted! Get support to fix it" , Toast.LENGTH_LONG).show();
     }
 
     private void savePdf(){

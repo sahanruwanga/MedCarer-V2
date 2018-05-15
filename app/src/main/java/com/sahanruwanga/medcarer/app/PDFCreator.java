@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -31,9 +33,23 @@ import java.util.List;
 
 public class PDFCreator {
     private List<MedicalRecord> medicalRecords;
+    private User user;
 
-    public PDFCreator(List<MedicalRecord> medicalRecords){
+    private static final String TITLE = "Medical History Report";
+    private static final String DATE_TEXT = "Date: ";
+    private static final String AGE_TEXT = "Age - ";
+    private static final String PAGE_TEXT = "Page ";
+    private static final String DISEASE = "Disease";
+    private static final String MEDICINE = "Medicine";
+    private static final String ALLERGIC = "Allergic";
+    private static final String DURATION = "Duration";
+    private static final String DESCRIPTION = "Description";
+    private static final String CONTACT = "Contact";
+    private static final String DOCTOR = "Doctor";
+
+    public PDFCreator(List<MedicalRecord> medicalRecords, User user){
         this.medicalRecords = medicalRecords;
+        this.user = user;
     }
 
     public void createPdf() {
@@ -62,7 +78,7 @@ public class PDFCreator {
             setFooter(canvas, docWriter);
 
             //Step 4 Add content
-            float[] columnWidths = {2f, 2f, 1.8f, 2.5f, 5f, 2.5f, 2.5f};
+            float[] columnWidths = {2f, 2f, 2.2f, 2.5f, 5f, 2.5f, 2.5f};
             PdfPTable table = new PdfPTable(columnWidths);
             PdfPCell Data=new PdfPCell();
             createTableWithColumns(table, Data);
@@ -71,12 +87,12 @@ public class PDFCreator {
             for(MedicalRecord medicalRecord: medicalRecords){
                 table.addCell(medicalRecord.getDisease()); // Disease
                 table.addCell(medicalRecord.getMedicine());   // Medicine
-                PdfPCell allerg = new PdfPCell(new Phrase("Yes"));  // Allergic
+                PdfPCell allerg = new PdfPCell(new Phrase(medicalRecord.getAllergic()));  // Allergic
                 allerg.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(allerg);
-                PdfPCell durat = new PdfPCell(new Phrase(medicalRecord.getDuration().substring(0,10)+"\n"+
-                                            medicalRecord.getDuration().substring(11,13)+"\n"+
-                                            medicalRecord.getDuration().substring(14))); // Duration
+                PdfPCell durat = new PdfPCell(new Phrase(medicalRecord.getDuration().substring(0,12) + "\n" +
+                        medicalRecord.getDuration().substring(13, 14) + "\n" +
+                        medicalRecord.getDuration().substring(15))); // Duration
                 durat.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(durat);
                 PdfPCell des = new PdfPCell(new Phrase(medicalRecord.getDescription()));    // Description
@@ -114,8 +130,8 @@ public class PDFCreator {
         }
     }
 
-    private void createTableWithColumns(PdfPTable table,PdfPCell Data ){
-        String disease = "Disease";
+    private void createTableWithColumns(PdfPTable table, PdfPCell Data){
+        String disease = DISEASE;
         Data=new PdfPCell(new Phrase(disease,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -124,7 +140,7 @@ public class PDFCreator {
         Data.setBorderWidth(1);
         table.addCell(Data);
 
-        String medicine="Medicine";
+        String medicine = MEDICINE;
         Data=new PdfPCell(new Phrase(medicine,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -133,7 +149,7 @@ public class PDFCreator {
         Data.setBorderWidth(1);
         table.addCell(Data);
 
-        String allergic="Allergic";
+        String allergic = ALLERGIC;
         Data=new PdfPCell(new Phrase(allergic,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -142,7 +158,7 @@ public class PDFCreator {
         Data.setBorderWidth(1);
         table.addCell(Data);
 
-        String duration="Duration";
+        String duration = DURATION;
         Data=new PdfPCell(new Phrase(duration,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -151,7 +167,7 @@ public class PDFCreator {
         Data.setBorderWidth(1);
         table.addCell(Data);
 
-        String description="Description";
+        String description = DESCRIPTION;
         Data=new PdfPCell(new Phrase(description,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -161,7 +177,7 @@ public class PDFCreator {
         table.addCell(Data);
 
 
-        String doctor="Doctor";
+        String doctor = DOCTOR;
         Data=new PdfPCell(new Phrase(doctor,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -170,7 +186,7 @@ public class PDFCreator {
         Data.setBorderWidth(1);
         table.addCell(Data);
 
-        String contact="Contact";
+        String contact = CONTACT;
         Data=new PdfPCell(new Phrase(contact,FontFactory.getFont(FontFactory.TIMES_BOLDITALIC,10,Font.BOLD,BaseColor.WHITE)));
         Data.setBackgroundColor(BaseColor.DARK_GRAY);
         Data.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -188,7 +204,7 @@ public class PDFCreator {
         footer.setBorderColor(new BaseColor(89, 156, 194));
         canvas.rectangle(footer);
 
-        String page = "Page "+String.valueOf(docWriter.getPageNumber());
+        String page = PAGE_TEXT + String.valueOf(docWriter.getPageNumber());
         Paragraph paraPage = new Paragraph(page,FontFactory.getFont(FontFactory.HELVETICA,12,Font.ITALIC,BaseColor.BLACK));
         paraPage.setAlignment(Element.ALIGN_RIGHT);
         paraPage.setIndentationRight(20);
@@ -211,18 +227,18 @@ public class PDFCreator {
         header.setBorderColor(new BaseColor(89, 156, 194));
         canvas.rectangle(header);
 
-        String title = "Medical History Report";
+        String title = TITLE;
         Paragraph paraTitle=new Paragraph(title, FontFactory.getFont(FontFactory.TIMES_ITALIC,22,Font.ITALIC,BaseColor.BLACK));
         paraTitle.setAlignment(Element.ALIGN_CENTER);
         paraTitle.setIndentationLeft(30);
 
-        String name = "Sahan Ruwanga Gunathilaka Gunathilaka";
+        String name = getUser().getUserDetails().getName();
         Paragraph paraName = new Paragraph(name,FontFactory.getFont(FontFactory.HELVETICA,18,Font.ITALIC,BaseColor.BLACK));
         paraName.setAlignment(Element.ALIGN_LEFT);
         paraName.setIndentationLeft(30);
         paraName.setPaddingTop(0);
 
-        String age = "Age - 23 years";
+        String age = AGE_TEXT + getUser().calculateAge();
         Paragraph paraAge = new Paragraph(age,FontFactory.getFont(FontFactory.HELVETICA,12,Font.ITALIC,BaseColor.BLACK));
         paraAge.setAlignment(Element.ALIGN_LEFT);
         paraAge.setIndentationLeft(30);
@@ -233,7 +249,7 @@ public class PDFCreator {
         columnHeader.addElement(paraName);
         columnHeader.addElement(paraAge);
 
-        String date = "Date: 15-03-2018";
+        String date = DATE_TEXT + getCurrentDate();
         Paragraph paraDate = new Paragraph(date,FontFactory.getFont(FontFactory.HELVETICA,12,Font.ITALIC,BaseColor.BLACK));
         paraName.setAlignment(Element.ALIGN_RIGHT);
         paraDate.setIndentationRight(30);
@@ -249,4 +265,17 @@ public class PDFCreator {
         }
     }
 
+    private String getCurrentDate(){
+        // Get current date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+        return dateFormat.format(new Date());
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

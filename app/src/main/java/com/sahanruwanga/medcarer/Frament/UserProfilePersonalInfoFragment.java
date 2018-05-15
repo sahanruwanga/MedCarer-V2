@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.activity.MyProfileActivity;
+import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 /**
  * Created by Sahan Ruwanga on 5/1/2018.
@@ -28,6 +30,8 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
     private Button cancelBtn;
 
     private MyProfileActivity myProfileActivity;
+    private User user;
+    private DateTimeFormatting dateTimeFormatting;
 
 
     @Override
@@ -35,6 +39,12 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
         View view = inflater.inflate(R.layout.layout_user_profile_personal_info, null);
         this.setCancelable(false);
         getDialog().setCanceledOnTouchOutside(false);
+
+        this.dateTimeFormatting = new DateTimeFormatting();
+
+        // Get User form activity
+        Bundle bundle = getArguments();
+        this.user =  bundle.getParcelable(User.USER);
 
         // Month Spinner initializing
         this.spinnerMonth = view.findViewById(R.id.personalInfoMonth);
@@ -76,29 +86,65 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
         getCancelBtn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancelPersonalInfo();
                 dismiss();
             }
         });
+
+        // Fill data from Activity
+        fillData();
         return view;
     }
 
+    private void fillData(){
+        String dob = getUser().getDob();
+        if(dob != null) {
+            getDobYear().setText(getUser().getDob().substring(0, 4));
+            getDobDay().setText(getUser().getDob().substring(8));
+            getSpinnerMonth().setSelection(Integer.parseInt(getUser().getDob().substring(5, 7)) - 1);
+        }
+        String gender = getUser().getGender();
+        if(gender != null) {
+            if (gender.equals("Male"))
+                getSpinnerGender().setSelection(0);
+            else
+                getSpinnerGender().setSelection(1);
+        }
+        getBloodType().setText(getUser().getBloodType());
+    }
+
     private void savePersonalInfo(){
-//        Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_SHORT).show();
-        String dob = spinnerMonth.getSelectedItem().toString().trim() + " " +
-                getDobDay().getText().toString().trim() + ", " + getDobYear().getText().toString().trim();
+            String dob2 = spinnerMonth.getSelectedItem().toString().trim() + " " +
+                    getDobDay().getText().toString().trim() + ", " + getDobYear().getText().toString().trim();
+            String gender = spinnerGender.getSelectedItem().toString().trim();
+            String bloodType = getBloodType().getText().toString().trim();
+            if(isDoBChanged(dob2) || !gender.equals(getUser().getGender()) ||
+                    !bloodType.equals(getUser().getBloodType())) {
 
+                new User(getActivity()).updateUserProfilePersonalInfo(
+                        getDateTimeFormatting().getDateToSaveInDB(dob2), gender, bloodType);
 
-        if(getMyProfileActivity() == null)
-            setMyProfileActivity((MyProfileActivity) getActivity());
-        getMyProfileActivity().updatePersonaloInfo(dob, spinnerGender.getSelectedItem().toString().trim(),
-                getBloodType().getText().toString().trim());
+                this.myProfileActivity = (MyProfileActivity) getActivity();
+                getMyProfileActivity().updatePersonalInfo(dob2, gender, bloodType);
+            }
     }
 
-    private void cancelPersonalInfo(){
-        Toast.makeText(getActivity(), "Cancel Button", Toast.LENGTH_SHORT).show();
-
+    private boolean isDoBChanged(String dob){
+        boolean isChanged = false;
+        String dob2 = getUser().getDob();
+        if(dob2 != null) {
+            if (!getDobYear().getText().toString().trim().equals(getUser().getDob().substring(0, 4)))
+                isChanged = true;
+            if(!getDobDay().getText().toString().trim().equals(getUser().getDob().substring(8)))
+                isChanged = true;
+            if(!getSpinnerMonth().getSelectedItem().equals(getUser().getDob().substring(5, 7)))
+                isChanged = true;
+        }else {
+            if (dob.length() > 6)
+                isChanged = true;
+        }
+        return isChanged;
     }
+
 
     // region Getters and Setters
     public Spinner getSpinnerMonth() {
@@ -163,6 +209,22 @@ public class UserProfilePersonalInfoFragment extends DialogFragment{
 
     public void setMyProfileActivity(MyProfileActivity myProfileActivity) {
         this.myProfileActivity = myProfileActivity;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
     }
     //endregion
 }

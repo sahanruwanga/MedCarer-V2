@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.activity.MyProfileActivity;
+import com.sahanruwanga.medcarer.app.User;
 
 /**
  * Created by Sahan Ruwanga on 5/1/2018.
@@ -21,11 +23,18 @@ public class UserProfileContactInfoFragment extends DialogFragment {
     private Button saveBtn;
     private Button cancelBtn;
 
+    private MyProfileActivity myProfileActivity;
+    private User user;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_user_profile_contact_info, null);
         this.setCancelable(false);
         getDialog().setCanceledOnTouchOutside(false);
+
+        // Get User form activity
+        Bundle bundle = getArguments();
+        this.user = bundle.getParcelable(User.USER);
 
         // Initializing EditTexts and Buttons
         this.phone = view.findViewById(R.id.contactInfoPhone);
@@ -49,13 +58,25 @@ public class UserProfileContactInfoFragment extends DialogFragment {
             }
         });
 
-
-
+        fillData();
         return view;
     }
 
+    private void fillData(){
+        getPhone().setText(getUser().getPhoneNo());
+        getAddress().setText(getUser().getAddress());
+    }
+
     private void saveContactInfo(){
-        Toast.makeText(getActivity(), getAddress().toString(), Toast.LENGTH_SHORT).show();
+        String phoneNo = getPhone().getText().toString().trim();
+        String address = getAddress().getText().toString().trim();
+
+        if(!phoneNo.equals(getUser().getPhoneNo()) || !address.equals(getUser().getAddress())) {
+            new User(getActivity()).updateUserProfileContactInfo(phoneNo, address);
+            this.myProfileActivity = (MyProfileActivity) getActivity();
+            getMyProfileActivity().updateContactInfo(phoneNo, address);
+        }
+
     }
 
     //region Getters and Setters
@@ -89,6 +110,22 @@ public class UserProfileContactInfoFragment extends DialogFragment {
 
     public void setCancelBtn(Button cancelBtn) {
         this.cancelBtn = cancelBtn;
+    }
+
+    public MyProfileActivity getMyProfileActivity() {
+        return myProfileActivity;
+    }
+
+    public void setMyProfileActivity(MyProfileActivity myProfileActivity) {
+        this.myProfileActivity = myProfileActivity;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     //endregion
 }

@@ -179,7 +179,7 @@ public class NetworkStateChecker extends BroadcastReceiver {
         // Getting all the un-synced deleted medication schedule
         List<MedicationSchedule> deletedMedicationSchedules = getSqLiteHandler().getUnsyncedDeletedMedicationSchedule();
         for(MedicationSchedule medicationSchedule : deletedMedicationSchedules) {
-            getUser().deleteMedicalRecordFromMySql(String.valueOf(medicationSchedule.getScheduleId()));
+            getUser().deleteMedicationScheduleFromMySQL(String.valueOf(medicationSchedule.getScheduleId()));
         }
     }
 
@@ -272,100 +272,6 @@ public class NetworkStateChecker extends BroadcastReceiver {
         AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
     }
 
-    private void deleteMedicalRecord(final String localRecordId){
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_DELETE_MEDICAL_RECORD, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    if (!error) {
-                        getSqLiteHandler().deleteMedicalRecord(Integer.parseInt(localRecordId));
-                        // Sending the broadcast to refresh the list
-                        getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to medical history url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", User.getUserId());
-                params.put("local_record_id", localRecordId);
-
-                return params;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq);
-    }
-
-    private void updateMedicalRecord(final MedicalRecord medicalRecord){
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_UPDATE_MEDICAL_RECORD, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        // Updating the status in SQLite
-                        getSqLiteHandler().updateMedicalRecordSyncStatus(medicalRecord.getRecord_id(), SYNCED_WITH_SERVER);
-
-                        // Sending the broadcast to refresh the list
-                        getContext().sendBroadcast(new Intent(DATA_SYNCED_BROADCAST));
-                    } else {
-                        String errorMsg = jObj.getString("error_msg");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", User.getUserId());
-                params.put("local_record_id", String.valueOf(medicalRecord.getRecord_id()));
-                params.put("disease", medicalRecord.getDisease());
-                params.put("medicine", medicalRecord.getMedicine());
-                params.put("duration", medicalRecord.getDuration());
-                params.put("allergic", medicalRecord.getAllergic());
-                params.put("doctor", medicalRecord.getDoctor());
-                params.put("contact", medicalRecord.getContact());
-                params.put("description", medicalRecord.getDescription());
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq);
-    }
 
     public Context getContext() {
         return context;

@@ -37,7 +37,7 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
         String[] medicines = {"Panadol", "Paracetamol", "Panadol1"};
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, medicines);
-        adapterMonth.setDropDownViewResource(R.layout.autocomplete_textview_style);
+        adapterMonth.setDropDownViewResource(R.layout.layout_schedule_list_item);
         getMedicine().setAdapter(adapterMonth);
 
         this.description = findViewById(R.id.newAllergicMedicineNote);

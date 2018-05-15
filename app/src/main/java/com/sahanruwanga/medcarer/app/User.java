@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -248,6 +249,17 @@ public class User implements Parcelable{
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq);
+    }
+
+    public void logout(){
+        getSessionManager().setLogin(false);
+        getSqLiteHandler().deleteTables();
+
+        // Launching the login activity
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        getContext().startActivity(intent);
+        HomeActivity homeActivity = (HomeActivity) getContext();
+        homeActivity.finish();
     }
 
 
@@ -1095,7 +1107,7 @@ public class User implements Parcelable{
     public void deleteMedicationSchedule(ArrayList<MedicationSchedule> medicationSchedules){
         for(MedicationSchedule medicationSchedule : medicationSchedules) {
             if(medicationSchedule.getStatusType() != SQLiteHandler.DELETED){
-                getSqLiteHandler().makeDeletedAppointment(medicationSchedule.getScheduleId(),
+                getSqLiteHandler().makeDeletedMedicationSchedule(medicationSchedule.getScheduleId(),
                         SQLiteHandler.NOT_SYNCED_WITH_SERVER);
                 deleteMedicationScheduleFromMySQL(String.valueOf(medicationSchedule.getScheduleId()));
             }
@@ -1369,7 +1381,7 @@ public class User implements Parcelable{
     public void deleteAllergicMedicine(ArrayList<AllergicMedicine> allergicMedicines){
         for(AllergicMedicine allergicMedicine : allergicMedicines) {
             if(allergicMedicine.getStatusType() != SQLiteHandler.DELETED){
-                getSqLiteHandler().makeDeletedAppointment(allergicMedicine.getAllergicMedicineId(),
+                getSqLiteHandler().makeDeletedAllergicMedicine(allergicMedicine.getAllergicMedicineId(),
                         SQLiteHandler.NOT_SYNCED_WITH_SERVER);
                 deleteAllergicMedicineFromMySQL(String.valueOf(allergicMedicine.getAllergicMedicineId()));
             }
@@ -1426,6 +1438,7 @@ public class User implements Parcelable{
         AppController.getInstance().addToRequestQueue(strReq);
     }
     //endregion
+
 
     //region Alternative Medicine maintaining
     public void storeAlternativeMedicineInSQLite(){
@@ -1508,7 +1521,8 @@ public class User implements Parcelable{
     //endregion
 
 
-    public User getUserProfile(){
+    //region User Profile Maintaining
+    public User getUserDetails(){
         return getSqLiteHandler().getUserDetail();
     }
 
@@ -1518,36 +1532,38 @@ public class User implements Parcelable{
         ((LoginActivity)getContext()).finish();
     }
 
-    public void updateUserProfilePersonalInfo(String dob, String gender, String bloodType,
-                                              int syncStatus, int statusType){
-        getSqLiteHandler().updatePersonalInfo(dob, gender, bloodType, syncStatus, statusType);
+    public void updateUserProfilePersonalInfo(String dob, String gender, String bloodType){
+        getSqLiteHandler().updatePersonalInfo(dob, gender, bloodType,
+                SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+    }
+
+    public void updateUserProfileContactInfo(String phoneNo, String address){
+        getSqLiteHandler().updateContactInfo(phoneNo, address,
+                SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.UPDATED);
+    }
+
+    public void updateUserNote(String note){
+        getSqLiteHandler().updateOtherNotes(note, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
+                SQLiteHandler.UPDATED);
+    }
+
+    public void updateUserName(String name){
+        getSqLiteHandler().updateName(name, SQLiteHandler.NOT_SYNCED_WITH_SERVER,
+                SQLiteHandler.UPDATED);
     }
 
     private void changeImage(){}
 
-    public void logout(){}
-
-    public void seeMedicalHistory(){}
-
-    public void seeAppointment(){}
-
-    public void seeMedicationSchedule(){}
-
-    public void seeAllergicMedicine(){}
-
-    public void searchAlternative(){}
-
-    public void shareMedicalHistory(){}
-
-    public void saveMediaclHistory(){}
+    //endregion
 
     public void downloadUserManual(){}
 
-    public void readAboutApp(){}
-
-    public void readAboutDevSR(){}
-
     public void rateApp(){}
+
+    public String calculateAge(){
+
+        return "24 Years";
+    }
 
     //region Progress Dialog Functions
     private void showDialog() {

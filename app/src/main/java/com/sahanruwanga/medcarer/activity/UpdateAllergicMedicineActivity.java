@@ -61,7 +61,7 @@ public class UpdateAllergicMedicineActivity extends AppCompatActivity {
     private void updateAllergicMedicine(){
         String medicine = getMedicine().getText().toString().trim();
         String note = getNote().getText().toString().trim();
-        if(!medicine.equals(getAllergicMedicine().getMedicineName()) && note.equals(getAllergicMedicine().getDescription())){
+        if(!medicine.equals(getAllergicMedicine().getMedicineName()) || !note.equals(getAllergicMedicine().getDescription())){
             if (!medicine.isEmpty()){
                 getUser().updateAllergicMedicine(getAllergicMedicine().getAllergicMedicineId(),
                         medicine, note, getAllergicMedicine().getSyncStatus(), getAllergicMedicine().getStatusType());

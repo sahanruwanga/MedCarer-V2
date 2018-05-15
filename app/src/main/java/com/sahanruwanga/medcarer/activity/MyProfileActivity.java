@@ -13,6 +13,7 @@ import com.sahanruwanga.medcarer.Frament.UserProfileNoteFragment;
 import com.sahanruwanga.medcarer.Frament.UserProfilePersonalInfoFragment;
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.User;
+import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 public class MyProfileActivity extends AppCompatActivity {
     private TextView nameTextView;
@@ -26,12 +27,21 @@ public class MyProfileActivity extends AppCompatActivity {
     private TextView noteTextView;
 
     private User user;
+    private DateTimeFormatting dateTimeFormatting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
 
+        // Create User Object
+        this.user = new User(this);
+        this.user = getUser().getUserDetails();
+
+        // Create DateTimeFormatting Object
+        this.dateTimeFormatting = new DateTimeFormatting();
+
+        // Initializing all widgets
         this.nameTextView = findViewById(R.id.myProfileName);
         this.ageTextView = findViewById(R.id.myProfileAge);
         this.dobTextView = findViewById(R.id.myProfileDOB);
@@ -49,13 +59,84 @@ public class MyProfileActivity extends AppCompatActivity {
     private void loadData(){
         if(getUser() == null)
             this.user = new User(this);
-        getNameTextView().setText(getUser().getUserProfile().getName());
+        getNameTextView().setText(getUser().getName());
+        getDobTextView().setText(getDateTimeFormatting().getDateToShowInUI(getUser().getDob()));
+        getGenderTextView().setText(getUser().getGender());
+        getBloodTypeTextView().setText(getUser().getBloodType());
+        getPhoneNoTextView().setText(getUser().getPhoneNo());
+        getAddressTextView().setText(getUser().getAddress());
+        getEmailTextView().setText(getUser().getEmail());
+        getNoteTextView().setText(getUser().getNote());
+
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
+    }
+
+    public void openPersonalInfoForm(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(User.USER, getUser());
+        FragmentManager fragmentManager = getFragmentManager();
+        UserProfilePersonalInfoFragment userProfilePersonalInfoFragment = new UserProfilePersonalInfoFragment();
+        userProfilePersonalInfoFragment.setArguments(bundle);
+        userProfilePersonalInfoFragment.show(fragmentManager, "PersonalInfo");
+
+    }
+
+    public void openContactInfoForm(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(User.USER, getUser());
+        FragmentManager fragmentManager = getFragmentManager();
+        UserProfileContactInfoFragment userProfileContactInfoFragment = new UserProfileContactInfoFragment();
+        userProfileContactInfoFragment.setArguments(bundle);
+        userProfileContactInfoFragment.show(fragmentManager, "ContactInfo");
+    }
+
+    public void openNoteForm(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(User.USER, getUser());
+        FragmentManager fragmentManager = getFragmentManager();
+        UserProfileNoteFragment noteFragment = new UserProfileNoteFragment();
+        noteFragment.setArguments(bundle);
+        noteFragment.show(fragmentManager, "Note");
+    }
+
+    public void openNameForm(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(User.USER, getUser());
+        FragmentManager fragmentManager = getFragmentManager();
+        UserProfileNameFragment nameFragment = new UserProfileNameFragment();
+        nameFragment.setArguments(bundle);
+        nameFragment.show(fragmentManager, "Note");
+    }
+
+    public void chooseImage(View view) {
+    }
+
+    public void updatePersonalInfo(String dob, String gender, String bloodType){
+        getDobTextView().setText(dob);
+        getGenderTextView().setText(gender);
+        getBloodTypeTextView().setText(bloodType);
+        setUser(new User(this).getUserDetails());
+    }
+
+    public void updateContactInfo(String phoneNo, String address){
+        getPhoneNoTextView().setText(phoneNo);
+        getAddressTextView().setText(address);
+        setUser(new User(this).getUserDetails());
+    }
+
+    public void updateNote(String note){
+        getNoteTextView().setText(note);
+        setUser(new User(this).getUserDetails());
+    }
+
+    public void updateName(String name){
+        getNameTextView().setText(name);
+        setUser(new User(this).getUserDetails());
     }
 
     //region Getters and Setters
@@ -138,39 +219,13 @@ public class MyProfileActivity extends AppCompatActivity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public DateTimeFormatting getDateTimeFormatting() {
+        return dateTimeFormatting;
+    }
+
+    public void setDateTimeFormatting(DateTimeFormatting dateTimeFormatting) {
+        this.dateTimeFormatting = dateTimeFormatting;
+    }
     //endregion
-
-    public void openPersonalInfoForm(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
-        UserProfilePersonalInfoFragment userProfilePersonalInfoFragment = new UserProfilePersonalInfoFragment();
-        userProfilePersonalInfoFragment.show(fragmentManager, "PersonalInfo");
-
-    }
-
-    public void openContactInfoForm(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
-        UserProfileContactInfoFragment userProfileContactInfoFragment = new UserProfileContactInfoFragment();
-        userProfileContactInfoFragment.show(fragmentManager, "ContactInfo");
-    }
-
-    public void openNoteForm(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
-        UserProfileNoteFragment noteFragment = new UserProfileNoteFragment();
-        noteFragment.show(fragmentManager, "Note");
-    }
-
-    public void openNameForm(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
-        UserProfileNameFragment nameFragment = new UserProfileNameFragment();
-        nameFragment.show(fragmentManager, "Note");
-    }
-
-    public void chooseImage(View view) {
-    }
-
-    public void updatePersonaloInfo(String dob, String gender, String bloodType){
-        getDobTextView().setText(dob);
-        getGenderTextView().setText(gender);
-        getBloodTypeTextView().setText(bloodType);
-    }
 }
