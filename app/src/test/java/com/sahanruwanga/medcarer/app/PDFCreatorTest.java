@@ -13,8 +13,6 @@ import static org.junit.Assert.*;
 public class PDFCreatorTest {
     @Test
     public void createPdf1() throws Exception {
-        PDFCreator pdfCreator = Mockito.mock(PDFCreator.class);
-        Mockito.verify(pdfCreator).createPdf();
     }
 
     @Test

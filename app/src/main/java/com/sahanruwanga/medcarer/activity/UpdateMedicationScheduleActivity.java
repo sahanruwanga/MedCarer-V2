@@ -1,9 +1,12 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
+import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
@@ -18,11 +22,12 @@ import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class UpdateMedicationScheduleActivity extends AppCompatActivity {
-    private EditText medicine;
+    private AutoCompleteTextView medicine;
     private EditText quantity;
     private TextView startDate;
     private TextView startTime;
@@ -54,15 +59,28 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
 
         // Initializing all widgets
         this.medicine = findViewById(R.id.medicineUpdateMedicationSchedule);
+        getMedicine().setSelectAllOnFocus(true);
         this.quantity = findViewById(R.id.quantityUpdateMedicationSchedule);
+        getQuantity().setSelectAllOnFocus(true);
         this.startDate = findViewById(R.id.startDateUpdateMedicationSchedule);
         this.startTime = findViewById(R.id.startTimeUpdateMedicationSchedule);
         this.periodDay = findViewById(R.id.periodDayUpdateMedicationSchedule);
+        getPeriodDay().setSelectAllOnFocus(true);
         this.periodHour = findViewById(R.id.periodHourUpdateMedicationSchedule);
+        getPeriodHour().setSelectAllOnFocus(true);
         this.periodMin = findViewById(R.id.periodMinUpdateMedicationSchedule);
+        getPeriodMin().setSelectAllOnFocus(true);
         this.notifyMin = findViewById(R.id.notifyMinUpdateMedicationSchedule);
+        getNotifyMin().setSelectAllOnFocus(true);
         this.updateBtn = findViewById(R.id.updateUpdateMedicationSchedule);
         this.cancelBtn = findViewById(R.id.cancelUpdateMedicationSchedule);
+
+        // Set Medicines for AutoCompleteTextView
+        ArrayList<String> medicines = getMedicnieNames();
+        ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, medicines);
+        adapterMonth.setDropDownViewResource(R.layout.layout_schedule_list_item);
+        getMedicine().setAdapter(adapterMonth);
 
         // Method call for filling data
         fillData();
@@ -81,6 +99,14 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private  ArrayList<String> getMedicnieNames(){
+        ArrayList<String> medicines = new ArrayList<>();
+        for(MedicalRecord medicalRecord : getUser().getMedicalRecords()){
+            medicines.add(medicalRecord.getMedicine());
+        }
+        return medicines;
     }
 
     // Fill data in text boxes
@@ -120,13 +146,24 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
                 !notifyTime.equals(getMedicationSchedule().getNotifyTime())){
             if(medicine.isEmpty() && quantity.isEmpty() && period.equals("00:00:00") && notifyTime.equals(00))
                 Toast.makeText(this, "Enter required details!", Toast.LENGTH_SHORT).show();
-            else
+            else {
                 getUser().updateMedicationSchedule(getMedicationSchedule().getScheduleId(), medicine,
                         quantity, completeStartTime, period, notifyTime, nextNotifyTime, syncStatus, statusType);
+
+                MedicationSchedule schedule = getMedicationSchedule();
+                schedule.setMedicine(medicine);
+                schedule.setQuantity(quantity);
+                schedule.setStartTime(completeStartTime);
+                schedule.setPeriod(period);
+                schedule.setNotifyTime(notifyTime);
+                schedule.setNextNotifyTime(nextNotifyTime);
+
+                Intent intent = new Intent();
+                intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, schedule);
+                setResult(1, intent);
+                finish();
+            }
         }
-
-
-        onBackPressed();
 
     }
 
@@ -210,11 +247,11 @@ public class UpdateMedicationScheduleActivity extends AppCompatActivity {
         this.medicationSchedule = medicationSchedule;
     }
 
-    public EditText getMedicine() {
+    public AutoCompleteTextView getMedicine() {
         return medicine;
     }
 
-    public void setMedicine(EditText medicine) {
+    public void setMedicine(AutoCompleteTextView medicine) {
         this.medicine = medicine;
     }
 

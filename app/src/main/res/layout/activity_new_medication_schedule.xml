@@ -62,7 +62,7 @@
                     android:padding="10dp"
                     android:textAlignment="gravity"/>
 
-                <EditText
+                <AutoCompleteTextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:id="@+id/medicineNewMedicationSchedule"
@@ -202,7 +202,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="dd"
+                    android:text="D"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -227,7 +227,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="hh"
+                    android:text="H"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -252,7 +252,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="mm"
+                    android:text="M"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -295,7 +295,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="mm"
+                    android:text="M"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"

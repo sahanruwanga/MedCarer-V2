@@ -145,7 +145,7 @@
                         android:textSize="16sp"
                         android:textColor="@color/colorPrimary"
                         android:padding="10dp"
-                        android:drawableRight="@drawable/ic_add_note"
+                        android:drawableRight="@drawable/ic_date"
                         android:drawablePadding="5dp"
                         android:background="@drawable/edit_text_style"/>
                     <TextView
@@ -164,7 +164,7 @@
                         android:textColor="@color/colorPrimary"
                         android:padding="10dp"
                         android:layout_marginLeft="10dp"
-                        android:drawableRight="@drawable/ic_add_note"
+                        android:drawableRight="@drawable/ic_date"
                         android:drawablePadding="5dp"
                         android:background="@drawable/edit_text_style"/>
 

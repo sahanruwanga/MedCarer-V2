@@ -73,10 +73,33 @@ public class ViewAppointmentActivity extends AppCompatActivity {
         if(itemId == R.id.editIcon){
             Intent intent = new Intent(this, UpdateAppointmentActivity.class);
             intent.putExtra(Appointment.APPOINTMENT, getAppointment());
-            startActivity(intent);
-            finish();
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            Appointment appointment = data.getParcelableExtra(Appointment.APPOINTMENT);
+            if(appointment != null) {
+                getVenue().setText(appointment.getVenue());
+                getContact().setText(appointment.getClinicContact());
+                getDate().setText(appointment.getDate());
+                getTime().setText(appointment.getTime());
+                getReason().setText(appointment.getReason());
+                getDoctor().setText(appointment.getDoctor());
+                getNotifyTime().setText(appointment.getNotifyTime());
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(2, intent);
+        super.onBackPressed();
     }
 
     // Clinic contact number opens in dial pad

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.Appointment;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
@@ -56,6 +57,10 @@ public class AddAppointmentActivity extends AppCompatActivity {
         this.notifyTimeText = findViewById(R.id.notifyTimeAppointment);
         this.saveBtn = findViewById(R.id.saveAppointment);
         this.cancelBtn = findViewById(R.id.cancelAppointment);
+
+        getDateText().setText(getCurrentDateTimeUI().substring(0, 12));
+        getTimeText().setText(getCurrentDateTimeUI().substring(13));
+        getNotifyTimeText().setText(getCurrentDateTimeUI().substring(13));
 
         // Set onFocusListener to open up calender in date text
         getDateText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -134,12 +139,30 @@ public class AddAppointmentActivity extends AppCompatActivity {
         // Check for essential data
         if(!reason.isEmpty() && !venue.isEmpty() && !doctor.isEmpty() &&
                 !date.isEmpty() && !time.isEmpty() && !notifyTime.isEmpty()){
-            getUser().saveNewAppointment(reason, date, time, venue, doctor, clinicNo, notifyTime,
+            long id = getUser().saveNewAppointment(reason, date, time, venue, doctor, clinicNo, notifyTime,
                     createdAt);
+            Appointment appointment = new Appointment();
+            appointment.setAppointmentId((int) id);
+            appointment.setReason(reason);
+            appointment.setVenue(venue);
+            appointment.setDoctor(doctor);
+            appointment.setClinicContact(clinicNo);
+            appointment.setDate(date);
+            appointment.setTime(time);
+            appointment.setNotifyTime(notifyTime);
+            Intent intent = new Intent();
+            intent.putExtra(Appointment.APPOINTMENT, appointment);
+            setResult(1, intent);
+            finish();
         }else{
             Toast.makeText(this, "Please enter required data", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private String getCurrentDateTimeUI(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        return  dateFormat.format(new Date());
     }
 
     // onClick for Calender icon
@@ -171,9 +194,6 @@ public class AddAppointmentActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, AllergicMedicineActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     // Back Icon click on toolbar

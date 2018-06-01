@@ -377,7 +377,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public List<MedicalRecord> getMedicalRecords() {
         List<MedicalRecord> medicalRecords = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_MEDICAL_HISTORY + " WHERE " + KEY_STATUS_TYPE +
-                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ") ORDER BY " + KEY_RECORD_ID + " DESC;";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         MedicalRecord medicalRecord;
@@ -600,7 +600,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public List<Appointment> getAppointment() {
         List<Appointment> appointments = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_APPOINTMENT + " WHERE " + KEY_STATUS_TYPE +
-                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ") ORDER BY " + KEY_APPOINTMENT_ID + " DESC;";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         Appointment appointment;
@@ -811,7 +811,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public List<AllergicMedicine> getAllergiceMedicine() {
         List<AllergicMedicine> allergicMedicines = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_ALLERGIC_MEDICINE + " WHERE " + KEY_STATUS_TYPE +
-                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ") ORDER BY " + KEY_ALLERGIC_MEDICINE_ID + " DESC;";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         AllergicMedicine allergicMedicine;
@@ -1011,7 +1011,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public List<MedicationSchedule> getMedicationSchedule() {
         List<MedicationSchedule> medicationSchedules = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_MEDICATION_SCHEDULE + " WHERE " + KEY_STATUS_TYPE +
-                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ");";
+                " IN (" + LOADED +"," + SAVED + "," + UPDATED + ") ORDER BY " + KEY_SCHEDULE_ID + " DESC;";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         MedicationSchedule medicationSchedule;
@@ -1195,7 +1195,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Getting alternative medicine from database
     public List<AlternativeMedicine> getAlternativeMedicine() {
         List<AlternativeMedicine> alternativeMedicines = new LinkedList<>();
-        String query = "SELECT  * FROM " + TABLE_ALTERNATIVE_MEDICINE ;
+        String query = "SELECT  * FROM " + TABLE_ALTERNATIVE_MEDICINE + " ORDER BY " + KEY_MEDICINE + ";";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         AlternativeMedicine alternativeMedicine;

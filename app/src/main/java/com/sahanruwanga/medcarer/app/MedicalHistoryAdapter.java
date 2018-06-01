@@ -104,7 +104,7 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
                 if(getSelectingCount() == 0) {
                     Intent intent = new Intent(context, ViewMedicalRecordActivity.class);
                     intent.putExtra(MedicalRecord.MEDICAL_RECORD, medicalRecord);
-                    context.startActivity(intent);
+                    context.startActivityForResult(intent, 2);
                 }
                 else{
                     if(checkIcon.isSelected()) {

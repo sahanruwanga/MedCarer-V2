@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -140,11 +141,30 @@ public class UpdateAppointmentActivity extends AppCompatActivity {
                 !notifyTime.equals(getAppointment().getNotifyTime())){
             if(venue.isEmpty() || reason.isEmpty() || doctor.isEmpty())
                 Toast.makeText(this, "Please fill required details!", Toast.LENGTH_SHORT).show();
-            else
+            else {
                 getUser().updateAppointment(getAppointment().getAppointmentId(), venue, reason,
                         doctor, clinicPhone, date, time, notifyTime, syncStatus, statusType);
+                Appointment appointment = getAppointment();
+                appointment.setVenue(venue);
+                appointment.setReason(reason);
+                appointment.setDoctor(doctor);
+                appointment.setClinicContact(clinicPhone);
+                appointment.setDate(date);
+                appointment.setTime(time);
+                appointment.setNotifyTime(notifyTime);
+
+                Intent intent = new Intent();
+                intent.putExtra(Appointment.APPOINTMENT, appointment);
+                setResult(1, intent);
+                finish();
+            }
         }
         onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     // Back Icon click on toolbar

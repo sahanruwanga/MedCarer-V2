@@ -24,8 +24,15 @@ public class MedicalRecord implements Parcelable{
 
     public MedicalRecord(){}
 
+    public MedicalRecord(String disease, String medicine, String duration, String allergic){
+        this.setDisease(disease);
+        this.setMedicine(medicine);
+        this.setDuration(duration);
+        this.setAllergic(allergic);
+    }
+
     public MedicalRecord(int record_id, String disease, String medicine, String duration, String allergic,
-                         String doctor, String contact, String description, int syncStatus){
+                         String doctor, String contact, String description){
         this.setRecord_id(record_id);
         this.setDisease(disease);
         this.setMedicine(medicine);
@@ -34,7 +41,6 @@ public class MedicalRecord implements Parcelable{
         this.setDoctor(doctor);
         this.setContact(contact);
         this.setDescription(description);
-        this.syncStatus = syncStatus;
     }
 
 

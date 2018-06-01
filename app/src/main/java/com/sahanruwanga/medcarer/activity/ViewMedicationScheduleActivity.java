@@ -45,6 +45,29 @@ public class ViewMedicationScheduleActivity extends AppCompatActivity {
         fillData();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            MedicationSchedule medicationSchedule = data.getParcelableExtra(MedicationSchedule.MEDICATION_SCHEDULE);
+            if(medicationSchedule != null){
+                getMedicine().setText(medicationSchedule.getMedicine());
+                getQuantity().setText(medicationSchedule.getQuantity());
+                getStartedAt().setText(medicationSchedule.getStartTime());
+                getPeriod().setText(medicationSchedule.getPeriod());
+                getNextToTake().setText(medicationSchedule.getNextNotifyTime());
+                getNotifyBefore().setText(medicationSchedule.getNotifyTime());
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(2, intent);
+        super.onBackPressed();
+    }
+
     // Fill data into Text Views
     private void fillData(){
         if(getDateTimeFormatting() == null)
@@ -80,7 +103,7 @@ public class ViewMedicationScheduleActivity extends AppCompatActivity {
     public void editIconClickViewMedicationSchedule(View view) {
         Intent intent = new Intent(this, UpdateMedicationScheduleActivity.class);
         intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, getMedicationSchedule());
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     //region Getters and Setters

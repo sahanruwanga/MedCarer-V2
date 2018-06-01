@@ -1,6 +1,7 @@
 package com.sahanruwanga.medcarer.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.AllergicMedicine;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
+import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.User;
 
 import java.text.SimpleDateFormat;
@@ -79,6 +82,18 @@ public class AddMedicalRecordActivity extends AppCompatActivity{
             }
         });
 
+        getMedicine().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b){
+                    checkAllergic();
+                }else{
+                    getMedicine().setTextColor(Color.parseColor("#22d3ff"));
+                    getMedicine().setSelectAllOnFocus(true);
+                }
+            }
+        });
+
         // OnClick listeners for buttons
         getSaveBtn().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +126,15 @@ public class AddMedicalRecordActivity extends AppCompatActivity{
 
     }
 
+    private void checkAllergic(){
+        for (AllergicMedicine allergicMedicine : getUser().getAllergicMedicines()){
+            if(getMedicine().getText().toString().trim().equals(allergicMedicine.getMedicineName())){
+                getMedicine().setTextColor(Color.parseColor("#ec5a68"));
+                break;
+            }
+        }
+    }
+
     // Save function in toolbar
     public void saveRecord(){
         String disease = getDisease().getText().toString().trim();
@@ -128,7 +152,12 @@ public class AddMedicalRecordActivity extends AppCompatActivity{
                 !getDate2().getText().toString().isEmpty()){
 
             clearAll();
-            getUser().saveNewRecord(disease, medicine, duration, NOT_ALLERGIC, doctor, contact, description, createdAt);
+            long localId = getUser().saveNewRecord(disease, medicine, duration, NOT_ALLERGIC, doctor, contact, description, createdAt);
+
+            Intent intent = new Intent();
+            intent.putExtra(MedicalRecord.MEDICAL_RECORD, new MedicalRecord(Integer.parseInt(String.valueOf(localId)),
+                    disease, medicine, duration, NOT_ALLERGIC, doctor, contact, description));
+            setResult(1, intent);
             finish();
 
         }else{
@@ -150,9 +179,6 @@ public class AddMedicalRecordActivity extends AppCompatActivity{
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, MedicalHistoryActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     // Open calender in DialogFragment

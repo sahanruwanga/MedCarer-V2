@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.AllergicMedicine;
 import com.sahanruwanga.medcarer.app.AllergicMedicineAdapter;
 import com.sahanruwanga.medcarer.app.User;
 
@@ -149,6 +150,20 @@ public class AllergicMedicineActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            AllergicMedicine allergicMedicine = data.getParcelableExtra(AllergicMedicine.ALLERGIC_MEDICINE);
+            if(allergicMedicine != null) {
+                getAllergicMedicineAdapter().getAllergicMedicines().add(0, allergicMedicine);
+                getAllergicMedicineAdapter().notifyDataSetChanged();
+            }
+        }else if(resultCode == 2){
+            showRecyclerView();
+        }
+    }
+
     //region Showing tool bars
     public void showDefaultToolBar() {
         getToolbar().getMenu().clear();
@@ -164,8 +179,7 @@ public class AllergicMedicineActivity extends AppCompatActivity {
 
     public void openAddAllergicMedicine(View view) {
         Intent intent = new Intent(this, NewAllergicMedicineActivity.class);
-        startActivity(intent);
-        finish();
+        startActivityForResult(intent, 1);
     }
 
     // Back Icon click on toolbar

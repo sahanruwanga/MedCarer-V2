@@ -37,7 +37,7 @@ public class NotificationHandler extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Intent intentNotification = new Intent(context, HomeActivity.class);
+        Intent intentNotification = new Intent(context, AppointmentActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(HomeActivity.class);
@@ -47,7 +47,7 @@ public class NotificationHandler extends BroadcastReceiver{
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder.setContentTitle("Appointment")
-                .setContentText("Sample")
+                .setContentText("You have an appointment!")
                 .setSmallIcon(R.drawable.ic_notification)
                 .setTicker("New Appointment")
                 .setAutoCancel(true)

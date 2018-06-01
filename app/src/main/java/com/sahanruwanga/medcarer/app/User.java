@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -345,7 +346,7 @@ public class User implements Parcelable{
     }
 
     // Save new record in SQLite
-    public void saveNewRecord(String disease, String medicine, String duration,
+    public long saveNewRecord(String disease, String medicine, String duration,
                               String allergic, String doctor, String contact, String description,
                               String createdAt){
         long localId = getSqLiteHandler().addMedicalRecord(disease, medicine,
@@ -355,6 +356,7 @@ public class User implements Parcelable{
         Toast.makeText(getContext(), "Record successfully inserted!", Toast.LENGTH_LONG).show();
         saveNewRecordInMySQL(String.valueOf(localId), disease, medicine, duration, allergic,
                 doctor, contact, description, createdAt);
+        return localId;
 
     }
 
@@ -364,9 +366,8 @@ public class User implements Parcelable{
                                       final String allergic, final String doctor,
                                       final String contact, final String description,
                                       final String createdAt){
-
         getProgressDialog().setMessage("Saving record ...");
-        showDialog();
+//        showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_INSERT_MEDICAL_RECORD, new Response.Listener<String>() {
@@ -374,7 +375,7 @@ public class User implements Parcelable{
             @Override
             public void onResponse(String response) {
                 Log.d("Saving record in MySQL", "Insert Record: " + response.toString());
-                hideDialog();
+//                hideDialog();
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -394,7 +395,7 @@ public class User implements Parcelable{
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Saving record in MySQL", "Registration Error: " + error.getMessage());
-                hideDialog();
+//                hideDialog();
             }
         }) {
 
@@ -649,7 +650,7 @@ public class User implements Parcelable{
     }
 
     // Save new Appointment in SQLite
-    public void saveNewAppointment(String reason, String date, String time, String venue, String doctor, String clinicContact,
+    public long saveNewAppointment(String reason, String date, String time, String venue, String doctor, String clinicContact,
                                    String notifyTime, String createdAt){
         long localId = getSqLiteHandler().addAppointment(reason, date, time, venue, doctor, clinicContact,
                 notifyTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON, SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.SAVED);
@@ -657,6 +658,7 @@ public class User implements Parcelable{
         Toast.makeText(getContext(), "Record successfully inserted!", Toast.LENGTH_LONG).show();
         saveNewAppointmentInMySQL(String.valueOf(localId), reason, date, time, venue, doctor, clinicContact,
                 notifyTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON);
+        return localId;
     }
 
     // Save new Appointment in MySQL
@@ -947,7 +949,7 @@ public class User implements Parcelable{
     }
 
     // Save new Medication Schedule in SQLite
-    public void saveNewMedicationSchedule(String medicine, String quantity, String startTime,
+    public long saveNewMedicationSchedule(String medicine, String quantity, String startTime,
                                           String period, String notifyTime, String nextNotifyTime,
                                           String createdAt){
         long localScheduleId = getSqLiteHandler().addMedicationSchedule(medicine, quantity, startTime, period, notifyTime,
@@ -956,6 +958,7 @@ public class User implements Parcelable{
         Toast.makeText(getContext(), "Schedule successfully inserted!", Toast.LENGTH_LONG).show();
         saveNewMedicationScheduleInMySQL(String.valueOf(localScheduleId), medicine, quantity, startTime,
                 period, notifyTime, nextNotifyTime, createdAt, SQLiteHandler.NOTIFICATION_STATUS_ON);
+        return localScheduleId;
     }
 
     // Save new Medication Schedule in MySQL
@@ -1244,12 +1247,13 @@ public class User implements Parcelable{
     }
 
     // Save new Allergic Medicine in SQLite
-    public void saveNewAllergicMedicine(String medicine, String description, String createdAt){
+    public long saveNewAllergicMedicine(String medicine, String description, String createdAt){
         long localAllergicMedicineId = getSqLiteHandler().addAllergicMedicine(medicine, description,
                 createdAt, SQLiteHandler.NOT_SYNCED_WITH_SERVER, SQLiteHandler.SAVED);
         Toast.makeText(getContext(), "Allergic Medicine successfully inserted!", Toast.LENGTH_LONG).show();
         saveNewAllergicMedicineInMySQL(String.valueOf(localAllergicMedicineId), medicine,
                 description, createdAt);
+        return localAllergicMedicineId;
 
     }
 
@@ -1560,10 +1564,15 @@ public class User implements Parcelable{
 
     public void rateApp(){}
 
-    public String calculateAge(){
-
-        return "24 Years";
+    public String calculateAge(String dob){
+        if(dob != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+            int dobSaved = Integer.parseInt(dob.substring(0, 4));
+            int date = Integer.parseInt(dateFormat.format(new Date()));
+            return String.valueOf(date - dobSaved) + " years";
+        }else return "";
     }
+
 
     //region Progress Dialog Functions
     private void showDialog() {

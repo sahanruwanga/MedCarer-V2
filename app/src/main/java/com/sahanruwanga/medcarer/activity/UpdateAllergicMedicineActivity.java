@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -65,11 +66,26 @@ public class UpdateAllergicMedicineActivity extends AppCompatActivity {
             if (!medicine.isEmpty()){
                 getUser().updateAllergicMedicine(getAllergicMedicine().getAllergicMedicineId(),
                         medicine, note, getAllergicMedicine().getSyncStatus(), getAllergicMedicine().getStatusType());
+                AllergicMedicine allergicMedicine = getAllergicMedicine();
+                allergicMedicine.setMedicineName(medicine);
+                allergicMedicine.setDescription(note);
+
+                Intent intent = new Intent();
+                intent.putExtra(AllergicMedicine.ALLERGIC_MEDICINE, allergicMedicine);
+                setResult(2, intent);
+                finish();
+
             }else{
                 Toast.makeText(this, "Please fill Medicine field!", Toast.LENGTH_SHORT).show();
             }
         }
-        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(2);
+        super.onBackPressed();
     }
 
     // Fill data

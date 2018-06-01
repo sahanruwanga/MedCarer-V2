@@ -219,7 +219,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_doctor"
+                    android:src="@drawable/ic_date"
                     android:onClick="openCalender"
                     android:padding="5dp"
                     android:paddingRight="20dp"
@@ -263,7 +263,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_doctor"
+                    android:src="@drawable/ic_time"
                     android:onClick="openClockForAppointmentTime"
                     android:padding="5dp"
                     android:paddingRight="20dp"
@@ -307,7 +307,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_doctor"
+                    android:src="@drawable/ic_time"
                     android:onClick="openClockForNotifyTime"
                     android:padding="5dp"
                     android:paddingRight="20dp"

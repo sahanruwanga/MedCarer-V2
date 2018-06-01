@@ -67,6 +67,7 @@ public class MyProfileActivity extends AppCompatActivity {
         getAddressTextView().setText(getUser().getAddress());
         getEmailTextView().setText(getUser().getEmail());
         getNoteTextView().setText(getUser().getNote());
+//        getAgeTextView().setText(getUser().calculateAge(getUser().getUserDetails().getDob()));
 
     }
 

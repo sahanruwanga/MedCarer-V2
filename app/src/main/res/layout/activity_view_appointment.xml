@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     tools:context="com.sahanruwanga.medcarer.activity.ViewAppointmentActivity"
     android:orientation="vertical"
-    android:background="@drawable/background">
+    android:background="@color/colorWhite">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -41,119 +39,194 @@
         </FrameLayout>
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp">
 
-        <ScrollView
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/edit_text_style">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="15dp">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="5dp">
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:background="@drawable/edit_text_style">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Venue"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/venueAppointmentDetail"
-                        android:layout_margin="5dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Contact"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/contactAppointmentDetail"
-                        android:textColor="@color/colorLink"
-                        android:layout_margin="5dp"
-                        android:onClick="openInDialPad"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Date"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/dateAppointmentDetail"
-                        android:layout_margin="5dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Time"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/timeAppointmentDetail"
-                        android:layout_margin="5dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Reason"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/reasonAppointmentDetail"
-                        android:layout_margin="5dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Doctor"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/doctorAppointmentDetail"
-                        android:layout_margin="5dp"/>
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_gravity="center">
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="Notify Time:"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/notifyTimeAppointmentDetail"
-                        android:text="00:00:00"/>
-                </LinearLayout>
+                    android:textSize="16sp"
+                    android:text="Venue"
+                    android:textColor="@color/colorHintText"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/venueAppointmentDetail"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="15dp"/>
 
             </LinearLayout>
-        </ScrollView>
 
-    </android.support.v7.widget.CardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="Phone"
+                    android:textColor="@color/colorHintText"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/contactAppointmentDetail"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="15dp"
+                    android:onClick="openInDialPad"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="Date"
+                    android:textColor="@color/colorHintText"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dateAppointmentDetail"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="15dp"
+                    android:onClick="openInDialPad"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="Time"
+                    android:textColor="@color/colorHintText"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timeAppointmentDetail"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="15dp"
+                    android:onClick="openInDialPad"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="Reason"
+                    android:textColor="@color/colorHintText"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/reasonAppointmentDetail"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="15dp"
+                    android:onClick="openInDialPad"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:background="@drawable/edit_text_style">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="Doctor"
+                    android:textColor="@color/colorHintText"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/doctorAppointmentDetail"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="15dp"
+                    android:onClick="openInDialPad"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="Notify Time:"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/notifyTimeAppointmentDetail"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,9 +11,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
+import com.sahanruwanga.medcarer.app.AllergicMedicine;
+import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.User;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class NewAllergicMedicineActivity extends AppCompatActivity {
@@ -34,7 +38,7 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
 
         // Initializing widgets
         this.medicine = findViewById(R.id.newAllergicMedicine);
-        String[] medicines = {"Panadol", "Paracetamol", "Panadol1"};
+        ArrayList<String> medicines = getMedicnieNames();
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, medicines);
         adapterMonth.setDropDownViewResource(R.layout.layout_schedule_list_item);
@@ -60,6 +64,18 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
         });
     }
 
+    private  ArrayList<String> getMedicnieNames(){
+        ArrayList<String> medicines = new ArrayList<>();
+        for(MedicalRecord medicalRecord : getUser().getMedicalRecords()){
+            medicines.add(medicalRecord.getMedicine());
+        }
+        return medicines;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     // Save function in toolbar
     public void saveMedicine() {
@@ -70,9 +86,17 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createdAt = dateFormat.format(new Date());
 
-        if(!medicine.equals(""))
-            getUser().saveNewAllergicMedicine(medicine, description, createdAt);
-        else
+        if(!medicine.equals("")) {
+            long id = getUser().saveNewAllergicMedicine(medicine, description, createdAt);
+            AllergicMedicine allergicMedicine = new AllergicMedicine();
+            allergicMedicine.setAllergicMedicineId((int) id);
+            allergicMedicine.setMedicineName(medicine);
+            allergicMedicine.setDescription(description);
+            Intent intent = new Intent();
+            intent.putExtra(AllergicMedicine.ALLERGIC_MEDICINE, allergicMedicine);
+            setResult(1, intent);
+            finish();
+        } else
             Toast.makeText(this, "Please add required fields", Toast.LENGTH_SHORT).show();
     }
 
@@ -80,6 +104,7 @@ public class NewAllergicMedicineActivity extends AppCompatActivity {
     public void backIconClick(View view) {
         onBackPressed();
     }
+
 
     //region Getters and Setters
     public AutoCompleteTextView getMedicine() {

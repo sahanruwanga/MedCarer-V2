@@ -1,5 +1,6 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -137,11 +138,28 @@ public class UpdateMedicalRecordActivity extends AppCompatActivity {
             getUser().updateRecord(getMedicalRecord().getRecord_id(), disease, medicine, duration,
                     allergic, doctor, contact, description, syncStatus, statusType);
 
+            MedicalRecord medicalRecord = new MedicalRecord();
+            medicalRecord.setMedicine(medicine);
+            medicalRecord.setDisease(disease);
+            medicalRecord.setDuration(duration);
+            medicalRecord.setAllergic(allergic);
+            medicalRecord.setDoctor(doctor);
+            medicalRecord.setContact(contact);
+            medicalRecord.setDescription(description);
+
+            Intent intent = new Intent();
+            intent.putExtra(MedicalRecord.MEDICAL_RECORD, medicalRecord);
+            setResult(1, intent);
+            finish();
+
         } else{
             Toast.makeText(this, "Please enter required details!", Toast.LENGTH_LONG).show();
         }
+    }
 
-        finish();
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     // Back Icon on toolbar

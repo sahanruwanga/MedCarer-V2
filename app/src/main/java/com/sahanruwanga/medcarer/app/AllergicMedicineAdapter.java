@@ -81,7 +81,7 @@ public class AllergicMedicineAdapter extends
                 if(getSelectingCount() == 0) {
                     Intent intent = new Intent(getContext(), UpdateAllergicMedicineActivity.class);
                     intent.putExtra(AllergicMedicine.ALLERGIC_MEDICINE, allergicMedicine);
-                    getContext().startActivity(intent);
+                    getContext().startActivityForResult(intent, 2);
                 }else {
                     if(imageView.isSelected()) {
                         setSelectingCount(getSelectingCount() - 1);

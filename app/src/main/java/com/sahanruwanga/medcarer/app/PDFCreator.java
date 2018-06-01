@@ -238,7 +238,7 @@ public class PDFCreator {
         paraName.setIndentationLeft(30);
         paraName.setPaddingTop(0);
 
-        String age = AGE_TEXT + getUser().calculateAge();
+        String age = AGE_TEXT + getUser().calculateAge(getUser().getUserDetails().getDob());
         Paragraph paraAge = new Paragraph(age,FontFactory.getFont(FontFactory.HELVETICA,12,Font.ITALIC,BaseColor.BLACK));
         paraAge.setAlignment(Element.ALIGN_LEFT);
         paraAge.setIndentationLeft(30);

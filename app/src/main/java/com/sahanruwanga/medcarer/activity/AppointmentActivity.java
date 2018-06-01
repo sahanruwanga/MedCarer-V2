@@ -123,6 +123,22 @@ public class AppointmentActivity extends AppCompatActivity {
     }
     //endregion
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            Appointment appointment = data.getParcelableExtra(Appointment.APPOINTMENT);
+            if(appointment != null) {
+                getAppointmentAdapter().getAppointments().add(0, appointment);
+                getAppointmentAdapter().notifyDataSetChanged();
+                getEmptyImage().setVisibility(View.GONE);
+            }
+        }else if(resultCode == 2) {
+            showRecyclerView();
+        }
+    }
+
     //region Dialog Box
     // Open dialog box after pressing delete icon
     private void openDialogBox(){
@@ -186,8 +202,7 @@ public class AppointmentActivity extends AppCompatActivity {
     //region Open Add Appointment Activity
     public void openAddAppointment(View view) {
         Intent intent = new Intent(this, AddAppointmentActivity.class);
-        startActivity(intent);
-        finish();
+        startActivityForResult(intent, 1);
     }
     //endregion
 

@@ -58,6 +58,21 @@ public class MedicationScheduleActivity extends AppCompatActivity {
     }
     //endregion
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            MedicationSchedule medicationSchedule = data.getParcelableExtra(MedicationSchedule.MEDICATION_SCHEDULE);
+            if(medicationSchedule != null){
+                getMedicationScheduleAdapter().getMedicationSchedules().add(0, medicationSchedule);
+                getMedicationScheduleAdapter().notifyDataSetChanged();
+            }
+        }else if(resultCode == 2) {
+            showRecyclerView();
+        }
+    }
+
     //region onCreateOptionMenu and onOptionItemSelected
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,7 +161,7 @@ public class MedicationScheduleActivity extends AppCompatActivity {
 
     public void openNewMedicationSchedule(View view) {
         Intent intent = new Intent(this, NewMedicationScheduleActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     // Back Icon click on toolbar

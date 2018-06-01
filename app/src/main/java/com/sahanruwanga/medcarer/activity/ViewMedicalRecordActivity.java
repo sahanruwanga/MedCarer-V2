@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
     private TextView doctor;
     private TextView contact;
     private TextView description;
+    private ImageView callIcon;
+    private ImageView messageIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +35,6 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
 
         // Get medical record object from intent
         this.medicalRecord = getIntent().getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
-
-        Toast.makeText(this, medicalRecord.getSyncStatus() + " " + medicalRecord.getStatusType(), Toast.LENGTH_SHORT).show();
 
         // Initialize toolbar
         this.toolbar = findViewById(R.id.toolbarVieMedicalRecord);
@@ -47,6 +48,8 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
         this.doctor = findViewById(R.id.doctorTextDetail);
         this.contact = findViewById(R.id.contactTextDetail);
         this.description = findViewById(R.id.descriptionTextDetail);
+        this.callIcon = findViewById(R.id.callIconViewRecord);
+        this.messageIcon = findViewById(R.id.messageIconViewRecord);
 
         // Set text in text views
         disease.setText(getMedicalRecord().getDisease());
@@ -55,6 +58,13 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
         duration.setText(getMedicalRecord().getDuration());
         doctor.setText(getMedicalRecord().getDoctor());
         contact.setText(getMedicalRecord().getContact());
+        if(getMedicalRecord().getContact().isEmpty()){
+            getCallIcon().setVisibility(View.GONE);
+            getMessageIcon().setVisibility(View.GONE);
+        }else {
+            getCallIcon().setVisibility(View.VISIBLE);
+            getMessageIcon().setVisibility(View.VISIBLE);
+        }
         description.setText(getMedicalRecord().getDescription());
     }
 
@@ -70,9 +80,33 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
         if(itemId == R.id.editIcon){
             Intent intent = new Intent(this, UpdateMedicalRecordActivity.class);
             intent.putExtra(MedicalRecord.MEDICAL_RECORD, getMedicalRecord());
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(2);
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            MedicalRecord medicalRecord = data.getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
+            if(medicalRecord != null) {
+                getMedicine().setText(medicalRecord.getMedicine());
+                getDisease().setText(medicalRecord.getDisease());
+                getAllergic().setText(medicalRecord.getAllergic());
+                getDuration().setText(medicalRecord.getDuration());
+                getDoctor().setText(medicalRecord.getDoctor());
+                getContact().setText(medicalRecord.getContact());
+                getDescription().setText(medicalRecord.getDescription());
+            }
+        }
     }
 
     // Back icon click on toolbar
@@ -165,6 +199,22 @@ public class ViewMedicalRecordActivity extends AppCompatActivity {
 
     public void setDescription(TextView description) {
         this.description = description;
+    }
+
+    public ImageView getCallIcon() {
+        return callIcon;
+    }
+
+    public void setCallIcon(ImageView callIcon) {
+        this.callIcon = callIcon;
+    }
+
+    public ImageView getMessageIcon() {
+        return messageIcon;
+    }
+
+    public void setMessageIcon(ImageView messageIcon) {
+        this.messageIcon = messageIcon;
     }
     //endregion
 

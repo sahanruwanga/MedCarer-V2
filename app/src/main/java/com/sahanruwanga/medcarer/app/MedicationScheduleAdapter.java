@@ -87,7 +87,7 @@ public class MedicationScheduleAdapter extends
                 if(getSelectingCount() == 0) {
                     Intent intent = new Intent(getContext(), ViewMedicationScheduleActivity.class);
                     intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, medicationSchedule);
-                    getContext().startActivity(intent);
+                    getContext().startActivityForResult(intent, 1);
                 }else {
                     if(holder.scheduleCheckIcon.isSelected()) {
                         setSelectingCount(getSelectingCount() - 1);

@@ -61,7 +61,7 @@
                     android:padding="10dp"
                     android:textAlignment="gravity"/>
 
-                <EditText
+                <AutoCompleteTextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:id="@+id/medicineUpdateMedicationSchedule"
@@ -201,7 +201,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="d"
+                    android:text="D"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -226,7 +226,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="h"
+                    android:text="H"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -251,7 +251,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="m"
+                    android:text="M"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -294,7 +294,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="mins"
+                    android:text="M"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
                     android:padding="10dp"
@@ -306,7 +306,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/updateUpdateMedicationSchedule"
-                android:text="SAVE"
+                android:text="UPDATE"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/button_shape"/>
 

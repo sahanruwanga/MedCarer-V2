@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.MedicalHistoryAdapter;
+import com.sahanruwanga.medcarer.app.MedicalRecord;
 import com.sahanruwanga.medcarer.app.PDFCreator;
 import com.sahanruwanga.medcarer.app.User;
 
@@ -28,6 +30,7 @@ import java.io.File;
 
 public class MedicalHistoryActivity extends AppCompatActivity {
     private Toolbar toolbar;
+    private FloatingActionButton newMRButton;
     private TextView toolBarText;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -68,6 +71,9 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         // TextView in toolbar
         this.setToolBarText((TextView)findViewById(R.id.toolBarText));
 
+        // Floating button
+        this.newMRButton = findViewById(R.id.addNewFloatingMH);
+
         // Add data into RecyclerView
         showRecyclerView();
 
@@ -87,6 +93,21 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     }
     //endregion
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            MedicalRecord medicalRecord = data.getParcelableExtra(MedicalRecord.MEDICAL_RECORD);
+            if(medicalRecord != null) {
+                getMedicalHistoryAdapter().getMedicalRecords().add(0, medicalRecord);
+                getMedicalHistoryAdapter().notifyDataSetChanged();
+            }
+        }else if(resultCode == 2) {
+            showRecyclerView();
+        }
+    }
 
     //region Show RecyclerView in Medical History
     private void showRecyclerView(){
@@ -192,12 +213,14 @@ public class MedicalHistoryActivity extends AppCompatActivity {
         getToolbar().getMenu().clear();
         getMenuInflater().inflate(R.menu.home, menu);
         getToolBarText().setVisibility(View.VISIBLE);
+        getNewMRButton().setVisibility(View.VISIBLE);
     }
 
     public void showDeletingToolBar() {
         getToolbar().getMenu().clear();
         getMenuInflater().inflate(R.menu.delete_all, menu);
         getToolBarText().setVisibility(View.GONE);
+        getNewMRButton().setVisibility(View.INVISIBLE);
     }
     //endregion
 
@@ -224,8 +247,7 @@ public class MedicalHistoryActivity extends AppCompatActivity {
     // Open new activity to add new medical record
     public void openAddMedicalRecord(View view){
         Intent intent = new Intent(this, AddMedicalRecordActivity.class);
-        startActivity(intent);
-        finish();
+        startActivityForResult(intent, 1);
     }
     //endregion
 
@@ -276,6 +298,14 @@ public class MedicalHistoryActivity extends AppCompatActivity {
 
     public void setSearchView(SearchView searchView) {
         this.searchView = searchView;
+    }
+
+    public FloatingActionButton getNewMRButton() {
+        return newMRButton;
+    }
+
+    public void setNewMRButton(FloatingActionButton newMRButton) {
+        this.newMRButton = newMRButton;
     }
 
     //endregion

@@ -1,9 +1,12 @@
 package com.sahanruwanga.medcarer.activity;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,17 +14,20 @@ import android.widget.Toast;
 
 import com.sahanruwanga.medcarer.R;
 import com.sahanruwanga.medcarer.app.DatePickerFragment;
+import com.sahanruwanga.medcarer.app.MedicalRecord;
+import com.sahanruwanga.medcarer.app.MedicationSchedule;
 import com.sahanruwanga.medcarer.app.TimePickerFragment;
 import com.sahanruwanga.medcarer.app.User;
 import com.sahanruwanga.medcarer.helper.DateTimeFormatting;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class NewMedicationScheduleActivity extends AppCompatActivity {
-    private EditText medicine;
+    private AutoCompleteTextView medicine;
     private EditText quantity;
     private TextView startDate;
     private TextView startTime;
@@ -51,15 +57,31 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
         // Define all widgets
         this.medicine = findViewById(R.id.medicineNewMedicationSchedule);
+        getMedicine().setSelectAllOnFocus(true);
         this.quantity = findViewById(R.id.quantityNewMedicationSchedule);
+        getQuantity().setSelectAllOnFocus(true);
         this.startDate = findViewById(R.id.startDateNewMedicationSchedule);
         this.startTime = findViewById(R.id.startTimeNewMedicationSchedule);
         this.periodDay = findViewById(R.id.periodDayNewMedicationSchedule);
+        getPeriodDay().setSelectAllOnFocus(true);
         this.periodHour = findViewById(R.id.periodHourNewMedicationSchedule);
+        getPeriodHour().setSelectAllOnFocus(true);
         this.periodMin = findViewById(R.id.periodMinNewMedicationSchedule);
+        getPeriodMin().setSelectAllOnFocus(true);
         this.notifyMin = findViewById(R.id.notifyMinNewMedicationSchedule);
+        getNotifyMin().setSelectAllOnFocus(true);
         this.saveBtn = findViewById(R.id.saveNewMedicationSchedule);
         this.cancelBtn = findViewById(R.id.cancelNewMedicationSchedule);
+
+        getStartDate().setText(getCurrentDateTimeUI().substring(0,12));
+        getStartTime().setText(getCurrentDateTimeUI().substring(13));
+
+        // Set Medicines for AutoCompleteTextView
+        ArrayList<String> medicines = getMedicnieNames();
+        ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, medicines);
+        adapterMonth.setDropDownViewResource(R.layout.layout_schedule_list_item);
+        getMedicine().setAdapter(adapterMonth);
 
         // OnClick listeners for buttons
         getSaveBtn().setOnClickListener(new View.OnClickListener() {
@@ -75,6 +97,14 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private  ArrayList<String> getMedicnieNames(){
+        ArrayList<String> medicines = new ArrayList<>();
+        for(MedicalRecord medicalRecord : getUser().getMedicalRecords()){
+            medicines.add(medicalRecord.getMedicine());
+        }
+        return medicines;
     }
 
     // Open clock to set Start Time
@@ -120,16 +150,27 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
 
         // Get current date time
         String createdAt = getCurrentDateTime();
-
         String fullStartedTime = getFullStartedTime(startDate+ " " + startTime);
-
         String nextNotifyTime = calculateNextNotifyTime(fullStartedTime);
 
         if(!medicine.isEmpty() && !quantity.isEmpty() && !period.equals("00:00:00") &&
                 !notifyTime.equals("00")){
             clearAll();
-            getUser().saveNewMedicationSchedule(medicine, quantity, fullStartedTime, period,
+            long id = getUser().saveNewMedicationSchedule(medicine, quantity, fullStartedTime, period,
                     notifyTime, nextNotifyTime, createdAt);
+
+            MedicationSchedule medicationSchedule = new MedicationSchedule();
+            medicationSchedule.setScheduleId((int) id);
+            medicationSchedule.setMedicine(medicine);
+            medicationSchedule.setQuantity(quantity);
+            medicationSchedule.setStartTime(fullStartedTime);
+            medicationSchedule.setPeriod(period);
+            medicationSchedule.setNotifyTime(notifyTime);
+            medicationSchedule.setNextNotifyTime(nextNotifyTime);
+
+            Intent intent = new Intent();
+            intent.putExtra(MedicationSchedule.MEDICATION_SCHEDULE, medicationSchedule);
+            setResult(1, intent);
             finish();
 
         }else{
@@ -142,12 +183,17 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
         String dateTime = getDateTimeFormatting().getDateTimeToShowInUI(getCurrentDateTime());
         getMedicine().setText("");
         getQuantity().setText("");
-        getStartDate().setText(dateTime.substring(0, 12));
-        getStartTime().setText(dateTime.substring(13));
+        getStartDate().setText(getCurrentDateTimeUI().substring(0,12));
+        getStartTime().setText(getCurrentDateTimeUI().substring(13));
         getPeriodDay().setText("00");
         getPeriodHour().setText("00");
         getPeriodMin().setText("00");
         getNotifyMin().setText("00");
+    }
+
+    private String getCurrentDateTimeUI(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        return dateFormat.format(new Date());
     }
 
     // Get current date time
@@ -247,11 +293,11 @@ public class NewMedicationScheduleActivity extends AppCompatActivity {
     //endregion
 
     //region Getters and Setters
-    public EditText getMedicine() {
+    public AutoCompleteTextView getMedicine() {
         return medicine;
     }
 
-    public void setMedicine(EditText medicine) {
+    public void setMedicine(AutoCompleteTextView medicine) {
         this.medicine = medicine;
     }
 
